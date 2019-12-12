@@ -1,0 +1,24 @@
+{
+  "name": "zigbee-clusters",
+  "version": "1.0.0",
+  "description": "ZigBee Clusters",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/athombv/node-zigbee-clusters.git"
+  },
+  "keywords": [
+    "zigbee",
+    "cluster",
+    "library"
+  ],
+  "author": "Athom B.V.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/athombv/node-zigbee-clusters/issues"
+  },
+  "homepage": "https://github.com/athombv/node-zigbee-clusters#readme"
+}
