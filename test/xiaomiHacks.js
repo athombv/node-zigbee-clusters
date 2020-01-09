@@ -90,7 +90,8 @@ Cluster.addCluster(XiaomiHackedBasicCluster);
 // node.endpoint[1].clusters.basic.configureReporting({powerSource: {minInterval: 1234, maxInterval: 4321, minChange: 10}}); //enables reporting
 
 
-// class LocalOnOffCluster extends OnOffCluster {
+// TODO: invert group commands
+// class LocalOnOffCluster {
 //     async on() {
 //         //binding said on, update attribute
 //         this.onOff = true;
@@ -109,7 +110,7 @@ Cluster.addCluster(XiaomiHackedBasicCluster);
 
 // node.endpoint[1].bind('onOff', new LocalOnOffCluster()); //binds the device+endpoint+cluster to us
 // node.endpoint[1].unbind('onOff'); //removes a previous binding to us
-
+// node.endpoint[1].bindings.onOff.onOff // returns boolean
 // const groupsResponse = await node.endpoints[1].touchlink.getGroups();
 // const {groupId} = groupsResponse.groups[0];
-// node.endpoint[1].bindGroup('onOff', groupId);
+//
