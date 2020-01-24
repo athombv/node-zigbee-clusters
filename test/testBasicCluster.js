@@ -23,7 +23,12 @@ tst.factoryReset();
 
 node.handleFrame(1, 0, Buffer.from([0x18, 0x00, 0x0A,     0x00, 0x00, 0x20, 0x02, 0x11, 0x00, 0x30, 0x6b]));
 
-const binding = new BoundCluster();
-node.endpoints[1].bind('basic', binding);
+class CustomHandler extends BoundCluster {
+    async readAttributes({attributes}) {
+        console.log(attributes);
+    }
+}
+
+node.endpoints[1].bind('basic', new CustomHandler());
 
 node.handleFrame(1, 0, Buffer.from([0x00, 0x00, 0x00,     0x04, 0x00, 0x05, 0x00]));
