@@ -14,6 +14,13 @@ const node = new Node(remotenode);
 
 const tst = node.endpoints[1].clusters['basic'];
 
+tst.configureReporting({
+    zclVersion: {
+        minInterval: 1234,
+        maxInterval: 4321
+    }
+});
+
 tst.readAttributes('zclVersion');
 tst.writeAttributes({
     zclVersion: 2,
