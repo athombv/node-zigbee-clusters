@@ -42,6 +42,6 @@ class CustomHandler extends BoundCluster {
 
 node.endpoints[1].bind('basic', new CustomHandler());
 
-tst.readAttributes('modelId');
+tst.readAttributes('modelId', 'zclVersion');
 
 //node.handleFrame(1, 0, Buffer.from([0x00, 0x00, 0x00,     0x04, 0x00, 0x05, 0x00]));
