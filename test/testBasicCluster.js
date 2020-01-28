@@ -31,6 +31,11 @@ const tst = node.endpoints[1].clusters['basic'];
 // node.handleFrame(1, 0, Buffer.from([0x18, 0x00, 0x0A,     0x00, 0x00, 0x20, 0x02, 0x11, 0x00, 0x30, 0x6b]));
 
 class CustomHandler extends BoundCluster {
+    constructor() {
+        super();
+        this.clusterRevision = 2;
+    }
+
     get manufacturerName() {
         return "Test";
     }
@@ -42,12 +47,26 @@ class CustomHandler extends BoundCluster {
     get zclVersion() {
         return 2;
     }
+
+    set modelId(val) {
+
+    }
+
+    get REPORTABLE_ATTRIBUTES() {
+        return ['zclVersion'];
+    }
 }
 
-node.endpoints[1].bind('basic', new CustomHandler());
+class SuperBoundCluster extends CustomHandler {
+
+};
+
+
+
+node.endpoints[1].bind('basic', new SuperBoundCluster());
 
 //tst.readAttributes('modelId', 'zclVersion', 'manufacturerName');
 
-tst.discoverAttributes().then(console.log);
+tst.discoverAttributesExtended().then(console.log);
 
 //node.handleFrame(1, 0, Buffer.from([0x00, 0x00, 0x00,     0x04, 0x00, 0x05, 0x00]));
