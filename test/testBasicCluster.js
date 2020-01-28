@@ -4,7 +4,7 @@ const BoundCluster = require('../lib/BoundCluster');
 
 require('../lib/clusters/basic');
 
-const remotenode = {sendFrame: console.log, bind: console.log, endpointDescriptors: [
+const remotenode = {sendFrame: (...args) => remotenode.handleFrame(...args), bind: console.log, endpointDescriptors: [
     {
         endpointId: 1,
         inputClusters: [0],
@@ -14,28 +14,34 @@ const node = new Node(remotenode);
 
 const tst = node.endpoints[1].clusters['basic'];
 
-tst.configureReporting({
-    zclVersion: {
-        minInterval: 1234,
-        maxInterval: 4321
-    }
-});
+// tst.configureReporting({
+//     zclVersion: {
+//         minInterval: 1234,
+//         maxInterval: 4321
+//     }
+// });
 
-tst.readAttributes('zclVersion');
-tst.writeAttributes({
-    zclVersion: 2,
-    physicalEnv: 'Corridor',
-});
-tst.factoryReset();
+// tst.readAttributes('zclVersion');
+// tst.writeAttributes({
+//     zclVersion: 2,
+//     physicalEnv: 'Corridor',
+// });
+// tst.factoryReset();
 
-node.handleFrame(1, 0, Buffer.from([0x18, 0x00, 0x0A,     0x00, 0x00, 0x20, 0x02, 0x11, 0x00, 0x30, 0x6b]));
+// node.handleFrame(1, 0, Buffer.from([0x18, 0x00, 0x0A,     0x00, 0x00, 0x20, 0x02, 0x11, 0x00, 0x30, 0x6b]));
 
 class CustomHandler extends BoundCluster {
-    async readAttributes({attributes}) {
-        console.log(attributes);
+    get manufacturerName() {
+        return "Test";
+    }
+
+    get modelId() {
+        return "TestDev";
     }
 }
 
 node.endpoints[1].bind('basic', new CustomHandler());
 
-node.handleFrame(1, 0, Buffer.from([0x00, 0x00, 0x00,     0x04, 0x00, 0x05, 0x00]));
+tst.readAttributes('modelId');
+
+//node.handleFrame(1, 0, Buffer.from([0x00, 0x00, 0x00,     0x04, 0x00, 0x05, 0x00]));
