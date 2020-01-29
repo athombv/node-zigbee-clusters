@@ -51,6 +51,10 @@ class CustomHandler extends BoundCluster {
     get REPORTABLE_ATTRIBUTES() {
         return ['zclVersion'];
     }
+
+    async factoryReset() {
+        console.log('reset!');
+    }
 }
 
 class SuperBoundCluster extends CustomHandler {
@@ -71,5 +75,18 @@ tst.discoverAttributesExtended()
         )
     ).then(a => console.log(a));
 
+tst.discoverCommandsGenerated()
+    .then(a => console.log('serverGenerated', a));
+
+tst.discoverCommandsReceived()
+    .then(a => console.log('serverReceived', a));
+
+tst.onDiscoverCommandsGenerated()
+    .then(a => console.log('clientGenerated', a));
+
+tst.onDiscoverCommandsReceived()
+    .then(a => console.log('clientReceived', a));
+
+tst.factoryReset();
 //node.handleFrame(1, 0, Buffer.from([0x00, 0x00, 0x00,     0x04, 0x00, 0x05, 0x00]));
 
