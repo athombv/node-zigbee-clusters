@@ -4,7 +4,7 @@ const BoundCluster = require('../lib/BoundCluster');
 
 require('../lib/clusters/basic');
 
-const remotenode = {sendFrame: (...args) => console.log('loopback', ...args) | remotenode.handleFrame(...args), bind: console.log, endpointDescriptors: [
+const remotenode = {sendFrame: (...args) => console.log('loopback', ...args) | remotenode.handleFrame(...args), bind: console.log.bind(console, 'binding: ep %d, cluster %d '), endpointDescriptors: [
     {
         endpointId: 1,
         inputClusters: [0],
@@ -31,25 +31,21 @@ const tst = node.endpoints[1].clusters['basic'];
 // node.handleFrame(1, 0, Buffer.from([0x18, 0x00, 0x0A,     0x00, 0x00, 0x20, 0x02, 0x11, 0x00, 0x30, 0x6b]));
 
 class CustomHandler extends BoundCluster {
-    constructor() {
-        super();
-        this.clusterRevision = 2;
-    }
-
-    get manufacturerName() {
-        return "Test";
-    }
-
-    get modelId() {
-        return "TestDev";
-    }
 
     get zclVersion() {
         return 2;
     }
 
-    set modelId(val) {
+    get powerSource() {
+        return 'mains';
+    }
 
+    get manufacturerName() {
+        return 'Athom';
+    }
+
+    get modelId() {
+        return 'Homey';
     }
 
     get REPORTABLE_ATTRIBUTES() {
@@ -62,11 +58,18 @@ class SuperBoundCluster extends CustomHandler {
 };
 
 
-
 node.endpoints[1].bind('basic', new SuperBoundCluster());
 
 //tst.readAttributes('modelId', 'zclVersion', 'manufacturerName');
 
-tst.discoverAttributesExtended().then(console.log);
+tst.discoverAttributesExtended()
+    .then(attrs => 
+        tst.readAttributes(
+            ...Object.values(attrs)
+            .filter(a => a.acl.readable)
+            .map(a => a.name)
+        )
+    ).then(a => console.log(a));
 
 //node.handleFrame(1, 0, Buffer.from([0x00, 0x00, 0x00,     0x04, 0x00, 0x05, 0x00]));
+
