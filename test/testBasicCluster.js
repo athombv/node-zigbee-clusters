@@ -1,16 +1,13 @@
 const {ZCLStandardHeader} = require('../lib/zclFrames');
-const Node = require('../lib/Node');
 const BoundCluster = require('../lib/BoundCluster');
-
 require('../lib/clusters/basic');
 
-const remotenode = {sendFrame: (...args) => console.log('loopback', ...args) | remotenode.handleFrame(...args), bind: console.log.bind(console, 'binding: ep %d, cluster %d '), endpointDescriptors: [
+const node = require('./loopbackNode')([
     {
         endpointId: 1,
         inputClusters: [0],
     }
-]};
-const node = new Node(remotenode);
+]);
 
 const tst = node.endpoints[1].clusters['basic'];
 
