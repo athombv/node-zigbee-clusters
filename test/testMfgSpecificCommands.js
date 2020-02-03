@@ -2,33 +2,39 @@ const Cluster = require('../lib/Cluster');
 const { ZCLDataTypes } = require('../lib/zclTypes');
 const BoundCluster = require('../lib/BoundCluster');
 const SceneCluster = require('../lib/clusters/scenes');
-require('../lib/clusters/levelControl');
 
 class IkeaSceneCluster extends SceneCluster {
     static get COMMANDS() {
         return {
             ...super.COMMANDS,
-            ikeaSceneLoop: {
+            ikeaSceneStep: {
                 id              : 0x07,
                 manufacturerId  : 0x117C,
                 args            : {
-                    id          : ZCLDataTypes.uint16,
-                    moveTo      : ZCLDataTypes.Array8(ZCLDataTypes.uint8),
+                    mode            : ZCLDataTypes.enum8({
+                        up            : 0,
+                        down          : 1,
+                    }),
+                    stepSize        : ZCLDataTypes.uint8,
+                    transitionTime  : ZCLDataTypes.uint16,
                 }
             },
-            ikeaSceneButtonButtonDown: {
+            ikeaSceneMove: {
                 id              : 0x08,
                 manufacturerId  : 0x117C,
                 args            : {
-                    id          : ZCLDataTypes.uint16,
-                    moveTo      : ZCLDataTypes.Array8(ZCLDataTypes.uint8),
+                    mode            : ZCLDataTypes.enum8({
+                        up            : 0,
+                        down          : 1,
+                    }),
+                    transitionTime  : ZCLDataTypes.uint16,
                 }
             },
-            ikeaSceneButtonButtonUp: {
+            ikeaSceneMoveStop: {
                 id              : 0x09,
                 manufacturerId  : 0x117C,
                 args            : {
-                    id          : ZCLDataTypes.uint16,
+                    duration       : ZCLDataTypes.uint16,
                 }
             }
         }
@@ -49,28 +55,30 @@ const node = require('./loopbackNode')
 const tst = node.endpoints[1].clusters['scenes'];
 
 class IkeaBoundCluster extends BoundCluster {
-  async ikeaSceneLoop({id, moveTo}) {
-    console.log('moving %d to %s', id, moveTo[0]?'+1':'-1');
+  async ikeaSceneStep(args) {
+    console.log(args);
   }
 
-  async ikeaSceneButtonButtonDown({id}) {
-    console.log('btn down %d', id);
+  async ikeaSceneMove(args) {
+    console.log(args);
   }
   
-  async ikeaSceneButtonButtonUp({id}) {
-    console.log('btn up %d', id);
+  async ikeaSceneMoveStop(args) {
+    console.log(args);
   }
 }
 
 node.endpoints[1].bind('scenes', new IkeaBoundCluster());
 
-tst.ikeaSceneLoop({
-  id: 0x0D00,
-  moveTo: [1],
+tst.ikeaSceneStep({
+  mode: 'up',
+  stepSize: 1,
+  transitionTime: 13,
 })
-tst.ikeaSceneButtonButtonDown({
-  id: 0x0D00,
+tst.ikeaSceneMove({
+  mode: 'up',
+  transitionTime: 13,
 })
-tst.ikeaSceneButtonButtonUp({
-  id: 0x0D00,
+tst.ikeaSceneMoveStop({
+  duration: 1000,
 })
