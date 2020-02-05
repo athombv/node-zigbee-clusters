@@ -1,0 +1,39 @@
+name: Test
+
+# Defines the trigger for this action (by default on push to master/production and on all pull requests)
+# For more information see: https://help.github.com/en/actions/automating-your-workflow-with-github-actions/events-that-trigger-workflows#about-workflow-events)
+on:
+  push:
+    - master
+    - production
+  pull_request:
+
+jobs:
+  test:
+    name: Run
+
+    # Define a strategy for running these tests on various operating systems and Node.js version in parallel.
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [8, 12]
+
+    steps:
+      # Checks out the current repository.
+      - uses: actions/checkout@v2
+
+      # Configures a Node.js environment.
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }} # Important: use the matrix.node property when using a matrix strategy
+
+      # Only use the ssh-agent action below if your repository has private git dependencies (see README.md for
+      # instructions on how to configure an ssh key).
+      # - uses: webfactory/ssh-agent@v0.2.0
+      #  with:
+      #    ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      # Run `npm ci` to re-create your local environment (make sure to commit your package-lock.json!).
+      # Finally run `npm test` (make sure you have defined a proper test command in package.json).
+      - run: npm ci
+      - run: npm test
