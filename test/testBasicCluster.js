@@ -52,7 +52,6 @@ describe('basicCluster', () => {
         node.endpoints[1].bind('basic', new class extends BoundCluster {
             async configureReporting({reports}) {
                 assert.equal(reports.length, 1, 'exactly 1 report');
-                assert.equal();
             }
         });
 
