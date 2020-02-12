@@ -1,75 +1,135 @@
-const {ZCLStandardHeader} = require('../lib/zclFrames');
-const Node = require('../lib/Node');
+const assert = require('assert');
 const BoundCluster = require('../lib/BoundCluster');
-
 require('../lib/clusters/basic');
 
-const remotenode = {sendFrame: (...args) => console.log('loopback', ...args) | remotenode.handleFrame(...args), bind: console.log.bind(console, 'binding: ep %d, cluster %d '), endpointDescriptors: [
-    {
-        endpointId: 1,
-        inputClusters: [0],
-    }
-]};
-const node = new Node(remotenode);
+describe('basicCluster', () => {
+    let node;
+    let basic;
+    before(() => {
+        node = require('./loopbackNode')
+        ([
+            {
+                endpointId: 1,
+                inputClusters: [0],
+            }
+        ]);
+        basic = node.endpoints[1].clusters['basic'];
+    });
+    it('should fail for unbound cluster', async () => {
+        try {
+            await basic.configureReporting({
+                zclVersion: {
+                    minInterval: 1234,
+                    maxInterval: 4321
+                }
+            });
+        } catch(e) {
+            return;
+        }
+        throw new Error('didn\'t throw');
+    });
 
-const tst = node.endpoints[1].clusters['basic'];
+    it('should fail for unimplemented command', async () => {
+        node.endpoints[1].bind('basic', new BoundCluster());
 
-// tst.configureReporting({
-//     zclVersion: {
-//         minInterval: 1234,
-//         maxInterval: 4321
-//     }
-// });
+        try {
+            await basic.factoryReset();
+        } catch(e) {
+            return;
+        }
+        throw new Error('didn\'t throw');
+    });
 
-// tst.readAttributes('zclVersion');
-// tst.writeAttributes({
-//     zclVersion: 2,
-//     physicalEnv: 'Corridor',
-// });
-// tst.factoryReset();
+    it('should invoke command', async () => {
+        node.endpoints[1].bind('basic', new class extends BoundCluster {
+            async factoryReset() { }
+        });
 
-// node.handleFrame(1, 0, Buffer.from([0x18, 0x00, 0x0A,     0x00, 0x00, 0x20, 0x02, 0x11, 0x00, 0x30, 0x6b]));
+        await basic.factoryReset();
+    });
 
-class CustomHandler extends BoundCluster {
+    it('should configure reporting', async () => {
+        node.endpoints[1].bind('basic', new class extends BoundCluster {
+            async configureReporting({reports}) {
+                assert.equal(reports.length, 1, 'exactly 1 report');
+            }
+        });
 
-    get zclVersion() {
-        return 2;
-    }
+        await basic.configureReporting({
+            zclVersion: {
+                minInterval: 1234,
+                maxInterval: 4321
+            }
+        });
+    });
 
-    get powerSource() {
-        return 'mains';
-    }
+    it('should read attributes', async () => {
+        node.endpoints[1].bind('basic', new class extends BoundCluster {
+            constructor() {
+                super();
+                this.dateCode = "1234"
+            }
+            get modelId() {
+                return "test";
+            }
+            get manufacturerName() {
+                return "Athom";
+            }
+        });
 
-    get manufacturerName() {
-        return 'Athom';
-    }
+        const res = await basic.readAttributes('modelId', 'manufacturerName', 'clusterRevision', 'zclVersion', 'dateCode');
+        assert.equal(res.modelId, 'test', 'modelId should be test');
+        assert.equal(res.manufacturerName, 'Athom', 'manufacturerName should be test');
+        assert.equal(res.clusterRevision, 1, 'clusterRevision should be test');
+        assert.equal(res.zclVersion, undefined, 'zclVersion should not be present');
+        assert.equal(res.dateCode, '1234', 'dateCode should not be present');
+        
+    });
 
-    get modelId() {
-        return 'Homey';
-    }
+    it('should write attributes', async () => {
+        node.endpoints[1].bind('basic', new class extends BoundCluster {
+            get modelId() {
+                return "test";
+            }
+            get manufacturerName() {
+                return "Athom";
+            }
+            set modelId(val) {
+                assert.equal(val, 'test1');
+            }
+        });
 
-    get REPORTABLE_ATTRIBUTES() {
-        return ['zclVersion'];
-    }
-}
+        await basic.writeAttributes({
+            modelId: 'test1'
+        });
+    });
 
-class SuperBoundCluster extends CustomHandler {
+    it('should discover attributes', async () => {
+        node.endpoints[1].bind('basic', new class extends BoundCluster {
+            get modelId() {
+                return "test";
+            }
+            get manufacturerName() {
+                return "Athom";
+            }
+            set modelId(val) {
+                assert.equal(val, 'test1');
+            }
+        });
 
-};
+        const attrs = await basic.discoverAttributes();
+        ['modelId', 'manufacturerName'].forEach(a => {
+            assert(attrs.includes(a), a+' is missing');
+        });
+    });
 
+    it('should discover received commands', async () => {
+        node.endpoints[1].bind('basic', new class extends BoundCluster {
+            async factoryReset() {
 
-node.endpoints[1].bind('basic', new SuperBoundCluster());
-
-//tst.readAttributes('modelId', 'zclVersion', 'manufacturerName');
-
-tst.discoverAttributesExtended()
-    .then(attrs => 
-        tst.readAttributes(
-            ...Object.values(attrs)
-            .filter(a => a.acl.readable)
-            .map(a => a.name)
-        )
-    ).then(a => console.log(a));
-
-//node.handleFrame(1, 0, Buffer.from([0x00, 0x00, 0x00,     0x04, 0x00, 0x05, 0x00]));
-
+            }
+        });
+        const cmds = await basic.discoverCommandsReceived();
+        assert(cmds.includes('factoryReset'));
+    });
+});
