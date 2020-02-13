@@ -9,8 +9,12 @@ const zclFrames = require('./lib/zclFrames');
 const clusterIdMap = {};
 const clusterNameMap = {};
 Object.values(Clusters).forEach((Cluster) => {
+  try {
     clusterIdMap[Cluster.NAME] = Cluster.ID;
     clusterNameMap[Cluster.ID] = Cluster.NAME;
+  } catch (err) {
+    // Skip lib/Cluster.js
+  }
 });
 
 const getClusterId = (clusterName) => clusterIdMap[clusterName];

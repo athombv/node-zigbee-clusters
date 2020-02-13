@@ -32,6 +32,11 @@ const tst = node.endpoints[1].clusters['basic'];
 
 class CustomHandler extends BoundCluster {
 
+    constructor() {
+        super();
+        this.test = 'test';
+    }
+
     get zclVersion() {
         return 2;
     }
