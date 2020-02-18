@@ -34,7 +34,7 @@ const XiaomiLifelineDataRecord = new ZCLDataType(NaN, 'XiaomiLifelineDataRecord'
     const dataTypeId = ZCLDataTypes.uint8.fromBuffer(buf, i);
     i += ZCLDataTypes.uint8.length;
 
-    const DataType = attributes[res.id] && attributes[res.id].type || ZCLDataTypes[dataTypeId];
+    const DataType = attributes[res.id] && attributes[res.id].type || Object.values(ZCLDataTypes).find(type => type && type.id === dataTypeId);
     if(!DataType) throw new TypeError('Invalid Type for Attribute: '+res.id);
 
     res.name = attributes[res.id] && attributes[res.id].name || 'unknown_attr_'+res.id;

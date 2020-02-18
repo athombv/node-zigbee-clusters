@@ -23,5 +23,8 @@
   "homepage": "https://github.com/athombv/node-zigbee-clusters#readme",
   "devDependencies": {
     "mocha": "^7.0.1"
+  },
+  "dependencies": {
+    "@athombv/data-types": "^1.0.0"
   }
 }
