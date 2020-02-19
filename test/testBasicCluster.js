@@ -32,11 +32,6 @@ const tst = node.endpoints[1].clusters['basic'];
 
 class CustomHandler extends BoundCluster {
 
-    constructor() {
-        super();
-        this.test = 'test';
-    }
-
     get zclVersion() {
         return 2;
     }
@@ -72,7 +67,7 @@ node.endpoints[1].bind('basic', new SuperBoundCluster());
 //tst.readAttributes('modelId', 'zclVersion', 'manufacturerName');
 
 tst.discoverAttributesExtended()
-    .then(attrs => 
+    .then(attrs =>
         tst.readAttributes(
             ...Object.values(attrs)
             .filter(a => a.acl.readable)

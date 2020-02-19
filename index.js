@@ -13,7 +13,7 @@ Object.values(Clusters).forEach((Cluster) => {
     clusterIdMap[Cluster.NAME] = Cluster.ID;
     clusterNameMap[Cluster.ID] = Cluster.NAME;
   } catch (err) {
-    // Skip lib/Cluster.js
+    // Skip lib/Cluster.js which throws when accessing Cluster.ID
   }
 });
 
