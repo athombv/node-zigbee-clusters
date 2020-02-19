@@ -6,7 +6,7 @@ const Clusters = require('./lib/clusters');
 const BoundCluster = require('./lib/BoundCluster');
 const zclTypes = require('./lib/zclTypes');
 const zclFrames = require('./lib/zclFrames');
-// TODO: rename ZCLDataTypes etc.
+
 const {
     ZCLDataTypes,
     ZCLDataType,
