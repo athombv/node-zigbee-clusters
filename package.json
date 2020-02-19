@@ -4,7 +4,7 @@
   "description": "ZigBee Clusters",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --reporter list"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,11 @@
   "bugs": {
     "url": "https://github.com/athombv/node-zigbee-clusters/issues"
   },
-  "homepage": "https://github.com/athombv/node-zigbee-clusters#readme"
+  "homepage": "https://github.com/athombv/node-zigbee-clusters#readme",
+  "devDependencies": {
+    "mocha": "^7.0.1"
+  },
+  "dependencies": {
+    "@athombv/data-types": "^1.0.0"
+  }
 }
