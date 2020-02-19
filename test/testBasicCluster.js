@@ -83,7 +83,7 @@ describe('basicCluster', () => {
         assert.equal(res.clusterRevision, 1, 'clusterRevision should be test');
         assert.equal(res.zclVersion, undefined, 'zclVersion should not be present');
         assert.equal(res.dateCode, '1234', 'dateCode should not be present');
-        
+
     });
 
     it('should write attributes', async () => {
