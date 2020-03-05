@@ -25,6 +25,6 @@
     "mocha": "^7.0.1"
   },
   "dependencies": {
-    "@athombv/data-types": "^1.0.0"
+    "@athombv/data-types": "^1.0.1"
   }
 }
