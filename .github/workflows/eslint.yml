@@ -17,7 +17,7 @@ on:
 
 jobs:
   eslint:
-    name: Run
+    name: ESLint
     runs-on: ubuntu-latest
     steps:
       # Checks out the current repository.
