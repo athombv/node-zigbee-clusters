@@ -13,23 +13,7 @@ const {
   ZCLStruct,
 } = zclTypes;
 
-const clusterIdMap = {};
-const clusterNameMap = {};
-Object.values(Clusters).forEach(_Cluster => {
-  try {
-    clusterIdMap[_Cluster.NAME] = _Cluster.ID;
-    clusterNameMap[_Cluster.ID] = _Cluster.NAME;
-  } catch (err) {
-    // Skip lib/Cluster.js which throws when accessing _Cluster.ID
-  }
-});
-
-const getClusterId = clusterName => clusterIdMap[clusterName];
-const getClusterName = clusterId => clusterNameMap[clusterId];
-
 module.exports = {
-  getClusterId,
-  getClusterName,
   Cluster,
   BoundCluster,
   ZCLNode,
