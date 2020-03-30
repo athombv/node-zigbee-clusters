@@ -1,10 +1,11 @@
 {
   "name": "zigbee-clusters",
-  "version": "1.0.0",
-  "description": "ZigBee Clusters",
+  "version": "1.0.1",
+  "description": "Zigbee clusters",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter list"
+    "test": "mocha --reporter list",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -22,9 +23,12 @@
   },
   "homepage": "https://github.com/athombv/node-zigbee-clusters#readme",
   "devDependencies": {
-    "mocha": "^7.0.1"
+    "eslint": "^6.8.0",
+    "eslint-config-athom": "^2.0.8",
+    "mocha": "^7.1.0"
   },
   "dependencies": {
-    "@athombv/data-types": "^1.0.0"
+    "@athombv/data-types": "^1.0.1",
+    "debug": "^4.1.1"
   }
 }
