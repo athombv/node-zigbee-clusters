@@ -42,11 +42,11 @@ const { ZCLNode, CLUSTER } = require('zigbee-clusters');
 
 // Get ZigBeeNode instance from ManagerZigBee
 Homey.ManagerZigBee.getNode(this)
-	.then(node => {
-		// Create ZCLNode instance
-		const zclNode = new ZCLNode(this.node);
-		await zclNode.endpoints[1].clusters[CLUSTER.ON_OFF.NAME].toggle();
-	});
+  .then(node => {
+    // Create ZCLNode instance
+    const zclNode = new ZCLNode(this.node);
+    await zclNode.endpoints[1].clusters[CLUSTER.ON_OFF.NAME].toggle();
+  });
 
 ```
 
@@ -58,21 +58,20 @@ This example shows in a simplified way how the OnOff cluster is implemented ([ac
 
 `zigbee-clusters/lib/clusters/onOff.js`
 ```js
-
 // Define the cluster attributes
 const ATTRIBUTES = {
-	onOff: { id: 0, type: ZCLDataTypes.bool },
+  onOff: { id: 0, type: ZCLDataTypes.bool },
 };
 
 // Define the cluster commands (with potential required arguments)
 const COMMANDS = {
-	toggle: { id: 2 },
-	onWithTimedOff: {
-		id: 66,
-		args: {
-			onOffControl: ZCLDataTypes.uint8, // Use the `ZCLDataTypes` object to specifiy types
-			onTime: ZCLDataTypes.uint16,
-			offWaitTime: ZCLDataTypes.uint16,
+  toggle: { id: 2 },
+  onWithTimedOff: {
+    id: 66,
+    args: {
+      onOffControl: ZCLDataTypes.uint8, // Use the `ZCLDataTypes` object to specifiy types
+      onTime: ZCLDataTypes.uint16,
+      offWaitTime: ZCLDataTypes.uint16,
     },
   },
 };
@@ -80,21 +79,21 @@ const COMMANDS = {
 // Implement the OnOff cluster by extending `Cluster`
 class OnOffCluster extends Cluster {
 
-	static get ID() {
-		return 6; // The cluster id
-	}
+  static get ID() {
+    return 6; // The cluster id
+  }
 
-	static get NAME() {
-		return 'onOff'; // The cluster name
-	}
+  static get NAME() {
+    return 'onOff'; // The cluster name
+  }
 
-	static get ATTRIBUTES() {
-		return ATTRIBUTES; // Returns the defined attributes
-	}
+  static get ATTRIBUTES() {
+    return ATTRIBUTES; // Returns the defined attributes
+  }
 
-	static get COMMANDS() {
-		return COMMANDS; // Returns the defined commands
-	}
+  static get COMMANDS() {
+    return COMMANDS; // Returns the defined commands
+  }
 
 }
 
@@ -121,18 +120,18 @@ const { BoundCluster } = require('zigbee-clusters');
 
 class LevelControlBoundCluster extends BoundCluster {
 
-	constructor({ onMove }) {
-    	super();
-    	this._onMove = onMove;
-	}
+  constructor({ onMove }) {
+    super();
+    this._onMove = onMove;
+  }
 
-	// This function name is directly derived from the `move`
-	// command in `zigbee-clusters/lib/clusters/levelControl.js`
-	// the payload received is the payload specified in
-	// `LevelControlCluster.COMMANDS.move.args`
-	move(payload) {
-		this._onMove(payload);
-	}
+  // This function name is directly derived from the `move`
+  // command in `zigbee-clusters/lib/clusters/levelControl.js`
+  // the payload received is the payload specified in
+  // `LevelControlCluster.COMMANDS.move.args`
+  move(payload) {
+    this._onMove(payload);
+  }
 }
 
 module.exports = LevelControlBoundCluster;
@@ -145,9 +144,9 @@ const LevelControlBoundCluster = require('../../lib/LevelControlBoundCluster');
 
 // Register the `BoundCluster` implementation with the `ZCLNode`
 zclNode.endpoints[1].bind(CLUSTER.LEVEL_CONTROL.NAME, new LevelControlBoundCluster({
-	onMove: (payload) => {
-		// Do something with the received payload
-	},
+  onMove: (payload) => {
+    // Do something with the received payload
+  },
 }));
 ```
 
@@ -160,24 +159,24 @@ const { ScenesCluster, ZCLDataTypes } = require('zigbee-clusters');
 
 class IkeaSpecificSceneCluster extends ScenesCluster {
 
-	// Here we override the `COMMANDS` getter from the `ScenesClusters` by
-	// extending it with the custom command we'd like to implement `ikeaSceneMove`.
-	static get COMMANDS() {
-		return {
-			...super.COMMANDS,
-			ikeaSceneMove: {
-				id: 0x08,
-				manufacturerId: 0x117C,
-				args: {
-					mode: ZCLDataTypes.enum8({
-						up: 0,
-						down: 1,
-					}),
-					transitionTime: ZCLDataTypes.uint16,
-				},
-			},
-		};
-	}
+  // Here we override the `COMMANDS` getter from the `ScenesClusters` by
+  // extending it with the custom command we'd like to implement `ikeaSceneMove`.
+  static get COMMANDS() {
+    return {
+      ...super.COMMANDS,
+      ikeaSceneMove: {
+        id: 0x08,
+        manufacturerId: 0x117C,
+        args: {
+          mode: ZCLDataTypes.enum8({
+            up: 0,
+            down: 1,
+          }),
+          transitionTime: ZCLDataTypes.uint16,
+        },
+      },
+    };
+  }
 }
 
 module.exports = IkeaSpecificSceneCluster;
