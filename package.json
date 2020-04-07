@@ -1,7 +1,7 @@
 {
   "name": "zigbee-clusters",
   "version": "1.0.1",
-  "description": "Zigbee clusters",
+  "description": "Zigbee Cluster Library for Node.js",
   "main": "index.js",
   "scripts": {
     "test": "mocha --reporter list",
