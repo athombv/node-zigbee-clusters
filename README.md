@@ -7,6 +7,8 @@ Note: if you are looking for the best way to implement Zigbee drivers for Homey 
 
 The [node-homey-zigbeedriver](https://github.com/athombv/node-homey-zigbeedriver) library implements this project and does a lot of the heavy lifting that is required for most Zigbee drivers for Homey. In the case you need to divert from [node-homey-zigbeedriver](https://github.com/athombv/node-homey-zigbeedriver) it is possible to directly use the Zigbee Cluster Library for Node.js.
 
+Make sure to take a look at the API documentation: [https://athombv.github.io/node-zigbee-clusters]().
+
 ## Installation
 
 `$ npm install zigbee-clusters`
