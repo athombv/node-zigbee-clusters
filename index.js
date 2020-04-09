@@ -14,6 +14,13 @@ const zclFrames = require('./lib/zclFrames');
  * @param {boolean} flag - Set to true to enable logging
  * @param {string} namespaces - As specified by `debug` npm module (e.g.
  * `zigbee-clusters:bound-cluster:*`).
+ *
+ * @example
+ *
+ * const { debug } = require('zigbee-clusters');
+ *
+ * // Enables debug logging in zigbee-clusters
+ * debug(true);
  */
 function debug(flag = true, namespaces = '*') {
   // If arg is boolean and true, or string with length consider logging to be enabled
