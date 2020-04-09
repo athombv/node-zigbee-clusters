@@ -63,6 +63,11 @@ jobs:
           node-version: '12'
           # Needed for publishing to npm
           registry-url: 'https://registry.npmjs.org'
+          
+      # Only use the ssh-agent action below if your repository has private git dependencies (see README.md for instructions on how to configure an ssh key).
+      - uses: webfactory/ssh-agent@v0.2.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
 
       # Run `npm ci` to re-create your local environment (make sure to commit your package-lock.json!).
       - name: Build
