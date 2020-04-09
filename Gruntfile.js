@@ -6,7 +6,7 @@ module.exports = grunt => {
   grunt.initConfig({
     jsdoc: {
       dist: {
-        src: ['lib/**/*.js'],
+        src: ['index.js', 'lib/**/*.js'],
         options: {
           configure: 'jsdoc.json',
           destination: 'docs',
@@ -28,7 +28,7 @@ module.exports = grunt => {
     },
     watch: {
       scripts: {
-        files: ['lib/**/*.js'],
+        files: ['index.js', 'lib/**/*.js'],
         tasks: ['jsdoc'],
         options: {
           spawn: true,
