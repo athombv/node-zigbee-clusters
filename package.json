@@ -1,11 +1,14 @@
 {
   "name": "zigbee-clusters",
   "version": "1.0.1",
-  "description": "Zigbee clusters",
+  "description": "Zigbee Cluster Library for Node.js",
   "main": "index.js",
   "scripts": {
     "test": "mocha --reporter list",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build": "grunt jsdoc",
+    "serve": "grunt connect",
+    "build:watch": "npm run build && concurrently -n serve,watch 'npm run serve' 'grunt watch'"
   },
   "repository": {
     "type": "git",
@@ -23,6 +26,12 @@
   },
   "homepage": "https://github.com/athombv/node-zigbee-clusters#readme",
   "devDependencies": {
+    "braintree-jsdoc-template": "^3.3.0",
+    "concurrently": "^5.1.0",
+    "grunt": "^1.0.4",
+    "grunt-contrib-connect": "^2.1.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-jsdoc": "^2.4.1",
     "eslint": "^6.8.0",
     "eslint-config-athom": "^2.0.8",
     "mocha": "^7.1.0"
