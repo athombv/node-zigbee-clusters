@@ -75,7 +75,7 @@
 
     
 
-    <h3>Classes</h3><ul><li id="BoundCluster-nav"><a href="BoundCluster.html">BoundCluster</a><ul class='methods'><li data-type="method" id="BoundCluster-discoverAttributes-nav"><a href="BoundCluster.html#discoverAttributes">discoverAttributes</a></li><li data-type="method" id="BoundCluster-discoverAttributesExtended-nav"><a href="BoundCluster.html#discoverAttributesExtended">discoverAttributesExtended</a></li><li data-type="method" id="BoundCluster-discoverCommandsGenerated-nav"><a href="BoundCluster.html#discoverCommandsGenerated">discoverCommandsGenerated</a></li><li data-type="method" id="BoundCluster-discoverCommandsReceived-nav"><a href="BoundCluster.html#discoverCommandsReceived">discoverCommandsReceived</a></li><li data-type="method" id="BoundCluster-readAttributes-nav"><a href="BoundCluster.html#readAttributes">readAttributes</a></li><li data-type="method" id="BoundCluster-writeAttributes-nav"><a href="BoundCluster.html#writeAttributes">writeAttributes</a></li></ul></li><li id="Cluster-nav"><a href="Cluster.html">Cluster</a><ul class='methods'><li data-type="method" id="Cluster-addCluster-nav"><a href="Cluster.html#.addCluster">addCluster</a></li><li data-type="method" id="Cluster-getCluster-nav"><a href="Cluster.html#.getCluster">getCluster</a></li><li data-type="method" id="Cluster-removeCluster-nav"><a href="Cluster.html#.removeCluster">removeCluster</a></li><li data-type="method" id="Cluster-configureReporting-nav"><a href="Cluster.html#configureReporting">configureReporting</a></li><li data-type="method" id="Cluster-discoverAttributes-nav"><a href="Cluster.html#discoverAttributes">discoverAttributes</a></li><li data-type="method" id="Cluster-discoverAttributesExtended-nav"><a href="Cluster.html#discoverAttributesExtended">discoverAttributesExtended</a></li><li data-type="method" id="Cluster-discoverCommandsGenerated-nav"><a href="Cluster.html#discoverCommandsGenerated">discoverCommandsGenerated</a></li><li data-type="method" id="Cluster-discoverCommandsReceived-nav"><a href="Cluster.html#discoverCommandsReceived">discoverCommandsReceived</a></li><li data-type="method" id="Cluster-readAttributes-nav"><a href="Cluster.html#readAttributes">readAttributes</a></li><li data-type="method" id="Cluster-writeAttributes-nav"><a href="Cluster.html#writeAttributes">writeAttributes</a></li></ul></li><li id="Endpoint-nav"><a href="Endpoint.html">Endpoint</a><ul class='methods'><li data-type="method" id="Endpoint-bind-nav"><a href="Endpoint.html#bind">bind</a></li><li data-type="method" id="Endpoint-unbind-nav"><a href="Endpoint.html#unbind">unbind</a></li></ul></li><li id="Node-nav"><a href="ZCLNode.html">Node</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#debug">debug</a></li></ul>
+    <h3>Classes</h3><ul><li id="BoundCluster-nav"><a href="BoundCluster.html">BoundCluster</a><ul class='methods'><li data-type="method" id="BoundCluster-discoverAttributes-nav"><a href="BoundCluster.html#discoverAttributes">discoverAttributes</a></li><li data-type="method" id="BoundCluster-discoverAttributesExtended-nav"><a href="BoundCluster.html#discoverAttributesExtended">discoverAttributesExtended</a></li><li data-type="method" id="BoundCluster-discoverCommandsGenerated-nav"><a href="BoundCluster.html#discoverCommandsGenerated">discoverCommandsGenerated</a></li><li data-type="method" id="BoundCluster-discoverCommandsReceived-nav"><a href="BoundCluster.html#discoverCommandsReceived">discoverCommandsReceived</a></li><li data-type="method" id="BoundCluster-readAttributes-nav"><a href="BoundCluster.html#readAttributes">readAttributes</a></li><li data-type="method" id="BoundCluster-writeAttributes-nav"><a href="BoundCluster.html#writeAttributes">writeAttributes</a></li></ul></li><li id="Cluster-nav"><a href="Cluster.html">Cluster</a><ul class='methods'><li data-type="method" id="Cluster-addCluster-nav"><a href="Cluster.html#.addCluster">addCluster</a></li><li data-type="method" id="Cluster-getCluster-nav"><a href="Cluster.html#.getCluster">getCluster</a></li><li data-type="method" id="Cluster-removeCluster-nav"><a href="Cluster.html#.removeCluster">removeCluster</a></li><li data-type="method" id="Cluster-configureReporting-nav"><a href="Cluster.html#configureReporting">configureReporting</a></li><li data-type="method" id="Cluster-discoverAttributes-nav"><a href="Cluster.html#discoverAttributes">discoverAttributes</a></li><li data-type="method" id="Cluster-discoverAttributesExtended-nav"><a href="Cluster.html#discoverAttributesExtended">discoverAttributesExtended</a></li><li data-type="method" id="Cluster-discoverCommandsGenerated-nav"><a href="Cluster.html#discoverCommandsGenerated">discoverCommandsGenerated</a></li><li data-type="method" id="Cluster-discoverCommandsReceived-nav"><a href="Cluster.html#discoverCommandsReceived">discoverCommandsReceived</a></li><li data-type="method" id="Cluster-readAttributes-nav"><a href="Cluster.html#readAttributes">readAttributes</a></li><li data-type="method" id="Cluster-readReportingConfiguration-nav"><a href="Cluster.html#readReportingConfiguration">readReportingConfiguration</a></li><li data-type="method" id="Cluster-writeAttributes-nav"><a href="Cluster.html#writeAttributes">writeAttributes</a></li></ul></li><li id="Endpoint-nav"><a href="Endpoint.html">Endpoint</a><ul class='methods'><li data-type="method" id="Endpoint-bind-nav"><a href="Endpoint.html#bind">bind</a></li><li data-type="method" id="Endpoint-unbind-nav"><a href="Endpoint.html#unbind">unbind</a></li></ul></li><li id="Node-nav"><a href="ZCLNode.html">Node</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#debug">debug</a></li></ul>
   </nav>
 
   <div id="main">
@@ -209,8 +209,9 @@ class BoundCluster {
    * This method handles an incoming `discoverCommandsReceived` command send from the remote node
    * to the controller. It assembles the cluster's commands which are implemented on this bound
    * cluster (i.e. commands it can receive) and returns a response to the remote node.
-   * @param {number} [startValue=250]
-   * @param {number} [maxResults=250]
+   * @param {Object} options
+   * @param {number} [options.startValue=0]
+   * @param {number} [options.maxResults=250]
    * @returns {Promise&lt;{commandIds: number[], lastResponse: boolean}>}
    */
   async discoverCommandsReceived({ startValue = 0, maxResults = 250 }) {
@@ -235,7 +236,7 @@ class BoundCluster {
    * This method handles an incoming `discoverCommandsGenerated` command send from the remote node
    * to the controller. It assembles the cluster's commands which are implemented on this bound
    * cluster (i.e. commands it can send).
-   * @param {number} [startValue=250]
+   * @param {number} [startValue=0]
    * @param {number} [maxResults=250]
    * @returns {Promise&lt;{commandIds: number[], lastResponse: boolean}>}
    */
@@ -258,15 +259,24 @@ class BoundCluster {
   }
 
   /**
+   * @typedef {object} DiscoverAttributesResponse
+   * @property {boolean} lastResponse
+   * @property {DiscoverAttributeResponse[]} attributes
+   */
+
+  /**
+   * @typedef {object} DiscoverAttributeResponse
+   * @property {number} id - Attribute id
+   * @property {number} dataTypeId - ZCLDataType id
+   */
+
+  /**
    * This method handles an incoming `discoverAttributes` command send from the remote node
    * to the controller. It assembles the cluster's attributes which are implemented on this bound
    * cluster and returns a response.
-   * @param {number} [startValue=250]
+   * @param {number} [startValue=0]
    * @param {number} [maxResults=250]
-   * @returns {Promise&lt;{
-   *  attributes: Array&lt;{dataTypeId: number, id: number}>,
-   *  lastResponse: boolean
-   * }>}
+   * @returns {Promise&lt;DiscoverAttributesResponse>}
    */
   async discoverAttributes({ startValue = 0, maxResults = 250 }) {
     const attributes = Object.values(this.cluster.attributesById)
@@ -281,15 +291,25 @@ class BoundCluster {
   }
 
   /**
+   * @typedef {object} DiscoverAttributesExtendedResponse
+   * @property {boolean} lastResponse
+   * @property {DiscoverAttributeExtendedResponse[]} attributes
+   */
+
+  /**
+   * @typedef {object} DiscoverAttributeExtendedResponse
+   * @property {number} id - Attribute id
+   * @property {number} dataTypeId - ZCLDataType id
+   * @property {string[]} acl - Can hold values "readable"/"writable"/"reportable"
+   */
+
+  /**
    * This method handles an incoming `discoverAttributesExtended` command send from the remote node
    * to the controller. It assembles the cluster's attributes which are implemented on this bound
    * cluster and returns a response.
-   * @param {number} [startValue=250]
-   * @param {number} [maxResults=250]
-   * @returns {Promise&lt;{
-   *  attributes: Array&lt;{dataTypeId: number, id: number}>,
-   *  lastResponse: boolean
-   * }>}
+   * @param {number} startValue
+   * @param {number} maxResults
+   * @returns {Promise&lt;DiscoverAttributesExtendedResponse>}
    */
   async discoverAttributesExtended({ startValue, maxResults }) {
     const attributes = Object.values(this.cluster.attributesById)

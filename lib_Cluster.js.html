@@ -75,7 +75,7 @@
 
     
 
-    <h3>Classes</h3><ul><li id="BoundCluster-nav"><a href="BoundCluster.html">BoundCluster</a><ul class='methods'><li data-type="method" id="BoundCluster-discoverAttributes-nav"><a href="BoundCluster.html#discoverAttributes">discoverAttributes</a></li><li data-type="method" id="BoundCluster-discoverAttributesExtended-nav"><a href="BoundCluster.html#discoverAttributesExtended">discoverAttributesExtended</a></li><li data-type="method" id="BoundCluster-discoverCommandsGenerated-nav"><a href="BoundCluster.html#discoverCommandsGenerated">discoverCommandsGenerated</a></li><li data-type="method" id="BoundCluster-discoverCommandsReceived-nav"><a href="BoundCluster.html#discoverCommandsReceived">discoverCommandsReceived</a></li><li data-type="method" id="BoundCluster-readAttributes-nav"><a href="BoundCluster.html#readAttributes">readAttributes</a></li><li data-type="method" id="BoundCluster-writeAttributes-nav"><a href="BoundCluster.html#writeAttributes">writeAttributes</a></li></ul></li><li id="Cluster-nav"><a href="Cluster.html">Cluster</a><ul class='methods'><li data-type="method" id="Cluster-addCluster-nav"><a href="Cluster.html#.addCluster">addCluster</a></li><li data-type="method" id="Cluster-getCluster-nav"><a href="Cluster.html#.getCluster">getCluster</a></li><li data-type="method" id="Cluster-removeCluster-nav"><a href="Cluster.html#.removeCluster">removeCluster</a></li><li data-type="method" id="Cluster-configureReporting-nav"><a href="Cluster.html#configureReporting">configureReporting</a></li><li data-type="method" id="Cluster-discoverAttributes-nav"><a href="Cluster.html#discoverAttributes">discoverAttributes</a></li><li data-type="method" id="Cluster-discoverAttributesExtended-nav"><a href="Cluster.html#discoverAttributesExtended">discoverAttributesExtended</a></li><li data-type="method" id="Cluster-discoverCommandsGenerated-nav"><a href="Cluster.html#discoverCommandsGenerated">discoverCommandsGenerated</a></li><li data-type="method" id="Cluster-discoverCommandsReceived-nav"><a href="Cluster.html#discoverCommandsReceived">discoverCommandsReceived</a></li><li data-type="method" id="Cluster-readAttributes-nav"><a href="Cluster.html#readAttributes">readAttributes</a></li><li data-type="method" id="Cluster-writeAttributes-nav"><a href="Cluster.html#writeAttributes">writeAttributes</a></li></ul></li><li id="Endpoint-nav"><a href="Endpoint.html">Endpoint</a><ul class='methods'><li data-type="method" id="Endpoint-bind-nav"><a href="Endpoint.html#bind">bind</a></li><li data-type="method" id="Endpoint-unbind-nav"><a href="Endpoint.html#unbind">unbind</a></li></ul></li><li id="Node-nav"><a href="ZCLNode.html">Node</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#debug">debug</a></li></ul>
+    <h3>Classes</h3><ul><li id="BoundCluster-nav"><a href="BoundCluster.html">BoundCluster</a><ul class='methods'><li data-type="method" id="BoundCluster-discoverAttributes-nav"><a href="BoundCluster.html#discoverAttributes">discoverAttributes</a></li><li data-type="method" id="BoundCluster-discoverAttributesExtended-nav"><a href="BoundCluster.html#discoverAttributesExtended">discoverAttributesExtended</a></li><li data-type="method" id="BoundCluster-discoverCommandsGenerated-nav"><a href="BoundCluster.html#discoverCommandsGenerated">discoverCommandsGenerated</a></li><li data-type="method" id="BoundCluster-discoverCommandsReceived-nav"><a href="BoundCluster.html#discoverCommandsReceived">discoverCommandsReceived</a></li><li data-type="method" id="BoundCluster-readAttributes-nav"><a href="BoundCluster.html#readAttributes">readAttributes</a></li><li data-type="method" id="BoundCluster-writeAttributes-nav"><a href="BoundCluster.html#writeAttributes">writeAttributes</a></li></ul></li><li id="Cluster-nav"><a href="Cluster.html">Cluster</a><ul class='methods'><li data-type="method" id="Cluster-addCluster-nav"><a href="Cluster.html#.addCluster">addCluster</a></li><li data-type="method" id="Cluster-getCluster-nav"><a href="Cluster.html#.getCluster">getCluster</a></li><li data-type="method" id="Cluster-removeCluster-nav"><a href="Cluster.html#.removeCluster">removeCluster</a></li><li data-type="method" id="Cluster-configureReporting-nav"><a href="Cluster.html#configureReporting">configureReporting</a></li><li data-type="method" id="Cluster-discoverAttributes-nav"><a href="Cluster.html#discoverAttributes">discoverAttributes</a></li><li data-type="method" id="Cluster-discoverAttributesExtended-nav"><a href="Cluster.html#discoverAttributesExtended">discoverAttributesExtended</a></li><li data-type="method" id="Cluster-discoverCommandsGenerated-nav"><a href="Cluster.html#discoverCommandsGenerated">discoverCommandsGenerated</a></li><li data-type="method" id="Cluster-discoverCommandsReceived-nav"><a href="Cluster.html#discoverCommandsReceived">discoverCommandsReceived</a></li><li data-type="method" id="Cluster-readAttributes-nav"><a href="Cluster.html#readAttributes">readAttributes</a></li><li data-type="method" id="Cluster-readReportingConfiguration-nav"><a href="Cluster.html#readReportingConfiguration">readReportingConfiguration</a></li><li data-type="method" id="Cluster-writeAttributes-nav"><a href="Cluster.html#writeAttributes">writeAttributes</a></li></ul></li><li id="Endpoint-nav"><a href="Endpoint.html">Endpoint</a><ul class='methods'><li data-type="method" id="Endpoint-bind-nav"><a href="Endpoint.html#bind">bind</a></li><li data-type="method" id="Endpoint-unbind-nav"><a href="Endpoint.html#unbind">unbind</a></li></ul></li><li id="Node-nav"><a href="ZCLNode.html">Node</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#debug">debug</a></li></ul>
   </nav>
 
   <div id="main">
@@ -198,7 +198,10 @@ const GLOBAL_COMMANDS = {
     id: 0x08,
     args: {
       attributes: ZCLDataTypes.Array0(ZCLStruct('ReadReportingConfiguration', {
-        direction: ZCLDataTypes.enum8('receiveReports', 'sendingReports'),
+        direction: ZCLDataTypes.enum8({
+          reported: 0,
+          received: 1,
+        }),
         attributeId: ZCLDataTypes.uint16,
       })),
     },
@@ -568,6 +571,164 @@ class Cluster extends EventEmitter {
   }
 
   /**
+   * @typedef {object} ReadReportingConfiguration
+   * @property {ZCLDataTypes.enum8Status} status
+   * @property {'reported'|'received'} direction
+   * @property {number} attributeId
+   * @property {ZCLDataType.id} [attributeDataType]
+   * @property {number} [minInterval]
+   * @property {number} [maxInterval]
+   * @property {number} [minChange]
+   * @property {number} [timeoutPeriod]
+   */
+
+  /**
+   * Command which retrieves the reporting configurations for the given `attributes` from the
+   * remote cluster. Currently this only takes the 'reported' into account, this represents the
+   * reports the remote cluster would sent out, instead of receive (which is likely the most
+   * interesting).
+   * @param {Array} attributes - Array with number/strings (either attribute id, or attribute name).
+   * @returns {Promise&lt;ReadReportingConfiguration[]>} - Returns array with
+   * ReadReportingConfiguration objects per attribute.
+   */
+  async readReportingConfiguration(attributes = []) {
+    const req = [];
+
+    // Loop all the provided attributes
+    for (const attribute of attributes) {
+      let attrId;
+      if (typeof attribute === 'number') {
+        attrId = attribute;
+      } else if (typeof attribute === 'string' &amp;&amp; this.constructor.attributes[attribute]) {
+        attrId = this.constructor.attributes[attribute].id;
+      }
+
+      // Check for valid attribute id
+      if (typeof attrId !== 'number') {
+        throw new Error(`Could not find attrId ${attrId} on cluster ${this.constructor.NAME}`);
+      }
+
+      // Push configuration
+      req.push({
+        direction: 'reported', // We are only interested in the reported direction, this
+        // property acts a filter and will only retrieve the reporting configuration for
+        // attributes which are being reported by the remote cluster (as opposed to being
+        // 'received' by the remote cluster)
+        attributeId: attrId,
+      });
+    }
+
+    debug(this.constructor.NAME, 'read reporting configuration', req);
+
+    // Accumulate the parsed reports here
+    const parsedReports = [];
+
+    // If a request has been constructed execute it
+    if (req.length) {
+      // Perform request, it returns a buffer that needs to be parsed
+      const { reports } = await super.readReportingConfiguration({ attributes: req });
+
+      // Keep a reference to the current buffer index while reading it
+      let bufferPointer = 0;
+
+      // Read the entire buffer
+      while (reports.length > bufferPointer) {
+        // Parse status
+        const status = ZCLDataTypes.enum8Status.fromBuffer(reports, bufferPointer);
+        bufferPointer += 1;
+
+        // Parse direction
+        const direction = ZCLDataTypes.enum8({ reported: 0, received: 1 })
+          .fromBuffer(reports, bufferPointer);
+        bufferPointer += 1;
+
+        // Parse attributeId
+        const attributeId = ZCLDataTypes.uint16.fromBuffer(reports, bufferPointer);
+        bufferPointer += 2;
+
+        // Check if the status is success, only then we need to continue parsing for other values
+        if (status !== 'SUCCESS') {
+          // Buffer parsing is complete
+          parsedReports.push({ status, direction, attributeId });
+
+          // Continue reading the buffer in a next iteration
+          continue;
+        }
+
+        // eslint-disable-next-line default-case
+        switch (direction) {
+          // Only if the direction is 'reported' are the minInterval/maxInterval and minChange
+          // properties available
+          case 'reported': {
+            // Parse attributeDataType, we need this to find the respective ZCLDataType in the
+            // next step
+            const attributeDataType = ZCLDataTypes.uint8.fromBuffer(reports, bufferPointer);
+            bufferPointer += 1;
+
+            // Find the respective ZCLDataType, we need it later on to determine if the data type
+            // is analog or discrete
+            const parsedAttributeDataType = Object.values(ZCLDataTypes)
+              .find(x => x.id === attributeDataType);
+
+            // Parse minInterval
+            const minInterval = ZCLDataTypes.uint16.fromBuffer(reports, bufferPointer);
+            bufferPointer += 2;
+
+            // Parse maxInterval
+            const maxInterval = ZCLDataTypes.uint16.fromBuffer(reports, bufferPointer);
+            bufferPointer += 2;
+
+            // If the ZCLDataType is not analog there will be no minChange field
+            if (!parsedAttributeDataType.isAnalog) {
+              parsedReports.push({
+                status, direction, attributeId, attributeDataType, minInterval, maxInterval,
+              });
+
+              // Continue reading the buffer in a next iteration
+              continue;
+            }
+
+            // Apparently the ZCLDataType is analog so we should parse the minChange field
+            const minChange = ZCLDataTypes[parsedAttributeDataType.shortName]
+              .fromBuffer(reports, bufferPointer);
+            bufferPointer += parsedAttributeDataType.length;
+
+            // Buffer parsing is complete
+            parsedReports.push({
+              status,
+              direction,
+              attributeId,
+              attributeDataType,
+              minInterval,
+              maxInterval,
+              minChange,
+            });
+            break;
+          }
+
+          // If the direction is 'received' we only have to parse the
+          case 'received': {
+            // timeoutPeriod
+            // Parse timeout period
+            const timeoutPeriod = ZCLDataTypes.uint16.fromBuffer(reports, bufferPointer);
+            bufferPointer += 2;
+
+            // Buffer parsing is complete
+            parsedReports.push({
+              status, direction, attributeId, timeoutPeriod,
+            });
+            break;
+          }
+        }
+      }
+      debug(this.constructor.NAME, 'read reporting configuration result', parsedReports);
+    }
+
+    // Return the parsed reports (or empty array)
+    return parsedReports;
+  }
+
+  /**
    * Command which discovers the implemented attributes on the remote cluster.
    *
    * TODO: handle the case where `lastResponse===false`. It might be possible that there are
@@ -606,7 +767,7 @@ class Cluster extends EventEmitter {
    * unlikely though). If `lastResponse===false` invoke `discoverCommandsGenerated` again
    * starting from the index where the previous invocation stopped (`maxResults`).
    *
-   * @returns {Promise&lt;Array>} - Returns an array with object with attribute names as keys and
+   * @returns {Promise&lt;Array>} - Returns an array with objects with attribute names as keys and
    * following object as values: `{name: string, id: number, acl: { readable: boolean, writable:
    * boolean, reportable: boolean } }`. Note that `name` is optional based on whether the
    * attribute is implemented in zigbee-clusters.
@@ -614,7 +775,7 @@ class Cluster extends EventEmitter {
   async discoverAttributesExtended() {
     const { attributes } = await super.discoverAttributesExtended({
       startValue: 0,
-      maxResults: 255,
+      maxResults: 250,
     });
 
     const result = [];
