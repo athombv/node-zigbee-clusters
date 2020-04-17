@@ -71,7 +71,7 @@ describe('basicCluster', function() {
 
     await basic.configureReporting({
       zclVersion: {
-        minInterval: 1234,
+        minInterval: 10,
         maxInterval: 4321,
       },
     });
