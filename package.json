@@ -37,7 +37,7 @@
     "mocha": "^7.1.0"
   },
   "dependencies": {
-    "@athombv/data-types": "^1.0.2",
+    "@athombv/data-types": "^1.0.3",
     "debug": "^4.1.1"
   }
 }
