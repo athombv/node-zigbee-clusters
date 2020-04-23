@@ -113,7 +113,9 @@ describe('command configure reporting', function() {
 describe('command read configure reporting', function() {
   it('should parse multiple records to buffer', function() {
     // Create type instance
-    const ZCLConfigureReportingRecordsWithStatusType = ZCLConfigureReportingRecords(true);
+    const ZCLConfigureReportingRecordsWithStatusType = ZCLConfigureReportingRecords({
+      withStatus: true,
+    });
 
     // Allocate buffer to be filled with configure reporting records
     const buf = Buffer.alloc(26);
@@ -129,7 +131,9 @@ describe('command read configure reporting', function() {
 
   it('should parse buffer to multiple records', function() {
     // Create type instance
-    const ZCLConfigureReportingRecordsWithStatusType = ZCLConfigureReportingRecords(true);
+    const ZCLConfigureReportingRecordsWithStatusType = ZCLConfigureReportingRecords({
+      withStatus: true,
+    });
 
     // Allocate buffer to be filled with configure reporting records
     const parsedRecords = ZCLConfigureReportingRecordsWithStatusType
