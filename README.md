@@ -42,14 +42,17 @@ In order to communicate with a Zigbee node retrieve a `node` instance from `Mana
 const Homey = require('homey');
 const { ZCLNode, CLUSTER } = require('zigbee-clusters');
 
-// Get ZigBeeNode instance from ManagerZigBee
-Homey.ManagerZigBee.getNode(this)
-  .then(node => {
-    // Create ZCLNode instance
-    const zclNode = new ZCLNode(this.node);
-    await zclNode.endpoints[1].clusters[CLUSTER.ON_OFF.NAME].toggle();
-  });
-
+class MyDevice extends Homey.Device {
+    onInit() {
+        // Get ZigBeeNode instance from ManagerZigBee
+        this.homey.zigbee.getNode(this)
+          .then(async node => {
+            // Create ZCLNode instance
+            const zclNode = new ZCLNode(this.node);
+            await zclNode.endpoints[1].clusters[CLUSTER.ON_OFF.NAME].toggle();
+          });
+    }
+}
 ```
 
 ### Implementing a cluster
