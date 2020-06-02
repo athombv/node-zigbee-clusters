@@ -48,7 +48,7 @@ class MyDevice extends Homey.Device {
         this.homey.zigbee.getNode(this)
           .then(async node => {
             // Create ZCLNode instance
-            const zclNode = new ZCLNode(this.node);
+            const zclNode = new ZCLNode(node);
             await zclNode.endpoints[1].clusters[CLUSTER.ON_OFF.NAME].toggle();
           });
     }
