@@ -11,7 +11,7 @@ Make sure to take a look at the API documentation: [https://athombv.github.io/no
 
 ## Installation
 
-`$ npm install zigbee-clusters`
+`$ npm install --save zigbee-clusters`
 
 ## About Zigbee Clusters
 
