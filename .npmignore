@@ -1,5 +1,8 @@
-.github
-test
+build
 docs
-.editorconfig
+test
+
 .eslintrc.json
+.eslintignore
+.editorconfig
+.github
