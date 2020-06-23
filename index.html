@@ -93,14 +93,14 @@
     <article>
       <h1>Zigbee Cluster Library for Node.js</h1>
 <p>This project implements the Zigbee Cluster Library (ZCL) based on the Zigbee Cluster Library
-Specification (<a href="./docs/zigbee-cluster-library-specification.pdf">documentation</a>). It is designed to work with Homey's Zigbee stack and can be used in Homey Apps to implement drivers for Zigbee devices that work with Homey.</p>
+Specification (<a href="https://etc.athom.com/zigbee_cluster_specification.pdf">documentation</a>). It is designed to work with Homey's Zigbee stack and can be used in Homey Apps to implement drivers for Zigbee devices that work with Homey.</p>
 <p>Note: if you are looking for the best way to implement Zigbee drivers for Homey take a look at <a href="https://github.com/athombv/node-homey-zigbeedriver">node-homey-zigbeedriver</a>.</p>
 <p>The <a href="https://github.com/athombv/node-homey-zigbeedriver">node-homey-zigbeedriver</a> library implements this project and does a lot of the heavy lifting that is required for most Zigbee drivers for Homey. In the case you need to divert from <a href="https://github.com/athombv/node-homey-zigbeedriver">node-homey-zigbeedriver</a> it is possible to directly use the Zigbee Cluster Library for Node.js.</p>
 <p>Make sure to take a look at the API documentation: <a href="https://athombv.github.io/node-zigbee-clusters">https://athombv.github.io/node-zigbee-clusters</a>.</p>
 <h2>Installation</h2>
 <p><code>$ npm install --save zigbee-clusters</code></p>
 <h2>About Zigbee Clusters</h2>
-<p>A Zigbee cluster is an abstraction on top of the Zigbee protocol which allows implementing functionality for many types of devices. A list of all available clusters can be found in the Zigbee Cluster Library Specification <a href="./docs/zigbee-cluster-library-specification.pdf">section 2.2.</a>. If you are familiar with Z-Wave Command Classes, Zigbee clusters are very similar.</p>
+<p>A Zigbee cluster is an abstraction on top of the Zigbee protocol which allows implementing functionality for many types of devices. A list of all available clusters can be found in the Zigbee Cluster Library Specification <a href="https://etc.athom.com/zigbee_cluster_specification.pdf">section 2.2.</a>. If you are familiar with Z-Wave Command Classes, Zigbee clusters are very similar.</p>
 <h3>Cluster hierachy</h3>
 <p>It is important to understand the structure of a Zigbee node:
 <a href="https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggVERcbiAgQVtOb2RlXSAtLT4gQihFbmRwb2ludCAxKVxuICBBIC0tPiBEKEVuZHBvaW50IC4uLilcbiAgQiAtLT4gRShDbHVzdGVyIE9uT2ZmKVxuICBCIC0tPiBGKENsdXN0ZXIgTGV2ZWxDb250cm9sKVxuICBCIC0tPiBHKENsdXN0ZXIgLi4uKVxuICBFIC0tPiBIKENvbW1hbmQgJ3RvZ2dsZScpXG4gIEUgLS0-IEkoQ29tbWFuZCAnc2V0T24nKVxuICBFIC0tPiBKKEF0dHJpYnV0ZSAnb25PZmYnKSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9"><img src="https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVERcbiAgQVtOb2RlXSAtLT4gQihFbmRwb2ludCAxKVxuICBBIC0tPiBEKEVuZHBvaW50IC4uLilcbiAgQiAtLT4gRShDbHVzdGVyIE9uT2ZmKVxuICBCIC0tPiBGKENsdXN0ZXIgTGV2ZWxDb250cm9sKVxuICBCIC0tPiBHKENsdXN0ZXIgLi4uKVxuICBFIC0tPiBIKENvbW1hbmQgJ3RvZ2dsZScpXG4gIEUgLS0-IEkoQ29tbWFuZCAnc2V0T24nKVxuICBFIC0tPiBKKEF0dHJpYnV0ZSAnb25PZmYnKSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9" alt=""></a></p>
@@ -110,7 +110,7 @@ Specification (<a href="./docs/zigbee-cluster-library-specification.pdf">documen
 <li>As server</li>
 <li>As client</li>
 </ul>
-<p>From the Zigbee Cluster Library Specification &quot;Typically, the entity that stores the attributes of a cluster is referred to as the server of that cluster and an entity that affects or manipulates those attributes is referred to as the client of that cluster.&quot; More information on this can be found in the Zigbee Cluster Library Specification <a href="./docs/zigbee-cluster-library-specification.pdf">section 2.2.2.</a>.</p>
+<p>From the Zigbee Cluster Library Specification &quot;Typically, the entity that stores the attributes of a cluster is referred to as the server of that cluster and an entity that affects or manipulates those attributes is referred to as the client of that cluster.&quot; More information on this can be found in the Zigbee Cluster Library Specification <a href="https://etc.athom.com/zigbee_cluster_specification.pdf">section 2.2.2.</a>.</p>
 <h3>Bindings and bound clusters</h3>
 <p>The concept of server/client is important for the following reason. Nodes can be receivers of commands (i.e. servers), or senders of commands (i.e. clients), and sometimes both. An example on how to send a command to a node can be found <a href="#basic-communication-with-node">below</a>. Receiving commands from a node requires a binding to be made from the controller to the cluster on the node, and the implementation of a <code>BoundCluster</code> to receive and handle the incoming commands. For an example on implementing a <code>BoundCluster</code> see <a href="#implementing-a-bound-cluster">below</a>.</p>
 <h2>Usage</h2>
@@ -133,8 +133,9 @@ class MyDevice extends Homey.Device {
 }
 </code></pre>
 <h3>Implementing a cluster</h3>
-<p>It is very easy to add support for a new cluster or add commands and/or attributes to an existing cluster. All implemented clusters are listed in <a href="./lib/clusters/index.js">lib/clusters/index.js</a>. It also exports a constant <code>CLUSTER</code> object for easy reference to a specific cluster name and/or id (e.g. <code>CLUSTER.WINDOW_COVERING</code> -&gt; <code>{NAME: &quot;windowCovering&quot;, ID: 258})</code>.</p>
-<p>This example shows in a simplified way how the OnOff cluster is implemented (<a href="./lib/clusters/onOff.js">actual implementation</a>). All the information with regard to the ids, names, available attributes and commands can be found in the Zigbee Cluster Library Specification <a href="./docs/zigbee-cluster-library-specification.pdf">section 3.8.</a>:</p>
+<p>It is very easy to add support for a new cluster or add commands and/or attributes to an existing
+cluster. All implemented clusters are listed in <a href="https://github.com/athombv/node-zigbee-clusters/blob/production/lib/clusters/index.js">lib/clusters/index.js</a>. It also exports a constant <code>CLUSTER</code> object for easy reference to a specific cluster name and/or id (e.g. <code>CLUSTER.WINDOW_COVERING</code> -&gt; <code>{NAME: &quot;windowCovering&quot;, ID: 258})</code>.</p>
+<p>This example shows in a simplified way how the OnOff cluster is implemented (<a href="https://github.com/athombv/node-zigbee-clusters/blob/production/lib/clusters/onOff.js">actual implementation</a>). All the information with regard to the ids, names, available attributes and commands can be found in the Zigbee Cluster Library Specification <a href="https://etc.athom.com/zigbee_cluster_specification.pdf">section 3.8.</a>:</p>
 <p><code>zigbee-clusters/lib/clusters/onOff.js</code></p>
 <pre class="prettyprint source lang-js"><code>// Define the cluster attributes
 const ATTRIBUTES = {
@@ -265,8 +266,8 @@ zclNode.endoints[1].clusters['scenes'].ikeaSceneMove({mode: 0, transitionTime: 1
 <p>Great if you'd like to contribute to this project, a few things to take note of before submitting a PR:</p>
 <ul>
 <li>This project enforces ESLint, validate by running <code>npm run lint</code>.</li>
-<li>This project implements a basic test framework based on mocha, see <a href="./test">test</a> directory.</li>
-<li>This project uses several <a href="./.github/workflows">GitHub Action workflows</a> (e.g. ESLint, running test and versioning/publishing).</li>
+<li>This project implements a basic test framework based on mocha, see <a href="https://github.com/athombv/node-zigbee-clusters/blob/production/test">test</a> directory.</li>
+<li>This project uses several <a href="https://github.com/athombv/node-zigbee-clusters/blob/production/.github/workflows">GitHub Action workflows</a> (e.g. ESLint, running test and versioning/publishing).</li>
 </ul>
     </article>
   </section>
