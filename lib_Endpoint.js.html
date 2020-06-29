@@ -147,7 +147,7 @@ class Endpoint extends EventEmitter {
       throw new TypeError('Binding implementation must be an instance of BoundCluster');
     }
 
-    clusterImpl.endpoint = this._endpointIdendpoint;
+    clusterImpl.endpoint = this._endpointId;
     clusterImpl.cluster = OutputCluster;
 
     this.bindings[OutputCluster.NAME] = clusterImpl;

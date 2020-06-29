@@ -258,7 +258,7 @@ module.exports = IkeaSpecificSceneCluster;
 Cluster.addCluster(IkeaSpecificSceneCluster);
 
 // Example invocation of custom cluster command
-zclNode.endoints[1].clusters['scenes'].ikeaSceneMove({mode: 0, transitionTime: 10});
+zclNode.endpoints[1].clusters['scenes'].ikeaSceneMove({mode: 0, transitionTime: 10});
 
 </code></pre>
 <p>This also works for <code>BoundClusters</code>, if a node sends commands to Homey using a custom cluster it is necessary to implement a custom <code>BoundCluster</code> and bind it to the <code>ZCLNode</code> instance. For an example check the implementation in the <code>com.ikea.tradfri</code> driver <a href="https://github.com/athombv/com.ikea.tradfri/tree/master/drivers/remote_control/device.js">remote_control</a>.</p>
