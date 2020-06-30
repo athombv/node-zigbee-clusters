@@ -198,7 +198,7 @@ const IkeaSpecificSceneCluster = require('../../lib/IkeaSpecificSceneCluster');
 Cluster.addCluster(IkeaSpecificSceneCluster);
 
 // Example invocation of custom cluster command
-zclNode.endoints[1].clusters['scenes'].ikeaSceneMove({mode: 0, transitionTime: 10});
+zclNode.endpoints[1].clusters['scenes'].ikeaSceneMove({mode: 0, transitionTime: 10});
 
 ```
 
