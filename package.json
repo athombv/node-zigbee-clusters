@@ -31,13 +31,13 @@
   "homepage": "https://github.com/athombv/node-zigbee-clusters#readme",
   "devDependencies": {
     "braintree-jsdoc-template": "^3.3.0",
-    "concurrently": "^5.1.0",
+    "concurrently": "^5.2.0",
     "eslint": "^6.8.0",
-    "eslint-config-athom": "^2.0.8",
+    "eslint-config-athom": "^2.1.0",
     "jsdoc": "^3.6.4",
+    "mocha": "^7.2.0",
     "npm-watch": "^0.6.0",
-    "serve": "^11.3.1",
-    "mocha": "^7.1.0"
+    "serve": "^11.3.1"
   },
   "dependencies": {
     "@athombv/data-types": "^1.0.4",

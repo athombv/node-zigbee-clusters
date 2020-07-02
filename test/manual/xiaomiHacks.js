@@ -72,7 +72,6 @@ const XiaomiLifelineDataRecordArray = new ZCLDataType(NaN, 'XiaomiLifelineDataRe
   return result;
 });
 
-
 class XiaomiHackedBasicCluster extends BasicCluster {
 
   static get ATTRIBUTES() {
@@ -87,7 +86,6 @@ class XiaomiHackedBasicCluster extends BasicCluster {
 // Replace basic cluster with our patched version
 Cluster.addCluster(XiaomiHackedBasicCluster);
 
-
 // //Demo non-meshdriver zigbee API:
 // const OnOffCluster = require('homey-zcl/zcl/onOff');
 
@@ -98,7 +96,6 @@ Cluster.addCluster(XiaomiHackedBasicCluster);
 // const {modelId, dateCode} = await node.endpoints[1].basic.readAttributes('modelId', 'dateCode');
 // node.endpoint[1].clusters.basic.configureReporting({
 // powerSource: {minInterval: 1234, maxInterval: 4321, minChange: 10}}); //enables reporting
-
 
 // TODO: invert group commands
 // class LocalOnOffCluster {
