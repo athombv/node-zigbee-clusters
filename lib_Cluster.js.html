@@ -400,9 +400,15 @@ class Cluster extends EventEmitter {
    * commands are commands which may be sent by the remote cluster.
    *
    * TODO: handle the case where `lastResponse===false`. It might be possible that there are
-   * more commands to be reported than can be transmitted in one report (in practice very
-   * unlikely though). If `lastResponse===false` invoke `discoverCommandsGenerated` again
-   * starting from the index where the previous invocation stopped (`maxResults`).
+   *  more commands to be reported than can be transmitted in one report (in practice very
+   *  unlikely though). If `lastResponse===false` invoke `discoverCommandsGenerated` again
+   *  starting from the index where the previous invocation stopped (`maxResults`).
+   *
+   * TODO: The manufacturer-specific sub-field SHALL be set to 0 to discover standard commands
+   *  in a ZigBee cluster or 1 to discover manufacturer-specific commands in either a standard or
+   *  a manufacturer-specific cluster. A manufacturer ID in this field of 0xffff (wildcard) will
+   *  discover any manufacture- specific
+   *  commands.
    *
    * @param {number} [startValue=0]
    * @param {number} [maxResults=250]
@@ -429,9 +435,14 @@ class Cluster extends EventEmitter {
    * commands are commands which may be received by the remote cluster.
    *
    * TODO: handle the case where `lastResponse===false`. It might be possible that there are
-   * more commands to be reported than can be transmitted in one report (in practice very
-   * unlikely though). If `lastResponse===false` invoke `discoverCommandsGenerated` again
-   * starting from the index where the previous invocation stopped (`maxResults`).
+   *  more commands to be reported than can be transmitted in one report (in practice very
+   *  unlikely though). If `lastResponse===false` invoke `discoverCommandsGenerated` again
+   *  starting from the index where the previous invocation stopped (`maxResults`).
+   *
+   * TODO: The manufacturer-specific sub-field SHALL be set to 0 to discover standard commands
+   *  in a ZigBee cluster or 1 to discover manufacturer-specific commands in either a standard or
+   *  a manufacturer-specific cluster. A manufacturer ID in this field of 0xffff (wildcard) will
+   *  discover any manufacture- specific commands.
    *
    * @param {number} [startValue=0]
    * @param {number} [maxResults=250]
@@ -455,6 +466,7 @@ class Cluster extends EventEmitter {
 
   /**
    * Command which reads a given set of attributes from the remote cluster.
+   * Note: do not mix regular and manufacturer specific attributes.
    * @param {string[]} attributeNames
    * @returns {Promise&lt;{}>} - Object with attribute values (e.g. `{ onOff: true }`)
    */
@@ -475,8 +487,15 @@ class Cluster extends EventEmitter {
 
     const resultObj = {};
     while (attrIds.size) {
-      debug(this.constructor.NAME, 'read attributes', [...attrIds]);
-      const { attributes } = await super.readAttributes({ attributes: [...attrIds] });
+      // Check if command should get manufacturerSpecific flag
+      const manufacturerId = this._checkForManufacturerSpecificAttributes(Array.from(attrIds));
+      debug(this.constructor.NAME, 'read attributes', [...attrIds], manufacturerId ? `manufacturer specific id ${manufacturerId}` : '');
+
+      const { attributes } = await super.readAttributes({
+        attributes: [...attrIds],
+        manufacturerId,
+      });
+
       debug(this.constructor.NAME, 'read attributes result', { attributes });
       const result = this.constructor.attributeArrayStatusDataType.fromBuffer(attributes, 0);
       if (!result.length) break;
@@ -494,10 +513,9 @@ class Cluster extends EventEmitter {
 
   /**
    * Command which writes a given set of attribute key-value pairs to the remote cluster.
+   * Note: do not mix regular and manufacturer specific attributes.
    * @param {object} attributes - Object with attribute names as keys and their values (e.g. `{
    * onOff: true, fakeAttributeName: 10 }`.
-   *
-   * TODO: needs to be tested with a device that supports a attribute write
    * @returns {Promise&lt;*|{attributes: *}>}
    */
   async writeAttributes(attributes = {}) {
@@ -512,15 +530,22 @@ class Cluster extends EventEmitter {
       };
     });
 
+    // Check if command should get manufacturerSpecific flag
+    const manufacturerId = this._checkForManufacturerSpecificAttributes(
+      Object.keys(attributes).map(n => this.constructor.attributes[n].id),
+    );
+
     let data = Buffer.alloc(1024);
     data = data.slice(0, this.constructor.attributeArrayDataType.toBuffer(data, arr, 0));
 
-    debug(this.constructor.NAME, 'write attributes', attributes);
-    return super.writeAttributes({ attributes: data });
+    debug(this.constructor.NAME, 'write attributes', attributes, manufacturerId ? `manufacturer specific id ${manufacturerId}` : '');
+
+    return super.writeAttributes({ attributes: data, manufacturerId });
   }
 
   /**
    * Command which configures attribute reporting for the given `attributes` on the remote cluster.
+   * Note: do not mix regular and manufacturer specific attributes.
    * @param {object} attributes - Attribute reporting configuration (e.g. `{ onOff: {
    * minInterval: 0, maxInterval: 300, minChange: 1 } }`)
    * @returns {Promise&lt;void>}
@@ -555,8 +580,15 @@ class Cluster extends EventEmitter {
       req.push(config);
     }
     if (req.length) {
-      debug(this.constructor.NAME, 'configure reporting', req);
-      const { reports } = await super.configureReporting({ reports: req });
+      // Check if command should get manufacturerSpecific flag
+      const manufacturerId = this._checkForManufacturerSpecificAttributes(
+        Object.keys(attributes).map(n => this.constructor.attributes[n].id),
+      );
+
+      debug(this.constructor.NAME, 'configure reporting', req, manufacturerId ? `manufacturer specific id ${manufacturerId}` : '');
+
+      const { reports } = await super.configureReporting({ reports: req, manufacturerId });
+
       debug(this.constructor.NAME, 'configured reporting', reports);
       for (const result of reports) {
         if (result.status !== 'SUCCESS') {
@@ -583,6 +615,7 @@ class Cluster extends EventEmitter {
    * remote cluster. Currently this only takes the 'reported' into account, this represents the
    * reports the remote cluster would sent out, instead of receive (which is likely the most
    * interesting).
+   * Note: do not mix regular and manufacturer specific attributes.
    * @param {Array} attributes - Array with number/strings (either attribute id, or attribute name).
    * @returns {Promise&lt;ReadReportingConfiguration[]>} - Returns array with
    * ReadReportingConfiguration objects per attribute.
@@ -614,12 +647,21 @@ class Cluster extends EventEmitter {
       });
     }
 
-    debug(this.constructor.NAME, 'read reporting configuration', req);
+    // Check if command should get manufacturerSpecific flag
+    const manufacturerId = this._checkForManufacturerSpecificAttributes(
+      attributes
+        .map(attributeName => this.constructor.attributes[attributeName].id),
+    );
+
+    debug(this.constructor.NAME, 'read reporting configuration', req, manufacturerId ? `manufacturer specific id ${manufacturerId}` : '');
 
     // If a request has been constructed execute it
     if (req.length) {
       // Perform request, it returns a buffer that needs to be parsed
-      const { reports } = await super.readReportingConfiguration({ attributes: req });
+      const { reports } = await super.readReportingConfiguration({
+        attributes: req,
+        manufacturerId,
+      });
       debug(this.constructor.NAME, 'read reporting configuration result', reports);
 
       // Return the parsed reports
@@ -634,9 +676,13 @@ class Cluster extends EventEmitter {
    * Command which discovers the implemented attributes on the remote cluster.
    *
    * TODO: handle the case where `lastResponse===false`. It might be possible that there are
-   * more commands to be reported than can be transmitted in one report (in practice very
-   * unlikely though). If `lastResponse===false` invoke `discoverCommandsGenerated` again
-   * starting from the index where the previous invocation stopped (`maxResults`).
+   *  more commands to be reported than can be transmitted in one report (in practice very
+   *  unlikely though). If `lastResponse===false` invoke `discoverCommandsGenerated` again
+   *  starting from the index where the previous invocation stopped (`maxResults`).
+   *
+   * TODO: The manufacturer specific sub-field SHALL be set to 0 to discover standard attributes
+   *  in a ZigBee cluster or 1 to discover manufacturer specific attributes in either a standard
+   *  or a manufacturer specific cluster.
    *
    * @returns {Promise&lt;Array>} - Array with string or number values (depending on if the
    * attribute
@@ -665,9 +711,14 @@ class Cluster extends EventEmitter {
    * attribute (whether it is readable/writable/reportable).
    *
    * TODO: handle the case where `lastResponse===false`. It might be possible that there are
-   * more commands to be reported than can be transmitted in one report (in practice very
-   * unlikely though). If `lastResponse===false` invoke `discoverCommandsGenerated` again
-   * starting from the index where the previous invocation stopped (`maxResults`).
+   *  more commands to be reported than can be transmitted in one report (in practice very
+   *  unlikely though). If `lastResponse===false` invoke `discoverCommandsGenerated` again
+   *  starting from the index where the previous invocation stopped (`maxResults`).
+   *
+   * TODO: The manufacturer-specific sub-field SHALL be set to 0 to discover standard attributes
+   *  in a ZigBee cluster or 1 to discover manufacturer-specific attributes in either a standard
+   *  or a manufacturer- specific cluster. A manufacturer ID in this field of 0xffff (wildcard)
+   *  will discover any manufacture-specific attributes.
    *
    * @returns {Promise&lt;Array>} - Returns an array with objects with attribute names as keys and
    * following object as values: `{name: string, id: number, acl: { readable: boolean, writable:
@@ -992,7 +1043,6 @@ class Cluster extends EventEmitter {
       ZCLAttributeDataRecord(false, clusterClass.attributesById),
     );
 
-
     // Ids are not unique
     clusterClass.commandsById = Object.entries(clusterClass.commands).reduce((r, [name, _cmd]) => {
       const cmd = { ..._cmd, name };
@@ -1029,7 +1079,6 @@ class Cluster extends EventEmitter {
       return r;
     }, {});
 
-
     // eslint-disable-next-line guard-for-in,no-restricted-syntax
     for (const cmdName in commands) {
       Object.defineProperty(proto, cmdName, {
@@ -1043,6 +1092,18 @@ class Cluster extends EventEmitter {
 
             if (cmd.global) {
               payload.frameControl = [];
+
+              // Some global commands can also be manufacturerSpecific (e.g. read/write manuf
+              // specific attributes), in that case the manuf id needs to be parsed from the
+              // args as it is a dynamic property which can not be defined on the command.
+              if (args.manufacturerId !== undefined) {
+                if (typeof args.manufacturerId === 'number') {
+                  payload.frameControl.push('manufacturerSpecific');
+                  payload.manufacturerId = args.manufacturerId;
+                }
+                // Always delete it as it is not part of the command args
+                delete args.manufacturerId;
+              }
             }
 
             if (cmd.manufacturerId) {
@@ -1081,6 +1142,42 @@ class Cluster extends EventEmitter {
         }[cmdName],
       });
     }
+  }
+
+  /**
+   * Given an array of attribute ids it checks if all of the attributes are manufacturer
+   * specific attributes. If that is the case it will return the manufacturerId so that the
+   * command can set the manufacturerSpecific flag.
+   * @param {number[]} attributeIds
+   * @returns {null|number}
+   * @private
+   */
+  _checkForManufacturerSpecificAttributes(attributeIds) {
+    // Convert to set
+    const attrIdsSet = new Set(attributeIds);
+
+    // Filter attributeIds for manufacturer specific attributes
+    const manufacturerIds = [];
+    for (const attribute of Object.values(this.constructor.attributes)) {
+      if (attrIdsSet.has(attribute.id) &amp;&amp; typeof attribute.manufacturerId === 'number') {
+        manufacturerIds.push(attribute.manufacturerId);
+      }
+    }
+
+    // Do not allow different manufacturer ids in one command
+    if (new Set(manufacturerIds).size > 1) {
+      throw new Error('Error: detected multiple manufacturer ids, can only read from one at a time');
+    }
+
+    // Show warning if a manufacturer specific attribute was found amongst non-manufacturer
+    // specific attributes
+    if (manufacturerIds.length > 0 &amp;&amp; attrIdsSet.size !== manufacturerIds.length) {
+      debug(this.constructor.NAME, 'WARNING expected only manufacturer specific attributes got:', manufacturerIds);
+    }
+
+    // Return the manufacturerId that was found in the attributes
+    if (attrIdsSet.size === manufacturerIds.length) return manufacturerIds[0];
+    return null;
   }
 
 }

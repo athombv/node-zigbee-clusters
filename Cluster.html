@@ -391,7 +391,7 @@ been created before it will be available on the node.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line815">line 815</a>
+          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line866">line 866</a>
         </li>
       </ul>
     </dd>
@@ -569,7 +569,7 @@ zclNode.endpoints[1].clusters['myClusterName'].doSomething();</code></pre>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line839">line 839</a>
+          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line890">line 890</a>
         </li>
       </ul>
     </dd>
@@ -721,7 +721,7 @@ zclNode.endpoints[1].clusters['myClusterName'].doSomething();</code></pre>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line825">line 825</a>
+          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line876">line 876</a>
         </li>
       </ul>
     </dd>
@@ -769,7 +769,8 @@ zclNode.endpoints[1].clusters['myClusterName'].doSomething();</code></pre>
 
 
   <div class="description">
-    <p>Command which configures attribute reporting for the given <code>attributes</code> on the remote cluster.</p>
+    <p>Command which configures attribute reporting for the given <code>attributes</code> on the remote cluster.
+Note: do not mix regular and manufacturer specific attributes.</p>
   </div>
 
 
@@ -867,7 +868,7 @@ zclNode.endpoints[1].clusters['myClusterName'].doSomething();</code></pre>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line436">line 436</a>
+          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line461">line 461</a>
         </li>
       </ul>
     </dd>
@@ -920,6 +921,9 @@ zclNode.endpoints[1].clusters['myClusterName'].doSomething();</code></pre>
 more commands to be reported than can be transmitted in one report (in practice very
 unlikely though). If <code>lastResponse===false</code> invoke <code>discoverCommandsGenerated</code> again
 starting from the index where the previous invocation stopped (<code>maxResults</code>).</p>
+<p>TODO: The manufacturer specific sub-field SHALL be set to 0 to discover standard attributes
+in a ZigBee cluster or 1 to discover manufacturer specific attributes in either a standard
+or a manufacturer specific cluster.</p>
   </div>
 
 
@@ -962,7 +966,7 @@ starting from the index where the previous invocation stopped (<code>maxResults<
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line553">line 553</a>
+          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line599">line 599</a>
         </li>
       </ul>
     </dd>
@@ -1017,6 +1021,10 @@ attribute (whether it is readable/writable/reportable).</p>
 more commands to be reported than can be transmitted in one report (in practice very
 unlikely though). If <code>lastResponse===false</code> invoke <code>discoverCommandsGenerated</code> again
 starting from the index where the previous invocation stopped (<code>maxResults</code>).</p>
+<p>TODO: The manufacturer-specific sub-field SHALL be set to 0 to discover standard attributes
+in a ZigBee cluster or 1 to discover manufacturer-specific attributes in either a standard
+or a manufacturer- specific cluster. A manufacturer ID in this field of 0xffff (wildcard)
+will discover any manufacture-specific attributes.</p>
   </div>
 
 
@@ -1059,7 +1067,7 @@ starting from the index where the previous invocation stopped (<code>maxResults<
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line585">line 585</a>
+          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line636">line 636</a>
         </li>
       </ul>
     </dd>
@@ -1113,6 +1121,11 @@ commands are commands which may be sent by the remote cluster.</p>
 more commands to be reported than can be transmitted in one report (in practice very
 unlikely though). If <code>lastResponse===false</code> invoke <code>discoverCommandsGenerated</code> again
 starting from the index where the previous invocation stopped (<code>maxResults</code>).</p>
+<p>TODO: The manufacturer-specific sub-field SHALL be set to 0 to discover standard commands
+in a ZigBee cluster or 1 to discover manufacturer-specific commands in either a standard or
+a manufacturer-specific cluster. A manufacturer ID in this field of 0xffff (wildcard) will
+discover any manufacture- specific
+commands.</p>
   </div>
 
 
@@ -1275,7 +1288,7 @@ starting from the index where the previous invocation stopped (<code>maxResults<
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line319">line 319</a>
+          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line325">line 325</a>
         </li>
       </ul>
     </dd>
@@ -1329,6 +1342,10 @@ commands are commands which may be received by the remote cluster.</p>
 more commands to be reported than can be transmitted in one report (in practice very
 unlikely though). If <code>lastResponse===false</code> invoke <code>discoverCommandsGenerated</code> again
 starting from the index where the previous invocation stopped (<code>maxResults</code>).</p>
+<p>TODO: The manufacturer-specific sub-field SHALL be set to 0 to discover standard commands
+in a ZigBee cluster or 1 to discover manufacturer-specific commands in either a standard or
+a manufacturer-specific cluster. A manufacturer ID in this field of 0xffff (wildcard) will
+discover any manufacture- specific commands.</p>
   </div>
 
 
@@ -1491,7 +1508,7 @@ starting from the index where the previous invocation stopped (<code>maxResults<
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line348">line 348</a>
+          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line359">line 359</a>
         </li>
       </ul>
     </dd>
@@ -1539,7 +1556,8 @@ starting from the index where the previous invocation stopped (<code>maxResults<
 
 
   <div class="description">
-    <p>Command which reads a given set of attributes from the remote cluster.</p>
+    <p>Command which reads a given set of attributes from the remote cluster.
+Note: do not mix regular and manufacturer specific attributes.</p>
   </div>
 
 
@@ -1649,7 +1667,7 @@ starting from the index where the previous invocation stopped (<code>maxResults<
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line369">line 369</a>
+          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line381">line 381</a>
         </li>
       </ul>
     </dd>
@@ -1700,7 +1718,8 @@ starting from the index where the previous invocation stopped (<code>maxResults<
     <p>Command which retrieves the reporting configurations for the given <code>attributes</code> from the
 remote cluster. Currently this only takes the 'reported' into account, this represents the
 reports the remote cluster would sent out, instead of receive (which is likely the most
-interesting).</p>
+interesting).
+Note: do not mix regular and manufacturer specific attributes.</p>
   </div>
 
 
@@ -1798,7 +1817,7 @@ interesting).</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line498">line 498</a>
+          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line531">line 531</a>
         </li>
       </ul>
     </dd>
@@ -1846,7 +1865,8 @@ interesting).</p>
 
 
   <div class="description">
-    <p>Command which writes a given set of attribute key-value pairs to the remote cluster.</p>
+    <p>Command which writes a given set of attribute key-value pairs to the remote cluster.
+Note: do not mix regular and manufacturer specific attributes.</p>
   </div>
 
 
@@ -1901,7 +1921,6 @@ interesting).</p>
 
         <td class="description last">
           <p>Object with attribute names as keys and their values (e.g. <code>{ onOff: true, fakeAttributeName: 10 }</code>.</p>
-<p>TODO: needs to be tested with a device that supports a attribute write</p>
           
         </td>
       </tr>
@@ -1945,7 +1964,7 @@ interesting).</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line411">line 411</a>
+          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line429">line 429</a>
         </li>
       </ul>
     </dd>
