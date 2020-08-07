@@ -1099,7 +1099,7 @@ class Cluster extends EventEmitter {
     for (const cmdName in commands) {
       Object.defineProperty(proto, cmdName, {
         value: {
-          async [cmdName](args) {
+          async [cmdName](args, opts = {}) {
             const cmd = commands[cmdName];
             const payload = {
               cmdId: cmd.id,
@@ -1137,6 +1137,10 @@ class Cluster extends EventEmitter {
             }
 
             if (payload.frameControl &amp;&amp; payload.frameControl.includes('disableDefaultResponse')) {
+              return this.sendFrame(payload);
+            }
+
+            if (opts.waitForResponse === false) {
               return this.sendFrame(payload);
             }
 
