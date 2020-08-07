@@ -189,9 +189,16 @@ class Endpoint extends EventEmitter {
       frame = ZCLMfgSpecificHeader.fromBuffer(rawFrame);
     } else frame = ZCLStandardHeader.fromBuffer(rawFrame);
 
-    const response = (frame.frameControl.disableDefaultResponse || (meta &amp;&amp; meta.groupId))
-      ? null
-      : this._makeErrorResponse(frame);
+    // NOTE: we do not respond with a default response if:
+    // 1. The frame we received is a default response (frame.cmdId = 11)
+    // 2. Another command is sent in response to the received frame
+    // 3. The frame has the disableDefaultResponse flag set
+    // See ZCL specification 2.5.12.2.
+    const response = (
+      frame.frameControl.disableDefaultResponse
+      || (meta &amp;&amp; meta.groupId)
+      || frame.cmdId === 11
+    ) ? null : this._makeErrorResponse(frame);
 
     try {
       const result = await this.handleZCLFrame(clusterId, frame, meta, rawFrame);
@@ -209,8 +216,8 @@ class Endpoint extends EventEmitter {
         endpointId: this._endpointId, clusterId, meta, frame,
       });
     }
+    // If desired (disableDefaultResponse: false) try to respond to the incoming frame
     if (response) {
-      // If desired (disableDefaultResponse: false) try to respond to the incoming frame
       try {
         await this.sendFrame(clusterId, response.toBuffer());
       } catch (err) {
