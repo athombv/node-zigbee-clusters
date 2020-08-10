@@ -37,6 +37,8 @@ The concept of server/client is important for the following reason. Nodes can be
 In order to communicate with a Zigbee node retrieve a `node` instance from `ManagerZigBee` and create a `ZCLNode` instance using that node. This step encapsulates the `node` with the Zigbee Clusters functionality and allows sending and receiving ZCL commands.
 
 ### Basic communication with node
+
+## Sending a command
 `/drivers/my-driver/device.js`
 ```js
 const Homey = require('homey');
@@ -49,9 +51,58 @@ class MyDevice extends Homey.Device {
           .then(async node => {
             // Create ZCLNode instance
             const zclNode = new ZCLNode(node);
+
+            // Send toggle command to onOff cluster on endpoint 1
             await zclNode.endpoints[1].clusters[CLUSTER.ON_OFF.NAME].toggle();
+
+            // Send moveToLevel command to levelControl cluster on endpoint 1 and don't wait for
+            // the default response confirmation.
+            await zclNode.endpoints[1].clusters[CLUSTER.LEVEL_CONTROL.NAME].moveToLevel({
+              level: 100,
+              transitionTime: 2000
+            }, {
+              // This is an optional flag that disables waiting for a default response from the
+              // receiving node as a confirmation that the command is received and executed.
+              // Usually you don't want to add this flag, only if the device does not follow the
+              // Zigbee specification and refuses to send a default response this flag is
+              // recommended.
+              waitForResponse: true,
+            });
           });
     }
+}
+```
+
+## Receiving an attribute report
+
+`/drivers/my-driver/device.js`
+```js
+const Homey = require('homey');
+const { ZCLNode, CLUSTER } = require('zigbee-clusters');
+
+class MyDevice extends Homey.Device {
+  onInit() {
+    // Get ZigBeeNode instance from ManagerZigBee
+    this.homey.zigbee.getNode(this)
+      .then(async node => {
+        // Create ZCLNode instance
+        const zclNode = new ZCLNode(node);
+
+        // Configure reporting
+        await zclNode.endpoints[1].clusters[CLUSTER.COLOR_CONTROL.NAME].configureReporting({
+          currentSaturation: {
+            minInterval: 0,
+            maxInterval: 300,
+            minChange: 1
+          }
+        });
+
+        // And listen for incoming attribute reports by binding a listener on the cluster
+        zclNode.endpoints[1].clusters[CLUSTER.COLOR_CONTROL.NAME].on('attr.currentSaturation', (currentSaturation) => {
+          // handle reported attribute value
+        });
+      });
+  }
 }
 ```
 
