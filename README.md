@@ -63,9 +63,8 @@ class MyDevice extends Homey.Device {
             }, {
               // This is an optional flag that disables waiting for a default response from the
               // receiving node as a confirmation that the command is received and executed.
-              // Usually you don't want to add this flag, only if the device does not follow the
-              // Zigbee specification and refuses to send a default response this flag is
-              // recommended.
+              // You should only use this flag if the device does not follow the
+              // Zigbee specification and refuses to send a default response.
               waitForResponse: true,
             });
           });
@@ -275,5 +274,4 @@ Great if you'd like to contribute to this project, a few things to take note of 
 * This project enforces ESLint, validate by running `npm run lint`.
 * This project implements a basic test framework based on mocha, see [test](https://github.com/athombv/node-zigbee-clusters/blob/production/test) directory.
 * This project uses several [GitHub Action workflows](https://github.com/athombv/node-zigbee-clusters/blob/production/.github/workflows) (e.g. ESLint, running test and versioning/publishing).
-
 
