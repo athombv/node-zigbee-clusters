@@ -1,103 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cluster - Zigbee Clusters</title>
 
-  <title>
-      Cluster - Documentation
-  </title>
-
-  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-
-  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-  <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-  
-
-  
-
-  <!-- start Mixpanel -->
-  <script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
-  0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
-  for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
-  mixpanel.init("1919205b2da72e4da3b9b6639b444d59");</script>
-  <!-- end Mixpanel -->
+  <meta property="og:image" content="https://etc.athom.com/logo/white/256.png" />
+  <link rel="icon" href="https://etc.athom.com/logo/transparent/128.png" />
+  <link rel="icon" type="image/png" href="https://etc.athom.com/logo/transparent/128.png" />
+  <link rel="preload" as="image" href="images/logo.png">
+  <link rel="preload" href="styles/homey.min.css" as="style">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="styles/atom-one-light.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto:wght@100;300;400;500;700&display=swap"
+        rel="stylesheet">
+  <link type="text/css" rel="stylesheet" href="styles/homey.min.css">
 </head>
 
 <body>
-  <svg style="display: none;">
-    <defs>
-      <symbol id="linkIcon" fill="#706d77" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 0h24v24H0z" fill="none"/>
-          <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
-      </symbol>
-    </defs>
-  </svg>
-
-  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-  <label for="nav-trigger" class="navicon-button x">
-    <div class="navicon"></div>
-  </label>
-
-  <label for="nav-trigger" class="overlay"></label>
-
-  <div class="top-nav-wrapper">
-    <ul>
-      <li >
-        <a href="index.html">
-          
-            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-              <path d="M0 0h24v24H0z" fill="none"/>
-            </svg>
-          
-          
-        </a>
-      </li>
-
-      
-
-    </ul>
-  </div>
-
-  <nav>
-    <h3 class="reference-title">
-      documentation zigbee-clusters
-    </h3>
-
-    
-
-    <h3>Classes</h3><ul><li id="BoundCluster-nav"><a href="BoundCluster.html">BoundCluster</a><ul class='methods'><li data-type="method" id="BoundCluster-discoverAttributes-nav"><a href="BoundCluster.html#discoverAttributes">discoverAttributes</a></li><li data-type="method" id="BoundCluster-discoverAttributesExtended-nav"><a href="BoundCluster.html#discoverAttributesExtended">discoverAttributesExtended</a></li><li data-type="method" id="BoundCluster-discoverCommandsGenerated-nav"><a href="BoundCluster.html#discoverCommandsGenerated">discoverCommandsGenerated</a></li><li data-type="method" id="BoundCluster-discoverCommandsReceived-nav"><a href="BoundCluster.html#discoverCommandsReceived">discoverCommandsReceived</a></li><li data-type="method" id="BoundCluster-readAttributes-nav"><a href="BoundCluster.html#readAttributes">readAttributes</a></li><li data-type="method" id="BoundCluster-writeAttributes-nav"><a href="BoundCluster.html#writeAttributes">writeAttributes</a></li></ul></li><li id="Cluster-nav"><a href="Cluster.html">Cluster</a><ul class='methods'><li data-type="method" id="Cluster-addCluster-nav"><a href="Cluster.html#.addCluster">addCluster</a></li><li data-type="method" id="Cluster-getCluster-nav"><a href="Cluster.html#.getCluster">getCluster</a></li><li data-type="method" id="Cluster-removeCluster-nav"><a href="Cluster.html#.removeCluster">removeCluster</a></li><li data-type="method" id="Cluster-configureReporting-nav"><a href="Cluster.html#configureReporting">configureReporting</a></li><li data-type="method" id="Cluster-discoverAttributes-nav"><a href="Cluster.html#discoverAttributes">discoverAttributes</a></li><li data-type="method" id="Cluster-discoverAttributesExtended-nav"><a href="Cluster.html#discoverAttributesExtended">discoverAttributesExtended</a></li><li data-type="method" id="Cluster-discoverCommandsGenerated-nav"><a href="Cluster.html#discoverCommandsGenerated">discoverCommandsGenerated</a></li><li data-type="method" id="Cluster-discoverCommandsReceived-nav"><a href="Cluster.html#discoverCommandsReceived">discoverCommandsReceived</a></li><li data-type="method" id="Cluster-readAttributes-nav"><a href="Cluster.html#readAttributes">readAttributes</a></li><li data-type="method" id="Cluster-readReportingConfiguration-nav"><a href="Cluster.html#readReportingConfiguration">readReportingConfiguration</a></li><li data-type="method" id="Cluster-writeAttributes-nav"><a href="Cluster.html#writeAttributes">writeAttributes</a></li></ul></li><li id="Endpoint-nav"><a href="Endpoint.html">Endpoint</a><ul class='methods'><li data-type="method" id="Endpoint-bind-nav"><a href="Endpoint.html#bind">bind</a></li><li data-type="method" id="Endpoint-unbind-nav"><a href="Endpoint.html#unbind">unbind</a></li></ul></li><li id="Node-nav"><a href="ZCLNode.html">Node</a></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#debug">debug</a></li></ul>
+<div class="container">
+  <nav class="navigation container__navigation component">
+    <header class="navigation__header">
+                <div class="navigation__logo"><a href="index.html"><img class="display-block" src="images/logo.png" width="40" height="40" alt="Homey"></a></div>
+                <h2 class="navigation__title"><a href="index.html">Zigbee Clusters</a></h2>
+                <button data-navigation-toggle class="navigation__button" title="menu"></button>
+             </header><div class="navigation__content" data-navigation-target><div class="navigation__search search">
+            <input title="filter" placeholder="Filter..." data-navigation-search class="search__input" type="search">
+            <button data-navigation-search-reset class="search__reset --mask" type="button" title="Reset"></button>
+           </div><div data-navigation-scroll class="navigation__scroll scroll trim"><div class="navigation__menu trim"><nav class="nav-group"><h3 class="nav-group__title">Classes</h3><ul class="nav-group__list"><li data-search-key="boundcluster" class="nav-group__item"><a href="BoundCluster.html">BoundCluster</a></li><li data-search-key="cluster" class="nav-group__item"><a href="Cluster.html">Cluster</a></li><li data-search-key="endpoint" class="nav-group__item"><a href="Endpoint.html">Endpoint</a></li><li data-search-key="zclnode" class="nav-group__item"><a href="ZCLNode.html">ZCLNode</a></li></ul></nav><h3 class="nav-group__title">Global</h3><ul class="nav-group__list"><li class="nav-group__item"><a href="global.html#debug">debug</a></li></ul></div></div></div>
   </nav>
 
-  <div id="main">
+  <main id="main" class="main container__main">
     
-      <h1 class="page-title">
-        Cluster
-      </h1>
-    
-
-    
-
-<section>
+  
+  
+  <div class="flex flex-direction-column flex-fill max-100">
+    <div class="flex">
+      <div class="main__center">
+        <div class="main__content align-baseline">
+          <h1 id="introduction" class="text-preset-heading-1">
+            Cluster
+          </h1>
+        </div>
+        <div class="main__index"></div>
+      </div>
+    </div>
+    <div class="flex">
+      <div class="main__center">
+        <div class="main__content align-baseline">
+          <section>
   <header>
     
-      <h2>
+      <h2 class="display-none">
+        
+        <span class="attribs"><span class="function__type-signature"></span></span>
         
         Cluster
         
+        <span class="function__parameters">(<span class="function__parameter">endpoint</span>)</span><span class="function__type-signature"></span>
+        
       </h2>
-
       
-        <div class="class-description">
-          <p>The base cluster class every other cluster implementation must extend from.</p>
-        </div>
+      <div class="class-description text-preset-intro trim"><p>The base cluster class every other cluster implementation must extend from.</p></div>
       
     
   </header>
@@ -105,46 +68,51 @@
   <article>
     <div class="container-overview">
       
-        
+      
 
+<h2 id="section-constructor">Constructor</h2>
+
+
+<section id="Cluster" class="method trim component">
+  
 
   
-    <h2>Constructor</h2>
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#Cluster">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="Cluster">
-      <span class="type-signature"></span>new Cluster<span class="signature">(endpoint)</span><span class="type-signature"></span>
-    </h4>
+  <h3 class="method__name">Cluster</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature"></span>new Cluster<span class="function__parameters">(<span class="function__parameter">endpoint</span>)</span><span class="function__type-signature"></span>
+    
   </span>
-
   
 
-
-
-  <div class="description">
-    <p>Create a new cluster instance.</p>
-  </div>
-
-
-
-
-
-
-
-  <h5>Parameters:</h5>
+  
   
 
-<table class="params">
-  <thead>
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Create a new cluster instance.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Parameters</h4>
+      
+
+<figure class="table-container trim">
+  <table class="params">
+    <thead>
     <tr>
       
-        <th>Name</th>
+      <th>Name</th>
       
 
       <th>Type</th>
@@ -155,102 +123,67 @@
 
       <th class="last">Description</th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>endpoint</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      <a href="Endpoint.html">Endpoint</a>
-    </span>
-
+    <tbody>
     
 
+    <tr>
+      
+      <td class="name"><code>endpoint</code></td>
+      
 
-          
-        </td>
+      <td class="type">
+        
+        
+<span class="param-type"><a href="Endpoint.html">Endpoint</a></span>
+
 
         
+      </td>
 
+      
+
+      
+
+      <td class="description last trim"><p>A node <a href="Endpoint.html">Endpoint</a> instance</p>
         
-
-        <td class="description last">
-          <p>A node <a href="Endpoint.html">Endpoint</a> instance</p>
-          
-        </td>
-      </tr>
+      </td>
+    </tr>
 
     
-  </tbody>
-</table>
+    </tbody>
+  </table>
+</figure>
+    </section>
+    
+
+    
 
 
 
 
+    
 
-<dl class="details">
+    
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+  </div>
   
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line258">line 258</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
+</section>
 
       
     </div>
@@ -261,126 +194,99 @@
 
     
 
-     
+    
+
+    
 
     
 
     
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-
-<h4 class="name" id="logId">
-  <span class="type-signature"></span>logId<span class="type-signature"></span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>Returns log id string for this cluster.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line311">line 311</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-    
-
-    
-      <h3 class="subsection-title">Methods</h3>
+    <section id="section-members">
+      <h2 class="subsection-title">Properties</h2>
 
       
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#.addCluster">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id=".addCluster">
-      <span class="type-signature">(static) </span>addCluster<span class="signature">(clusterClass)</span><span class="type-signature"></span>
-    </h4>
+      
+<section id="logId" class="method component trim">
+  <h3 class="method__name">logId</h3>
+  <span class="method__function function">
+    <span class="function__type-signature"></span>logId<span class="function__type-signature"></span>
   </span>
 
-  
+  <div class="method__content trim">
+    
+
+    
+    <div class="description trim">
+      <p>Returns log id string for this cluster.</p>
+    </div>
+    
+
+    
+
+    
 
 
 
-  <div class="description">
-    <p>Add a cluster class. This should be called whenever a custom Cluster implementation has
-been created before it will be available on the node.</p>
+
+    
+
+    
   </div>
+</section>
+
+      
+    </section>
+    
+
+    
+    <section id="section-methods">
+      <h2 class="subsection-title">Methods</h2>
+
+      
+      
 
 
-
-
-
-
-
-  <h5>Parameters:</h5>
+<section id=".addCluster" class="method trim component">
   
 
-<table class="params">
-  <thead>
+  
+  <h3 class="method__name">addCluster</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(static) </span>addCluster<span class="function__parameters">(<span class="function__parameter">clusterClass</span>)</span><span class="function__type-signature"></span>
+    
+  </span>
+  
+
+  
+  
+
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Add a cluster class. This should be called whenever a custom Cluster implementation has
+been created before it will be available on the node.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Parameters</h4>
+      
+
+<figure class="table-container trim">
+  <table class="params">
+    <thead>
     <tr>
       
-        <th>Name</th>
+      <th>Name</th>
       
 
       <th>Type</th>
@@ -391,112 +297,67 @@ been created before it will be available on the node.</p>
 
       <th class="last">Description</th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>clusterClass</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      <a href="Cluster.html">Cluster</a>
-    </span>
-
+    <tbody>
     
 
+    <tr>
+      
+      <td class="name"><code>clusterClass</code></td>
+      
 
-          
-        </td>
+      <td class="type">
+        
+        
+<span class="param-type"><a href="Cluster.html">Cluster</a></span>
+
 
         
+      </td>
 
+      
+
+      
+
+      <td class="description last trim"><p>The class, not an instance.</p>
         
-
-        <td class="description last">
-          <p>The class, not an instance.</p>
-          
-        </td>
-      </tr>
+      </td>
+    </tr>
 
     
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line882">line 882</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <div class="example-container">
-    <a class="link-icon" href="#addCluster-examples">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h5 id="addCluster-examples">Example</h5>
+    </tbody>
+  </table>
+</figure>
+    </section>
     
 
-  <pre class="prettyprint"><code>const { Cluster } = require('zigbee-clusters');
+    
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Example</h4>
+      
+    <pre class="highlight"><code>const { Cluster } = require('zigbee-clusters');
 
 const MyCluster extends Cluster {
  // Implement custom cluster logic here
@@ -511,48 +372,57 @@ Cluster.addCluster(MyCluster);
 zclNode.endpoints[1].clusters['myClusterName'].doSomething();</code></pre>
 
 
+    </section>
+    
   </div>
+  
 
+</section>
 
       
-        
+      
 
 
+<section id=".getCluster" class="method trim component">
   
 
-  <span class='name-container'>
-    <a class="link-icon" href="#.getCluster">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id=".getCluster">
-      <span class="type-signature">(static) </span>getCluster<span class="signature">(clusterIdOrName)</span><span class="type-signature"> &rarr; {<a href="Cluster.html">Cluster</a>}</span>
-    </h4>
+  
+  <h3 class="method__name">getCluster</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(static) </span>getCluster<span class="function__parameters">(<span class="function__parameter">clusterIdOrName</span>)</span><span class="function__type-signature">:  <a href="Cluster.html">Cluster</a></span>
+    
   </span>
-
   
 
-
-
-  <div class="description">
-    <p>Get a cluster instance by ID or NAME.</p>
-  </div>
-
-
-
-
-
-
-
-  <h5>Parameters:</h5>
+  
   
 
-<table class="params">
-  <thead>
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Get a cluster instance by ID or NAME.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Parameters</h4>
+      
+
+<figure class="table-container trim">
+  <table class="params">
+    <thead>
     <tr>
       
-        <th>Name</th>
+      <th>Name</th>
       
 
       <th>Type</th>
@@ -563,148 +433,129 @@ zclNode.endpoints[1].clusters['myClusterName'].doSomething();</code></pre>
 
       <th class="last">Description</th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>clusterIdOrName</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    |
-
-    <span class="param-type">
-      number
-    </span>
-
+    <tbody>
     
 
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line906">line 906</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#.removeCluster">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id=".removeCluster">
-      <span class="type-signature">(static) </span>removeCluster<span class="signature">(clusterIdOrName)</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Remove cluster by ID or NAME.</p>
-  </div>
-
-
-
-
-
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
     <tr>
       
-        <th>Name</th>
+      <td class="name"><code>clusterIdOrName</code></td>
+      
+
+      <td class="type">
+        
+        
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
+
+
+        
+      </td>
+
+      
+
+      
+
+      <td class="description last trim">
+        
+      </td>
+    </tr>
+
+    
+    </tbody>
+  </table>
+</figure>
+    </section>
+    
+
+    
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Returns</h4>
+      
+      
+
+<div class="text-preset-small">
+  
+<span class="param-type"><a href="Cluster.html">Cluster</a></span>
+
+
+</div>
+
+    </section>
+    
+
+    
+
+    
+  </div>
+  
+
+</section>
+
+      
+      
+
+
+<section id=".removeCluster" class="method trim component">
+  
+
+  
+  <h3 class="method__name">removeCluster</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(static) </span>removeCluster<span class="function__parameters">(<span class="function__parameter">clusterIdOrName</span>)</span><span class="function__type-signature"></span>
+    
+  </span>
+  
+
+  
+  
+
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Remove cluster by ID or NAME.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Parameters</h4>
+      
+
+<figure class="table-container trim">
+  <table class="params">
+    <thead>
+    <tr>
+      
+      <th>Name</th>
       
 
       <th>Type</th>
@@ -715,149 +566,116 @@ zclNode.endpoints[1].clusters['myClusterName'].doSomething();</code></pre>
 
       <th class="last">Description</th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>clusterIdOrName</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    |
-
-    <span class="param-type">
-      number
-    </span>
-
+    <tbody>
     
 
+    <tr>
+      
+      <td class="name"><code>clusterIdOrName</code></td>
+      
 
-          
-        </td>
+      <td class="type">
+        
+        
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
+
 
         
-
-        
-
-        <td class="description last">
-          
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line892">line 892</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
+      </td>
 
       
+
+      
+
+      <td class="description last trim">
         
+      </td>
+    </tr>
+
+    
+    </tbody>
+  </table>
+</figure>
+    </section>
+    
+
+    
 
 
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+  </div>
   
 
-  <span class='name-container'>
-    <a class="link-icon" href="#configureReporting">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="configureReporting">
-      <span class="type-signature">(async) </span>configureReporting<span class="signature">(attributes)</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span>
-    </h4>
+</section>
+
+      
+      
+
+
+<section id="configureReporting" class="method trim component">
+  
+
+  
+  <h3 class="method__name">configureReporting</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(async) </span>configureReporting<span class="function__parameters">(<span class="function__parameter">attributes</span>)</span><span class="function__type-signature">:  Promise.&lt;void></span>
+    
   </span>
-
   
 
+  
+  
 
-
-  <div class="description">
-    <p>Command which configures attribute reporting for the given <code>attributes</code> on the remote cluster.
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Command which configures attribute reporting for the given <code>attributes</code> on the remote cluster.
 Note: do not mix regular and manufacturer specific attributes.</p>
-  </div>
+    </div>
+    
 
+    
 
+    
 
+    
 
+    
+    <section class="method__section trim">
+      <h4>Parameters</h4>
+      
 
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
+<figure class="table-container trim">
+  <table class="params">
+    <thead>
     <tr>
       
-        <th>Name</th>
+      <th>Name</th>
       
 
       <th>Type</th>
@@ -868,126 +686,106 @@ Note: do not mix regular and manufacturer specific attributes.</p>
 
       <th class="last">Description</th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>attributes</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      object
-    </span>
-
+    <tbody>
     
 
+    <tr>
+      
+      <td class="name"><code>attributes</code></td>
+      
 
-          
-        </td>
+      <td class="type">
+        
+        
+<span class="param-type">object</span>
+
 
         
-
-        
-
-        <td class="description last">
-          <p>Attribute reporting configuration (e.g. <code>{ onOff: { minInterval: 0, maxInterval: 300, minChange: 1 } }</code>)</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line474">line 474</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
+      </td>
 
       
+
+      
+
+      <td class="description last trim"><p>Attribute reporting configuration (e.g. <code>{ onOff: { minInterval: 0, maxInterval: 300, minChange: 1 } }</code>)</p>
         
+      </td>
+    </tr>
+
+    
+    </tbody>
+  </table>
+</figure>
+    </section>
+    
+
+    
 
 
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Returns</h4>
+      
+      
+
+<div class="text-preset-small">
+  
+<span class="param-type">Promise.&lt;void></span>
+
+
+</div>
+
+    </section>
+    
+
+    
+
+    
+  </div>
   
 
-  <span class='name-container'>
-    <a class="link-icon" href="#discoverAttributes">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="discoverAttributes">
-      <span class="type-signature">(async) </span>discoverAttributes<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;Array>}</span>
-    </h4>
+</section>
+
+      
+      
+
+
+<section id="discoverAttributes" class="method trim component">
+  
+
+  
+  <h3 class="method__name">discoverAttributes</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(async) </span>discoverAttributes<span class="function__parameters">()</span><span class="function__type-signature">:  Promise.&lt;Array></span>
+    
   </span>
-
   
 
+  
+  
 
-
-  <div class="description">
-    <p>Command which discovers the implemented attributes on the remote cluster.</p>
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Command which discovers the implemented attributes on the remote cluster.</p>
 <p>TODO: handle the case where <code>lastResponse===false</code>. It might be possible that there are
 more commands to be reported than can be transmitted in one report (in practice very
 unlikely though). If <code>lastResponse===false</code> invoke <code>discoverCommandsGenerated</code> again
@@ -995,97 +793,88 @@ starting from the index where the previous invocation stopped (<code>maxResults<
 <p>TODO: The manufacturer specific sub-field SHALL be set to 0 to discover standard attributes
 in a ZigBee cluster or 1 to discover manufacturer specific attributes in either a standard
 or a manufacturer specific cluster.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Returns</h4>
+      
+      
+  <ul>
+<li>Array with string or number values (depending on if the
+attribute
+is implemented in zigbee-clusters or not).</li>
+</ul>
+
+
+<div class="text-preset-small">
+  
+<span class="param-type">Promise.&lt;Array></span>
+
+
+</div>
+
+    </section>
+    
+
+    
+
+    
   </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
   
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line615">line 615</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
+</section>
 
       
-        
+      
 
 
+<section id="discoverAttributesExtended" class="method trim component">
   
 
-  <span class='name-container'>
-    <a class="link-icon" href="#discoverAttributesExtended">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="discoverAttributesExtended">
-      <span class="type-signature">(async) </span>discoverAttributesExtended<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;Array>}</span>
-    </h4>
+  
+  <h3 class="method__name">discoverAttributesExtended</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(async) </span>discoverAttributesExtended<span class="function__parameters">()</span><span class="function__type-signature">:  Promise.&lt;Array></span>
+    
   </span>
-
   
 
+  
+  
 
-
-  <div class="description">
-    <p>Command which discovers the implemented attributes on the remote cluster, the difference with
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Command which discovers the implemented attributes on the remote cluster, the difference with
 <code>discoverAttributes</code> is that this command also reports the access control field of the
 attribute (whether it is readable/writable/reportable).</p>
 <p>TODO: handle the case where <code>lastResponse===false</code>. It might be possible that there are
@@ -1096,97 +885,88 @@ starting from the index where the previous invocation stopped (<code>maxResults<
 in a ZigBee cluster or 1 to discover manufacturer-specific attributes in either a standard
 or a manufacturer- specific cluster. A manufacturer ID in this field of 0xffff (wildcard)
 will discover any manufacture-specific attributes.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Returns</h4>
+      
+      
+  <ul>
+<li>Returns an array with objects with attribute names as keys and
+following object as values: <code>{name: string, id: number, acl: { readable: boolean, writable: boolean, reportable: boolean } }</code>. Note that <code>name</code> is optional based on whether the
+attribute is implemented in zigbee-clusters.</li>
+</ul>
+
+
+<div class="text-preset-small">
+  
+<span class="param-type">Promise.&lt;Array></span>
+
+
+</div>
+
+    </section>
+    
+
+    
+
+    
   </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
   
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line652">line 652</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
+</section>
 
       
-        
+      
 
 
+<section id="discoverCommandsGenerated" class="method trim component">
   
 
-  <span class='name-container'>
-    <a class="link-icon" href="#discoverCommandsGenerated">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="discoverCommandsGenerated">
-      <span class="type-signature">(async) </span>discoverCommandsGenerated<span class="signature">(startValue<span class="signature-attributes">opt</span>, maxResults<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;Array.&lt;number>>}</span>
-    </h4>
+  
+  <h3 class="method__name">discoverCommandsGenerated</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(async) </span>discoverCommandsGenerated<span class="function__parameters">(<span class="function__parameter"><span class="function__parameter">startValue</span></span><span class="function__signature-attributes">opt</span>, <span class="function__parameter"><span class="function__parameter">maxResults</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;number>></span>
+    
   </span>
-
   
 
+  
+  
 
-
-  <div class="description">
-    <p>Command which requests the remote cluster to report its generated commands. Generated
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Command which requests the remote cluster to report its generated commands. Generated
 commands are commands which may be sent by the remote cluster.</p>
 <p>TODO: handle the case where <code>lastResponse===false</code>. It might be possible that there are
 more commands to be reported than can be transmitted in one report (in practice very
@@ -1197,217 +977,197 @@ in a ZigBee cluster or 1 to discover manufacturer-specific commands in either a 
 a manufacturer-specific cluster. A manufacturer ID in this field of 0xffff (wildcard) will
 discover any manufacture- specific
 commands.</p>
-  </div>
+    </div>
+    
 
+    
 
+    
 
+    
 
+    
+    <section class="method__section trim">
+      <h4>Parameters</h4>
+      
 
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
+<figure class="table-container trim">
+  <table class="params">
+    <thead>
     <tr>
       
-        <th>Name</th>
+      <th>Name</th>
       
 
       <th>Type</th>
 
       
-        <th>Attributes</th>
+      <th>Attributes</th>
       
 
       
-        <th>Default</th>
+      <th>Default</th>
       
 
       <th class="last">Description</th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>startValue</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      number
-    </span>
-
+    <tbody>
     
 
+    <tr>
+      
+      <td class="name"><code>startValue</code></td>
+      
 
-          
-        </td>
+      <td class="type">
+        
+        
+<span class="param-type">number</span>
+
 
         
-          <td class="attributes">
-            
-              &lt;optional><br>
-            
-
-            
-
-            
-          </td>
-        
-
-        
-          <td class="default">
-            
-              0
-            
-          </td>
-        
-
-        <td class="description last">
-          
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
-          <td class="name"><code>maxResults</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      number
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-          <td class="attributes">
-            
-              &lt;optional><br>
-            
-
-            
-
-            
-          </td>
-        
-
-        
-          <td class="default">
-            
-              250
-            
-          </td>
-        
-
-        <td class="description last">
-          
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line338">line 338</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
+      </td>
 
       
+      <td class="attributes">
+        
+        &lt;optional><br>
         
 
+        
 
+        
+      </td>
+      
+
+      
+      <td class="default">
+        
+        0
+        
+      </td>
+      
+
+      <td class="description last trim">
+        
+      </td>
+    </tr>
+
+    
+
+    <tr>
+      
+      <td class="name"><code>maxResults</code></td>
+      
+
+      <td class="type">
+        
+        
+<span class="param-type">number</span>
+
+
+        
+      </td>
+
+      
+      <td class="attributes">
+        
+        &lt;optional><br>
+        
+
+        
+
+        
+      </td>
+      
+
+      
+      <td class="default">
+        
+        250
+        
+      </td>
+      
+
+      <td class="description last trim">
+        
+      </td>
+    </tr>
+
+    
+    </tbody>
+  </table>
+</figure>
+    </section>
+    
+
+    
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Returns</h4>
+      
+      
+
+<div class="text-preset-small">
+  
+<span class="param-type">Promise.&lt;Array.&lt;number>></span>
+
+
+</div>
+
+    </section>
+    
+
+    
+
+    
+  </div>
   
 
-  <span class='name-container'>
-    <a class="link-icon" href="#discoverCommandsReceived">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="discoverCommandsReceived">
-      <span class="type-signature">(async) </span>discoverCommandsReceived<span class="signature">(startValue<span class="signature-attributes">opt</span>, maxResults<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;Array.&lt;number>>}</span>
-    </h4>
+</section>
+
+      
+      
+
+
+<section id="discoverCommandsReceived" class="method trim component">
+  
+
+  
+  <h3 class="method__name">discoverCommandsReceived</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(async) </span>discoverCommandsReceived<span class="function__parameters">(<span class="function__parameter"><span class="function__parameter">startValue</span></span><span class="function__signature-attributes">opt</span>, <span class="function__parameter"><span class="function__parameter">maxResults</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;number>></span>
+    
   </span>
-
   
 
+  
+  
 
-
-  <div class="description">
-    <p>Command which requests the remote cluster to report its received commands. Received
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Command which requests the remote cluster to report its received commands. Received
 commands are commands which may be received by the remote cluster.</p>
 <p>TODO: handle the case where <code>lastResponse===false</code>. It might be possible that there are
 more commands to be reported than can be transmitted in one report (in practice very
@@ -1417,396 +1177,368 @@ starting from the index where the previous invocation stopped (<code>maxResults<
 in a ZigBee cluster or 1 to discover manufacturer-specific commands in either a standard or
 a manufacturer-specific cluster. A manufacturer ID in this field of 0xffff (wildcard) will
 discover any manufacture- specific commands.</p>
-  </div>
+    </div>
+    
 
+    
 
+    
 
+    
 
+    
+    <section class="method__section trim">
+      <h4>Parameters</h4>
+      
 
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
+<figure class="table-container trim">
+  <table class="params">
+    <thead>
     <tr>
       
-        <th>Name</th>
+      <th>Name</th>
       
 
       <th>Type</th>
 
       
-        <th>Attributes</th>
+      <th>Attributes</th>
       
 
       
-        <th>Default</th>
+      <th>Default</th>
       
 
       <th class="last">Description</th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>startValue</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      number
-    </span>
-
+    <tbody>
     
 
+    <tr>
+      
+      <td class="name"><code>startValue</code></td>
+      
 
-          
-        </td>
+      <td class="type">
+        
+        
+<span class="param-type">number</span>
+
 
         
-          <td class="attributes">
-            
-              &lt;optional><br>
-            
-
-            
-
-            
-          </td>
-        
-
-        
-          <td class="default">
-            
-              0
-            
-          </td>
-        
-
-        <td class="description last">
-          
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
-          <td class="name"><code>maxResults</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      number
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-          <td class="attributes">
-            
-              &lt;optional><br>
-            
-
-            
-
-            
-          </td>
-        
-
-        
-          <td class="default">
-            
-              250
-            
-          </td>
-        
-
-        <td class="description last">
-          
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line372">line 372</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
+      </td>
 
       
+      <td class="attributes">
+        
+        &lt;optional><br>
         
 
+        
 
+        
+      </td>
+      
+
+      
+      <td class="default">
+        
+        0
+        
+      </td>
+      
+
+      <td class="description last trim">
+        
+      </td>
+    </tr>
+
+    
+
+    <tr>
+      
+      <td class="name"><code>maxResults</code></td>
+      
+
+      <td class="type">
+        
+        
+<span class="param-type">number</span>
+
+
+        
+      </td>
+
+      
+      <td class="attributes">
+        
+        &lt;optional><br>
+        
+
+        
+
+        
+      </td>
+      
+
+      
+      <td class="default">
+        
+        250
+        
+      </td>
+      
+
+      <td class="description last trim">
+        
+      </td>
+    </tr>
+
+    
+    </tbody>
+  </table>
+</figure>
+    </section>
+    
+
+    
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Returns</h4>
+      
+      
+
+<div class="text-preset-small">
+  
+<span class="param-type">Promise.&lt;Array.&lt;number>></span>
+
+
+</div>
+
+    </section>
+    
+
+    
+
+    
+  </div>
   
 
-  <span class='name-container'>
-    <a class="link-icon" href="#readAttributes">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="readAttributes">
-      <span class="type-signature">(async) </span>readAttributes<span class="signature">(&hellip;attributeNames)</span><span class="type-signature"> &rarr; {Promise.&lt;{}>}</span>
-    </h4>
+</section>
+
+      
+      
+
+
+<section id="readAttributes" class="method trim component">
+  
+
+  
+  <h3 class="method__name">readAttributes</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(async) </span>readAttributes<span class="function__parameters">(&hellip;<span class="function__parameter">attributeNames</span>)</span><span class="function__type-signature">:  Promise.&lt;{}></span>
+    
   </span>
-
   
 
+  
+  
 
-
-  <div class="description">
-    <p>Command which reads a given set of attributes from the remote cluster.
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Command which reads a given set of attributes from the remote cluster.
 Note: do not mix regular and manufacturer specific attributes.</p>
-  </div>
+    </div>
+    
 
+    
 
+    
 
+    
 
+    
+    <section class="method__section trim">
+      <h4>Parameters</h4>
+      
 
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
+<figure class="table-container trim">
+  <table class="params">
+    <thead>
     <tr>
       
-        <th>Name</th>
+      <th>Name</th>
       
 
       <th>Type</th>
 
       
-        <th>Attributes</th>
+      <th>Attributes</th>
       
 
       
 
       <th class="last">Description</th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>attributeNames</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      Array.&lt;string>
-    </span>
-
+    <tbody>
     
 
+    <tr>
+      
+      <td class="name"><code>attributeNames</code></td>
+      
 
-          
-        </td>
+      <td class="type">
+        
+        
+<span class="param-type">Array.&lt;string></span>
+
 
         
-          <td class="attributes">
-            
-
-            
-
-            
-              &lt;repeatable><br>
-            
-          </td>
-        
-
-        
-
-        <td class="description last">
-          
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line394">line 394</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
+      </td>
 
       
+      <td class="attributes">
         
 
+        
 
+        
+        &lt;repeatable><br>
+        
+      </td>
+      
+
+      
+
+      <td class="description last trim">
+        
+      </td>
+    </tr>
+
+    
+    </tbody>
+  </table>
+</figure>
+    </section>
+    
+
+    
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Returns</h4>
+      
+      
+  <ul>
+<li>Object with attribute values (e.g. <code>{ onOff: true }</code>)</li>
+</ul>
+
+
+<div class="text-preset-small">
+  
+<span class="param-type">Promise.&lt;{}></span>
+
+
+</div>
+
+    </section>
+    
+
+    
+
+    
+  </div>
   
 
-  <span class='name-container'>
-    <a class="link-icon" href="#readReportingConfiguration">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="readReportingConfiguration">
-      <span class="type-signature">(async) </span>readReportingConfiguration<span class="signature">(attributes)</span><span class="type-signature"> &rarr; {Promise.&lt;Array.&lt;<a href="global.html#ReadReportingConfiguration">ReadReportingConfiguration</a>>>}</span>
-    </h4>
+</section>
+
+      
+      
+
+
+<section id="readReportingConfiguration" class="method trim component">
+  
+
+  
+  <h3 class="method__name">readReportingConfiguration</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(async) </span>readReportingConfiguration<span class="function__parameters">(<span class="function__parameter">attributes</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;<a href="global.html#ReadReportingConfiguration">ReadReportingConfiguration</a>>></span>
+    
   </span>
-
   
 
+  
+  
 
-
-  <div class="description">
-    <p>Command which retrieves the reporting configurations for the given <code>attributes</code> from the
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Command which retrieves the reporting configurations for the given <code>attributes</code> from the
 remote cluster. Currently this only takes the 'reported' into account, this represents the
 reports the remote cluster would sent out, instead of receive (which is likely the most
 interesting).
 Note: do not mix regular and manufacturer specific attributes.</p>
-  </div>
+    </div>
+    
 
+    
 
+    
 
+    
 
+    
+    <section class="method__section trim">
+      <h4>Parameters</h4>
+      
 
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
+<figure class="table-container trim">
+  <table class="params">
+    <thead>
     <tr>
       
-        <th>Name</th>
+      <th>Name</th>
       
 
       <th>Type</th>
@@ -1817,143 +1549,132 @@ Note: do not mix regular and manufacturer specific attributes.</p>
 
       <th class="last">Description</th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>attributes</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      Array
-    </span>
-
+    <tbody>
     
 
+    <tr>
+      
+      <td class="name"><code>attributes</code></td>
+      
 
-          
-        </td>
+      <td class="type">
+        
+        
+<span class="param-type">Array</span>
+
 
         
-
-        
-
-        <td class="description last">
-          <p>Array with number/strings (either attribute id, or attribute name).</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line544">line 544</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
+      </td>
 
       
+
+      
+
+      <td class="description last trim"><p>Array with number/strings (either attribute id, or attribute name).</p>
         
+      </td>
+    </tr>
+
+    
+    </tbody>
+  </table>
+</figure>
+    </section>
+    
+
+    
 
 
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Returns</h4>
+      
+      
+  <ul>
+<li>Returns array with
+ReadReportingConfiguration objects per attribute.</li>
+</ul>
+
+
+<div class="text-preset-small">
+  
+<span class="param-type">Promise.&lt;Array.&lt;<a href="global.html#ReadReportingConfiguration">ReadReportingConfiguration</a>>></span>
+
+
+</div>
+
+    </section>
+    
+
+    
+
+    
+  </div>
   
 
-  <span class='name-container'>
-    <a class="link-icon" href="#writeAttributes">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="writeAttributes">
-      <span class="type-signature">(async) </span>writeAttributes<span class="signature">(attributes)</span><span class="type-signature"> &rarr; {Promise.&lt;(*|{attributes: *})>}</span>
-    </h4>
+</section>
+
+      
+      
+
+
+<section id="writeAttributes" class="method trim component">
+  
+
+  
+  <h3 class="method__name">writeAttributes</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(async) </span>writeAttributes<span class="function__parameters">(<span class="function__parameter">attributes</span>)</span><span class="function__type-signature">:  Promise.&lt;(*|{attributes: *})></span>
+    
   </span>
-
   
 
+  
+  
 
-
-  <div class="description">
-    <p>Command which writes a given set of attribute key-value pairs to the remote cluster.
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Command which writes a given set of attribute key-value pairs to the remote cluster.
 Note: do not mix regular and manufacturer specific attributes.</p>
-  </div>
+    </div>
+    
 
+    
 
+    
 
+    
 
+    
+    <section class="method__section trim">
+      <h4>Parameters</h4>
+      
 
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
+<figure class="table-container trim">
+  <table class="params">
+    <thead>
     <tr>
       
-        <th>Name</th>
+      <th>Name</th>
       
 
       <th>Type</th>
@@ -1964,127 +1685,200 @@ Note: do not mix regular and manufacturer specific attributes.</p>
 
       <th class="last">Description</th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>attributes</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      object
-    </span>
-
+    <tbody>
     
 
+    <tr>
+      
+      <td class="name"><code>attributes</code></td>
+      
 
-          
-        </td>
+      <td class="type">
+        
+        
+<span class="param-type">object</span>
+
 
         
-
-        
-
-        <td class="description last">
-          <p>Object with attribute names as keys and their values (e.g. <code>{ onOff: true, fakeAttributeName: 10 }</code>.</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="lib_Cluster.js.html">lib/Cluster.js</a>, <a href="lib_Cluster.js.html#line442">line 442</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
+      </td>
 
       
+
+      
+
+      <td class="description last trim"><p>Object with attribute names as keys and their values (e.g. <code>{ onOff: true, fakeAttributeName: 10 }</code>.</p>
+        
+      </td>
+    </tr>
+
+    
+    </tbody>
+  </table>
+</figure>
+    </section>
+    
+
+    
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Returns</h4>
+      
+      
+
+<div class="text-preset-small">
+  
+<span class="param-type">Promise.&lt;(*|{attributes: *})></span>
+
+
+</div>
+
+    </section>
+    
+
+    
+
+    
+  </div>
+  
+
+</section>
+
+      
+    </section>
     
 
     
 
     
   </article>
+
 </section>
+        </div>
+        <div class="main__index">
+          
+<nav class="toc trim">
+  <h4 class="toc__title font-weight-bold">Table of Contents</h4>
 
+  <ul class="toc__list">
+    <li class="toc__item"><a class="toc__link" href="#introduction">Introduction</a></li>
 
+    
+    <li class="toc__item"><a class="toc__link" href="#section-constructor">Constructor</a></li>
+    
 
+    
+    <li class="toc__item">
+      <a class="toc__link" href="#section-members">Properties</a>
+      <ul class="toc__list toc__list--lvl2">
+        
+        <li class="toc__item">
+          <a class="toc__link" title="logId" href="#logId">logId</a>
+        </li>
+        
+      </ul>
+    </li>
+    
 
+    
+
+    
+    <li class="toc__item">
+      <a class="toc__link" href="#section-methods">Methods</a>
+      <ul class="toc__list toc__list--lvl2">
+        
+        <li class="toc__item">
+          <a class="toc__link" title="addCluster" href="#addCluster">addCluster</a>
+        </li>
+        
+        <li class="toc__item">
+          <a class="toc__link" title="getCluster" href="#getCluster">getCluster</a>
+        </li>
+        
+        <li class="toc__item">
+          <a class="toc__link" title="removeCluster" href="#removeCluster">removeCluster</a>
+        </li>
+        
+        <li class="toc__item">
+          <a class="toc__link" title="configureReporting" href="#configureReporting">configureReporting</a>
+        </li>
+        
+        <li class="toc__item">
+          <a class="toc__link" title="discoverAttributes" href="#discoverAttributes">discoverAttributes</a>
+        </li>
+        
+        <li class="toc__item">
+          <a class="toc__link" title="discoverAttributesExtended" href="#discoverAttributesExtended">discoverAttributesExtended</a>
+        </li>
+        
+        <li class="toc__item">
+          <a class="toc__link" title="discoverCommandsGenerated" href="#discoverCommandsGenerated">discoverCommandsGenerated</a>
+        </li>
+        
+        <li class="toc__item">
+          <a class="toc__link" title="discoverCommandsReceived" href="#discoverCommandsReceived">discoverCommandsReceived</a>
+        </li>
+        
+        <li class="toc__item">
+          <a class="toc__link" title="readAttributes" href="#readAttributes">readAttributes</a>
+        </li>
+        
+        <li class="toc__item">
+          <a class="toc__link" title="readReportingConfiguration" href="#readReportingConfiguration">readReportingConfiguration</a>
+        </li>
+        
+        <li class="toc__item">
+          <a class="toc__link" title="writeAttributes" href="#writeAttributes">writeAttributes</a>
+        </li>
+        
+      </ul>
+    </li>
+    
+
+    
+
+    
+  </ul>
+
+</nav>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <br class="clear">
-
-  <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
-  </footer>
-
-  <script src="scripts/linenumber.js"></script>
-  <script src="scripts/pagelocation.js"></script>
-
   
+
+
+
+  </main>
+</div>
+
+<script src="scripts/ready.js"></script>
+<script src="scripts/navigation.js"></script>
+<script src="scripts/toc.js"></script>
+
+<link type="text/css" rel="stylesheet" href="styles/atom-one-light.css">
+<script src="scripts/highlight.min.js"></script>
+<!--<script src="scripts/linenumber.js"></script>-->
+
+<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>
 
 </body>
 </html>
