@@ -1,19 +1,23 @@
 {
-  "plugins": [
-    "plugins/markdown"
-  ],
   "source": {
-    "include": [
-      "../README.md",
-      "../lib",
-      "../index.js"
-    ]
-  },
-  "templates": {
-    "referenceTitle": "documentation zigbee-clusters"
+    "include": ["./lib", "./index.js"]
   },
   "opts": {
-    "destination": "../build/docs",
-    "template": "../node_modules/braintree-jsdoc-template"
+    "mainpagetitle": "Zigbee Clusters",
+    "template": "./node_modules/homey-jsdoc-template",
+    "readme": "./README.md",
+    "destination": "./build"
+  },
+  "plugins": [
+    "jsdoc-ts-utils",
+    "plugins/markdown"
+  ],
+  "templates": {
+    "default": {
+      "outputSourceFiles": false
+    }
+  },
+  "tsUtils": {
+    "typeScriptUtilityTypes": false
   }
 }
