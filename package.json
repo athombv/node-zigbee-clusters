@@ -30,15 +30,15 @@
   },
   "homepage": "https://github.com/athombv/node-zigbee-clusters#readme",
   "devDependencies": {
-    "homey-jsdoc-template": "github:athombv/homey-jsdoc-template#1.1",
     "concurrently": "^5.2.0",
     "eslint": "^6.8.0",
     "eslint-config-athom": "^2.1.0",
+    "homey-jsdoc-template": "github:athombv/homey-jsdoc-template#1.1.2",
     "jsdoc": "^3.6.7",
     "jsdoc-ts-utils": "^2.0.0",
-    "watch": "^1.0.2",
     "mocha": "^7.2.0",
-    "serve": "^11.3.1"
+    "serve": "^11.3.1",
+    "watch": "^1.0.2"
   },
   "dependencies": {
     "@athombv/data-types": "^1.0.4",
