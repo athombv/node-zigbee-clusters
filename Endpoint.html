@@ -4,20 +4,75 @@
   <meta charset="utf-8">
   <title>Endpoint - Zigbee Clusters</title>
 
-  <meta property="og:image" content="https://etc.athom.com/logo/white/256.png" />
-  <link rel="icon" href="https://etc.athom.com/logo/transparent/128.png" />
-  <link rel="icon" type="image/png" href="https://etc.athom.com/logo/transparent/128.png" />
+  <meta property="og:image" content="https://etc.athom.com/logo/white/256.png"/>
+  <link rel="icon" href="https://etc.athom.com/logo/transparent/128.png"/>
+  <link rel="icon" type="image/png" href="https://etc.athom.com/logo/transparent/128.png"/>
   <link rel="preload" as="image" href="images/logo.png">
   <link rel="preload" href="styles/homey.min.css" as="style">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link rel="preconnect" href="styles/atom-one-light.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Roboto:wght@100;300;400;500;700&display=swap"
-        rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Roboto:wght@100;300;400;500;700&display=swap"
+    rel="stylesheet">
   <link type="text/css" rel="stylesheet" href="styles/homey.min.css">
+
+  <!-- preload javascript -->
+  <link rel="preload" as="script" href="scripts/ready.js">
+  <link rel="preload" as="script" href="scripts/navigation.js">
+  <link rel="preload" as="script" href="scripts/toc.js">
+  <link rel="preload" as="script" href="scripts/table.js">
+  <link rel="preload" as="script" href="scripts/hash-link.js">
+  <link rel="preload" as="script" href="scripts/docs-nav.js">
 </head>
 
 <body>
 <div class="container">
+  <div class="container__docs-nav">
+    <div class="docs-nav">
+      <button data-docs-nav-toggle class="docs-nav__button" title="All documentation"><span
+          class="docs-nav__button-icon --mask"></span></button>
+      <nav data-docs-nav-menu class="docs-nav__menu component">
+        <div class="docs-nav__banner trim">
+          <h2>Homey Developers</h2>
+        </div>
+        <div class="docs-nav__columns">
+          <div class="docs-nav__column trim">
+            <h3>Homey Apps SDK</h3>
+            <ul class="docs-nav__list">
+              <li class="docs-nav__item"><a target="_blank" href="https://apps.developer.homey.app/">Documentation</a></li>
+              <li class="docs-nav__item"><a target="_blank" href="https://apps-sdk-v3.developer.homey.app/">Reference</a></li>
+            </ul>
+            <h3>Homey Web API</h3>
+            <ul class="docs-nav__list">
+              <li class="docs-nav__item"><a target="_blank" href="https://api.developer.homey.app/">Documentation</a></li>
+              <li class="docs-nav__item"><a target="_blank" href="https://athombv.github.io/node-homey-api/">Reference</a></li>
+            </ul>
+            <h3>Tools</h3>
+            <ul class="docs-nav__list">
+              <li class="docs-nav__item"><a target="_blank" href="https://tools.developer.homey.app/">Developer Tools</a></li>
+            </ul>
+          </div>
+          <div class="docs-nav__column trim">
+            <h3>Node.js Modules</h3>
+            <ul class="docs-nav__list">
+              <li class="docs-nav__item"><a target="_blank" href="https://athombv.github.io/node-homey-zigbeedriver/">Homey
+                  ZigbeeDriver</a>
+              </li>
+              <li class="docs-nav__item"><a target="_blank" href="https://athombv.github.io/node-homey-zwavedriver/">Homey
+                  ZWaveDriver</a>
+              </li>
+              <li class="docs-nav__item"><a target="_blank" href="https://athombv.github.io/node-homey-rfdriver/">Homey RFDriver</a>
+              </li>
+              <li class="docs-nav__item"><a target="_blank" href="https://athombv.github.io/node-homey-log/">Homey Log</a></li>
+              <li class="docs-nav__item"><a target="_blank" href="https://athombv.github.io/node-zigbee-clusters/">Zigbee Clusters</a>
+              </li>
+              <li class="docs-nav__item"><a target="_blank" href="https://athombv.github.io/node-homey-oauth2app/">Homey OAuth2</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </div>
   <nav class="navigation container__navigation component">
     <header class="navigation__header">
                 <div class="navigation__logo"><a href="index.html"><img class="display-block" src="images/logo.png" width="40" height="40" alt="Homey"></a></div>
@@ -26,7 +81,7 @@
              </header><div class="navigation__content" data-navigation-target><div class="navigation__search search">
             <input title="filter" placeholder="Filter..." data-navigation-search class="search__input" type="search">
             <button data-navigation-search-reset class="search__reset --mask" type="button" title="Reset"></button>
-           </div><div data-navigation-scroll class="navigation__scroll scroll trim"><div class="navigation__menu trim"><nav class="nav-group"><h3 class="nav-group__title">Classes</h3><ul class="nav-group__list"><li data-lvl="0" data-search-key="boundcluster" class="nav-group__item"><a href="BoundCluster.html"> BoundCluster</a></li><li data-lvl="0" data-search-key="cluster" class="nav-group__item"><a href="Cluster.html"> Cluster</a></li><li data-lvl="0" data-search-key="endpoint" class="nav-group__item"><a href="Endpoint.html"> Endpoint</a></li><li data-lvl="0" data-search-key="zclnode" class="nav-group__item"><a href="ZCLNode.html"> ZCLNode</a></li></ul></nav><h3 class="nav-group__title">Global</h3><ul class="nav-group__list"><li class="nav-group__item"><a href="global.html#debug">debug</a></li></ul></div></div></div>
+           </div><div data-navigation-scroll class="navigation__scroll scroll trim"><div data-navigation class="navigation__menu trim"><nav class="nav-group"><h3 class="nav-group__title">Classes</h3><ul class="nav-group__list"><li data-lvl="0" data-search-key="boundcluster" class="nav-group__item"><a href="BoundCluster.html"> BoundCluster</a></li><li data-lvl="0" data-search-key="cluster" class="nav-group__item"><a href="Cluster.html"> Cluster</a></li><li data-lvl="0" data-search-key="endpoint" class="nav-group__item"><a href="Endpoint.html"> Endpoint</a></li><li data-lvl="0" data-search-key="zclnode" class="nav-group__item"><a href="ZCLNode.html"> ZCLNode</a></li></ul></nav><h3 class="nav-group__title">Global</h3><ul class="nav-group__list"><li class="nav-group__item"><a href="global.html#debug">debug</a></li></ul></div></div></div>
   </nav>
 
   <main id="main" class="main container__main">
@@ -47,7 +102,9 @@
     <div class="flex">
       <div class="main__center">
         <div class="main__content align-baseline">
-          <section>
+          
+
+<section>
   <header>
     
       <h2 class="display-none">
@@ -77,7 +134,7 @@
   
 
   
-  <h3 class="method__name">Endpoint</h3>
+  <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#Endpoint"></a>Endpoint</h3>
   <span class="method__function function">
     
     <span class="function__type-signature"></span>new Endpoint<span class="function__parameters">(<span class="function__parameter">node</span>, <span class="function__parameter">descriptor</span>)</span><span class="function__type-signature"></span>
@@ -353,7 +410,7 @@
   
 
   
-  <h3 class="method__name">bind</h3>
+  <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#bind"></a>bind</h3>
   <span class="method__function function">
     
     <span class="function__type-signature"></span>bind<span class="function__parameters">(<span class="function__parameter">clusterName</span>, <span class="function__parameter">clusterImpl</span>)</span><span class="function__type-signature"></span>
@@ -517,7 +574,7 @@ commands on the Cluster instance.</p>
   
 
   
-  <h3 class="method__name">unbind</h3>
+  <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#unbind"></a>unbind</h3>
   <span class="method__function function">
     
     <span class="function__type-signature"></span>unbind<span class="function__parameters">(<span class="function__parameter">clusterName</span>)</span><span class="function__type-signature"></span>
@@ -647,6 +704,7 @@ bind.</p>
   </article>
 
 </section>
+
         </div>
         <div class="main__index">
           
@@ -703,6 +761,8 @@ bind.</p>
 <script src="scripts/navigation.js"></script>
 <script src="scripts/toc.js"></script>
 <script src="scripts/table.js"></script>
+<script src="scripts/hash-link.js"></script>
+<script src="scripts/docs-nav.js"></script>
 
 <link type="text/css" rel="stylesheet" href="styles/atom-one-light.css">
 <script src="scripts/highlight.min.js"></script>
