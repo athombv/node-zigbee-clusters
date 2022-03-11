@@ -276,7 +276,7 @@ zclNode.endpoints[1].bind(CLUSTER.LEVEL_CONTROL.NAME, new LevelControlBoundClust
 }));
 </code></pre>
 <h3>Implementing a custom cluster</h3>
-<p>There are cases where it is required to implement a custom cluster, for example to handle manufacturer specific cluster implementations. Often these manufacturer specific cluster implementations are extensions of existing clusters. An example is the <code>IkeaSpecificSceneCluster</code> (<a href="https://github.com/athombv/com.ikea.tradfri/tree/master/lib/IkeaSpecificSceneCluster.js">complete implementation</a>):</p>
+<p>There are cases where it is required to implement a custom cluster, for example to handle manufacturer specific cluster implementations. Often these manufacturer specific cluster implementations are extensions of existing clusters. An example is the <code>IkeaSpecificSceneCluster</code> (<a href="https://github.com/athombv/com.ikea.tradfri-example/tree/master/lib/IkeaSpecificSceneCluster.js">complete implementation</a>):</p>
 <p><code>lib/IkeaSpecificSceneCluster.js</code></p>
 <pre class="prettyprint source lang-js"><code>const { ScenesCluster, ZCLDataTypes } = require('zigbee-clusters');
 
@@ -331,7 +331,7 @@ Cluster.addCluster(IkeaSpecificSceneCluster);
 zclNode.endpoints[1].clusters['scenes'].ikeaSceneMove({mode: 0, transitionTime: 10});
 
 </code></pre>
-<p>This also works for <code>BoundClusters</code>, if a node sends commands to Homey using a custom cluster it is necessary to implement a custom <code>BoundCluster</code> and bind it to the <code>ZCLNode</code> instance. For an example check the implementation in the <code>com.ikea.tradfri</code> driver <a href="https://github.com/athombv/com.ikea.tradfri/tree/master/drivers/remote_control/device.js">remote_control</a>.</p>
+<p>This also works for <code>BoundClusters</code>, if a node sends commands to Homey using a custom cluster it is necessary to implement a custom <code>BoundCluster</code> and bind it to the <code>ZCLNode</code> instance. For an example check the implementation in the <code>com.ikea.tradfri</code> driver <a href="https://github.com/athombv/com.ikea.tradfri-example/tree/master/drivers/remote_control/device.js">remote_control</a>.</p>
 <h2>Contributing</h2>
 <p>Great if you'd like to contribute to this project, a few things to take note of before submitting a PR:</p>
 <ul>
