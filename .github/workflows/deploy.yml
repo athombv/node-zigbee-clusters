@@ -58,15 +58,17 @@ jobs:
       - name: Set up node 12 environment
         uses: actions/setup-node@v1
         with:
-          node-version: '12'
+          node-version: 16
           # Needed for publishing to npm
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: https://npm.pkg.github.com
 
       # Run `npm ci && npm run build` to re-create your local environment (make sure to commit your - package-lock.json!).
       - name: Build
         run: |
           npm ci
           npm run build
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
 
       - name: Version bump patch
         if: github.event.inputs.versionBumpType == 'patch' || contains(github.event.head_commit.message, '#patch') && !contains(github.event.head_commit.message, '#minor') && !contains(github.event.head_commit.message, '#major')
@@ -74,6 +76,8 @@ jobs:
           npm version patch
           git pull
           git push --follow-tags
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
 
       - name: Version bump minor
         if: github.event.inputs.versionBumpType == 'minor' || contains(github.event.head_commit.message, '#minor') && !contains(github.event.head_commit.message, '#major')
@@ -93,6 +97,7 @@ jobs:
       - name: Publish
         if: github.ref == 'refs/heads/production'
         run: |
+          npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
           npm publish
           VERSION="$(node -p "require('./package.json').version")"
           echo package_version=${VERSION} >> $GITHUB_ENV
@@ -103,6 +108,7 @@ jobs:
       - name: Publish to beta
         if: github.ref == 'refs/heads/testing'
         run: |
+          npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
           npm publish --tag beta
           VERSION="$(node -p "require('./package.json').version")@beta"
           echo package_version=${VERSION} >> $GITHUB_ENV
