@@ -41,7 +41,7 @@
     "watch": "^1.0.2"
   },
   "dependencies": {
-    "@athombv/data-types": "^1.0.4",
+    "@athombv/data-types": "^1.0.6",
     "debug": "^4.1.1"
   }
 }
