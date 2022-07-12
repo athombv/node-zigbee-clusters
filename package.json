@@ -9,7 +9,7 @@
     "serve": "concurrently \"serve build/\" \"npm run build:watch\"",
     "build": "jsdoc --configure ./docs/jsdoc.json",
     "build:clean": "rm -rf ./build",
-    "build:watch": "watch \"npm run build:clean && npm run build\" lib docs \"node_modules/homey-jsdoc-template\""
+    "build:watch": "watch \"npm run build:clean && npm run build\" lib docs \"node_modules/jsdoc-template\""
   },
   "repository": {
     "type": "git",
