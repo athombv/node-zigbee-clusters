@@ -27,7 +27,7 @@ jobs:
       # Configures a Node.js environment.
       - uses: actions/setup-node@v1
         with:
-          node-version: 12 # Important: use the matrix.node property when using a matrix strategy
+          node-version: 16 # Important: use the matrix.node property when using a matrix strategy
 
       # Run `npm ci` to re-create your local environment (make sure to commit your package-lock.json!).
       # Finally run `npm test` (make sure you have defined a proper test command in package.json).
