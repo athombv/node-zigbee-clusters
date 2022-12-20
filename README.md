@@ -17,7 +17,7 @@ Make sure to take a look at the API documentation: [https://athombv.github.io/no
 
 A Zigbee cluster is an abstraction on top of the Zigbee protocol which allows implementing functionality for many types of devices. A list of all available clusters can be found in the Zigbee Cluster Library Specification [section 2.2.](https://etc.athom.com/zigbee_cluster_specification.pdf). If you are familiar with Z-Wave Command Classes, Zigbee clusters are very similar.
 
-### Cluster hierachy
+### Cluster hierarchy
 
 It is important to understand the structure of a Zigbee node:
 [![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVERcbiAgQVtOb2RlXSAtLT4gQihFbmRwb2ludCAxKVxuICBBIC0tPiBEKEVuZHBvaW50IC4uLilcbiAgQiAtLT4gRShDbHVzdGVyIE9uT2ZmKVxuICBCIC0tPiBGKENsdXN0ZXIgTGV2ZWxDb250cm9sKVxuICBCIC0tPiBHKENsdXN0ZXIgLi4uKVxuICBFIC0tPiBIKENvbW1hbmQgJ3RvZ2dsZScpXG4gIEUgLS0-IEkoQ29tbWFuZCAnc2V0T24nKVxuICBFIC0tPiBKKEF0dHJpYnV0ZSAnb25PZmYnKSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggVERcbiAgQVtOb2RlXSAtLT4gQihFbmRwb2ludCAxKVxuICBBIC0tPiBEKEVuZHBvaW50IC4uLilcbiAgQiAtLT4gRShDbHVzdGVyIE9uT2ZmKVxuICBCIC0tPiBGKENsdXN0ZXIgTGV2ZWxDb250cm9sKVxuICBCIC0tPiBHKENsdXN0ZXIgLi4uKVxuICBFIC0tPiBIKENvbW1hbmQgJ3RvZ2dsZScpXG4gIEUgLS0-IEkoQ29tbWFuZCAnc2V0T24nKVxuICBFIC0tPiBKKEF0dHJpYnV0ZSAnb25PZmYnKSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
@@ -30,7 +30,7 @@ A cluster can be implemented in two ways:
 From the Zigbee Cluster Library Specification "Typically, the entity that stores the attributes of a cluster is referred to as the server of that cluster and an entity that affects or manipulates those attributes is referred to as the client of that cluster." More information on this can be found in the Zigbee Cluster Library Specification [section 2.2.2.](https://etc.athom.com/zigbee_cluster_specification.pdf).
 
 ### Bindings and bound clusters
-The concept of server/client is important for the following reason. Nodes can be receivers of commands (i.e. servers), or senders of commands (i.e. clients), and sometimes both. An example on how to send a command to a node can be found [below](#basic-communication-with-node). Receiving commands from a node requires a binding to be made from the controller to the cluster on the node, and the implementation of a `BoundCluster` to receive and handle the incoming commands. For an example on implementing a `BoundCluster` see [below](#implementing-a-bound-cluster).
+The concept of server/client is important for the following reason. Nodes can be receivers of commands (i.e. servers), or senders of commands (i.e. clients), and sometimes both. An example on how to send a command to a node can be found [below](#basic-communication-with-node). Receiving commands from a node requires a binding to be made from the controller to the cluster on the node, and the implementation of a `BoundCluster` (i.e. server cluster) to receive and handle the incoming commands. For an example on implementing a `BoundCluster` see [below](#implementing-a-bound-cluster).
 
 ## Usage
 
@@ -124,8 +124,10 @@ const COMMANDS = {
   toggle: { id: 2 },
   onWithTimedOff: {
     id: 66,
+    // Optional property that can be used to implement two commands with the same id but different directions. Both commands must have a direction property in that case. See lib/clusters/iasZone.js as example.
+    // direction: Cluster.DIRECTION_SERVER_TO_CLIENT
     args: {
-      onOffControl: ZCLDataTypes.uint8, // Use the `ZCLDataTypes` object to specifiy types
+      onOffControl: ZCLDataTypes.uint8, // Use the `ZCLDataTypes` object to specify types
       onTime: ZCLDataTypes.uint16,
       offWaitTime: ZCLDataTypes.uint16,
     },
