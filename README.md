@@ -13,6 +13,10 @@ Make sure to take a look at the API documentation: [https://athombv.github.io/no
 
 `$ npm install --save zigbee-clusters`
 
+## Release
+
+Merge to production and include `#patch`, `#minor` or `#major` in the PR/commit message. Or merge to production and run the "Deploy" workflow and provide a version bump parameter.
+
 ## About Zigbee Clusters
 
 A Zigbee cluster is an abstraction on top of the Zigbee protocol which allows implementing functionality for many types of devices. A list of all available clusters can be found in the Zigbee Cluster Library Specification [section 2.2.](https://etc.athom.com/zigbee_cluster_specification.pdf). If you are familiar with Z-Wave Command Classes, Zigbee clusters are very similar.
