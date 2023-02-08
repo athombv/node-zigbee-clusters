@@ -70,6 +70,10 @@ class MyDevice extends Homey.Device {
               // You should only use this flag if the device does not follow the
               // Zigbee specification and refuses to send a default response.
               waitForResponse: true,
+
+              // This is an optional property that allows for adjusting the response
+              // timeout (25000ms) before the command is considered rejected.
+              timeout: 10000,
             });
           });
     }
