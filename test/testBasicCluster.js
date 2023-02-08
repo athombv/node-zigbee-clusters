@@ -95,7 +95,7 @@ describe('basicCluster', function() {
 
     }());
 
-    const res = await basic.readAttributes('modelId', 'manufacturerName', 'clusterRevision', 'zclVersion', 'dateCode');
+    const res = await basic.readAttributes(['modelId', 'manufacturerName', 'clusterRevision', 'zclVersion', 'dateCode']);
     assert.equal(res.modelId, 'test', 'modelId should be test');
     assert.equal(res.manufacturerName, 'Athom', 'manufacturerName should be test');
     assert.equal(res.clusterRevision, 1, 'clusterRevision should be test');

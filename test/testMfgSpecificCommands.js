@@ -156,10 +156,10 @@ describe('manufacturer specific commands', function() {
             done();
           },
         }));
-        node.endpoints[1].clusters['scenes'].readAttributes('sceneCount');
+        node.endpoints[1].clusters['scenes'].readAttributes(['sceneCount']);
       });
       it('should throw when different manufacturerIds are found', function(done) {
-        node.endpoints[1].clusters['scenes'].readAttributes('sceneCount', 'currentScene')
+        node.endpoints[1].clusters['scenes'].readAttributes(['sceneCount', 'currentScene'])
           .catch(err => {
             assert(err instanceof Error);
             done();
@@ -173,7 +173,7 @@ describe('manufacturer specific commands', function() {
           },
         }));
 
-        node.endpoints[1].clusters['scenes'].readAttributes('currentScene', 'currentGroup');
+        node.endpoints[1].clusters['scenes'].readAttributes(['currentScene', 'currentGroup']);
       });
       it('should not set manufacturerId when zcl attribute is present', function(done) {
         node.endpoints[1].bind('scenes', new IkeaBoundCluster({
@@ -183,7 +183,7 @@ describe('manufacturer specific commands', function() {
           },
         }));
 
-        node.endpoints[1].clusters['scenes'].readAttributes('sceneValid');
+        node.endpoints[1].clusters['scenes'].readAttributes(['sceneValid']);
       });
     });
 
