@@ -11,8 +11,13 @@ type ConstructorOptions = {
   sendFrame: (endpointId: number, clusterId: number, frame: Buffer) => Promise<void>;
 };
 type ZCLNodeCluster = EventEmitter & {
-  readAttributes: (...attributeNames: string[]) => Promise<{ [attributeName: string]: any }>;
-  writeAttributes: (attributes: { [attributeName: string]: any }) => Promise<{ [attributeName: string]: { id: number, status: 'SUCCESS' | 'FAILURE' } }>;
+  readAttributes: (
+    attributeNames: string[],
+    opts: { timeout: number }
+  ) => Promise<{ [attributeName: string]: any }>;
+  writeAttributes: (attributes: {
+    [attributeName: string]: any;
+  }) => Promise<{ [attributeName: string]: { id: number; status: "SUCCESS" | "FAILURE" } }>;
 };
 type ZCLNodeEndpoint = {
   clusters: { [clusterName: string]: ZCLNodeCluster };

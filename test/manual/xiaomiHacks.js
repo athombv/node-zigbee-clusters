@@ -93,7 +93,9 @@ Cluster.addCluster(XiaomiHackedBasicCluster);
 //     console.log('xiaomi custom state:', attributes.state1);
 // })
 
-// const {modelId, dateCode} = await node.endpoints[1].basic.readAttributes('modelId', 'dateCode');
+// const {modelId, dateCode} = await node.endpoints[1].basic.readAttributes([
+//   'modelId', 'dateCode'
+// ]);
 // node.endpoint[1].clusters.basic.configureReporting({
 // powerSource: {minInterval: 1234, maxInterval: 4321, minChange: 10}}); //enables reporting
 
