@@ -1125,7 +1125,7 @@ attribute is implemented in zigbee-clusters.</li>
   <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#discoverCommandsGenerated"></a>discoverCommandsGenerated</h3>
   <span class="method__function function">
     
-    <span class="function__type-signature">(async) </span>discoverCommandsGenerated<span class="function__parameters">(<span class="function__parameter"><span class="function__parameter">startValue</span></span><span class="function__signature-attributes">opt</span>, <span class="function__parameter"><span class="function__parameter">maxResults</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;number>></span>
+    <span class="function__type-signature">(async) </span>discoverCommandsGenerated<span class="function__parameters">(<span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;number>></span>
     
   </span>
   
@@ -1188,7 +1188,53 @@ commands.</p>
         <div class="lvl">
           
         </div>
-        <code>startValue</code>
+        <code>opts=</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">object</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+        
+        
+
+      </td>
+
+
+      <td class="description last trim">
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-1"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts.startValue</code>
         
       </td>
       
@@ -1228,7 +1274,7 @@ commands.</p>
 
     
 
-    <tr data-table-lvl="0" data-table-row-id="0-1"
+    <tr data-table-lvl="0" data-table-row-id="0-2"
         data-table-row-parent="0" >
       
       <td class="name position-relative">
@@ -1236,7 +1282,7 @@ commands.</p>
         <div class="lvl">
           
         </div>
-        <code>maxResults</code>
+        <code>opts.maxResults</code>
         
       </td>
       
@@ -1336,7 +1382,7 @@ commands.</p>
   <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#discoverCommandsReceived"></a>discoverCommandsReceived</h3>
   <span class="method__function function">
     
-    <span class="function__type-signature">(async) </span>discoverCommandsReceived<span class="function__parameters">(<span class="function__parameter"><span class="function__parameter">startValue</span></span><span class="function__signature-attributes">opt</span>, <span class="function__parameter"><span class="function__parameter">maxResults</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;number>></span>
+    <span class="function__type-signature">(async) </span>discoverCommandsReceived<span class="function__parameters">(<span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;number>></span>
     
   </span>
   
@@ -1398,7 +1444,53 @@ discover any manufacture- specific commands.</p>
         <div class="lvl">
           
         </div>
-        <code>startValue</code>
+        <code>opts=</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">object</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+        
+        
+
+      </td>
+
+
+      <td class="description last trim">
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-1"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts.startValue</code>
         
       </td>
       
@@ -1438,7 +1530,7 @@ discover any manufacture- specific commands.</p>
 
     
 
-    <tr data-table-lvl="0" data-table-row-id="0-1"
+    <tr data-table-lvl="0" data-table-row-id="0-2"
         data-table-row-parent="0" >
       
       <td class="name position-relative">
@@ -1446,7 +1538,7 @@ discover any manufacture- specific commands.</p>
         <div class="lvl">
           
         </div>
-        <code>maxResults</code>
+        <code>opts.maxResults</code>
         
       </td>
       
@@ -1471,7 +1563,7 @@ discover any manufacture- specific commands.</p>
 
         
         
-        default:<code>250</code>
+        default:<code>255</code>
         
         
 
@@ -1546,7 +1638,7 @@ discover any manufacture- specific commands.</p>
   <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#readAttributes"></a>readAttributes</h3>
   <span class="method__function function">
     
-    <span class="function__type-signature">(async) </span>readAttributes<span class="function__parameters">(<span class="function__parameter">attributeNames</span>, <span class="function__parameter">opts</span>)</span><span class="function__type-signature">:  Promise.&lt;{}></span>
+    <span class="function__type-signature">(async) </span>readAttributes<span class="function__parameters">(<span class="function__parameter">attributeNames</span>, <span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;{}></span>
     
   </span>
   
@@ -1614,6 +1706,12 @@ Note: do not mix regular and manufacturer specific attributes.</p>
         
 
         
+        
+
+        
+
+        
+        
 
         
 
@@ -1636,7 +1734,7 @@ Note: do not mix regular and manufacturer specific attributes.</p>
         <div class="lvl">
           
         </div>
-        <code>opts</code>
+        <code>opts=</code>
         
       </td>
       
@@ -1649,6 +1747,14 @@ Note: do not mix regular and manufacturer specific attributes.</p>
 
         
 
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
         
 
         
