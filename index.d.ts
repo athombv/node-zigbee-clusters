@@ -24,7 +24,7 @@ type ZCLNodeEndpoint = {
 };
 
 interface ZCLNode {
-  endpoints: { [endpointId: number]: ZCLNodeEndpoint };
+  endpoints: { [endpointId: number | string]: ZCLNodeEndpoint };
   handleFrame: (
     endpointId: number,
     clusterId: number,
