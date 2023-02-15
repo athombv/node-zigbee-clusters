@@ -69,7 +69,7 @@ type ZCLNodeCluster = EventEmitter & {
    * Note: do not mix regular and manufacturer specific attributes.
    * @param {string[]} attributeNames
    * @param {{timeout: number}} [opts=]
-   * @returns {Promise<{[key: string]: unknown}>} - Object with values (e.g. `{ onOff: true }`)
+   * @returns {Promise<Object.<string, unknown>>} - Object with values (e.g. `{ onOff: true }`)
    */
   readAttributes(
     attributeNames: string[],
@@ -77,7 +77,7 @@ type ZCLNodeCluster = EventEmitter & {
       timeout: number;
     }
   ): Promise<{
-    [key: string]: unknown;
+    [x: string]: unknown;
   }>;
   /**
    * Command which writes a given set of attribute key-value pairs to the remote cluster.
