@@ -10,7 +10,7 @@ type ConstructorOptions = {
   endpointDescriptors: EndpointDescriptor[];
   sendFrame: (endpointId: number, clusterId: number, frame: Buffer) => Promise<void>;
 };
-type ZCLNodeCluster = EventEmitter & {
+interface ZCLNodeCluster extends EventEmitter {
   /**
    * Command which requests the remote cluster to report its generated commands. Generated
    * commands are commands which may be sent by the remote cluster.
@@ -171,10 +171,114 @@ type ZCLNodeCluster = EventEmitter & {
    * attribute is implemented in zigbee-clusters.
    */
   discoverAttributesExtended(): Promise<any[]>;
-};
+}
+
+interface OnOffCluster extends ZCLNodeCluster {
+  setOn(): Promise<void>;
+  setOff(): Promise<void>;
+  toggle(): Promise<void>;
+  offWithEffect({
+    effectIdentifier,
+    effectVariant,
+  }: {
+    effectIdentifier: number;
+    effectVariant: number;
+  }): Promise<void>;
+  onWithRecallGlobalScene(): Promise<void>;
+  onWithTimedOff({
+    onOffControl,
+    onTime,
+    offWaitTime,
+  }: {
+    onOffControl: number;
+    onTime: number;
+    offWaitTime: number;
+  }): Promise<void>;
+}
+
+interface LevelControlCluster extends ZCLNodeCluster {
+  moveToLevel({ level, transitionTime }: { level: number; transitionTime: number }): Promise<void>;
+  move({ moveMode, rate }: { moveMode: "up" | "down"; rate: number }): Promise<void>;
+  step({
+    moveMode,
+    stepSize,
+    transitionTime,
+  }: {
+    moveMode: "up" | "down";
+    stepSize: number;
+    transitionTime: number;
+  }): Promise<void>;
+  moveToLevelWithOnOff({
+    level,
+    transitionTime,
+  }: {
+    level: number;
+    transitionTime: number;
+  }): Promise<void>;
+  moveWithOnOff({ moveMode, rate }: { moveMode: "up" | "down"; rate: number }): Promise<void>;
+  stepWithOnOff({
+    moveMode,
+    stepSize,
+    transitionTime,
+  }: {
+    moveMode: "up" | "down";
+    stepSize: number;
+    transitionTime: number;
+  }): Promise<void>;
+  stopWithOnOff(): Promise<void>;
+}
+
+interface ColorControlCluster extends ZCLNodeCluster {
+  moveToHue({
+    hue,
+    direction,
+    transitionTime,
+  }: {
+    hue: number;
+    direction: "shortestDistance" | "longestDistance" | "up" | "down";
+    transitionTime: number;
+  }): Promise<void>;
+  moveToSaturation({
+    saturation,
+    transitionTime,
+  }: {
+    saturation: number;
+    transitionTime: number;
+  }): Promise<void>;
+  moveToHueAndSaturation({
+    hue,
+    saturation,
+    transitionTime,
+  }: {
+    hue: number;
+    saturation: number;
+    transitionTime: number;
+  }): Promise<void>;
+  moveToColor({
+    colorX,
+    colorY,
+    transitionTime,
+  }: {
+    colorX: number;
+    colorY: number;
+    transitionTime: number;
+  }): Promise<void>;
+  moveToColorTemperature({
+    colorTemperature,
+    transitionTime,
+  }: {
+    colorTemperature: number;
+    transitionTime: number;
+  }): Promise<void>;
+}
 
 type ZCLNodeEndpoint = {
-  clusters: { [clusterName: string]: ZCLNodeCluster };
+  clusters: {
+    onOff?: OnOffCluster;
+    levelControl?: LevelControlCluster;
+    colorControl?: ColorControlCluster;
+    [clusterName: string]: ZCLNodeCluster | undefined;
+  };
 };
 
 interface ZCLNode {
@@ -195,4 +299,7 @@ declare module "zigbee-clusters" {
     [key: string]: { ID: number; NAME: string; ATTRIBUTES: any; COMMANDS: any };
   };
   export var ZCLNodeCluster;
+  export var OnOffCluster;
+  export var LevelControlCluster;
+  export var ColorControlCluster;
 }
