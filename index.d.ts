@@ -1,4 +1,4 @@
-import EventEmitter from "events";
+import * as EventEmitter from "events";
 
 type EndpointDescriptor = {
   endpointId: number;
@@ -126,7 +126,7 @@ interface ZCLNodeCluster extends EventEmitter {
       status: any;
       direction: "reported" | "received";
       attributeId: number;
-      attributeDataType?: ZCLDataType.id;
+      attributeDataType?: number;
       minInterval?: number;
       maxInterval?: number;
       minChange?: number;
