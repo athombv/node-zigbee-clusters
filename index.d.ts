@@ -272,6 +272,10 @@ interface ColorControlCluster extends ZCLNodeCluster {
   }): Promise<void>;
 }
 
+interface MeteringCluster extends ZCLNodeCluster {}
+
+interface ElectricalMeasurementCluster extends ZCLNodeCluster {}
+
 type ZCLNodeEndpoint = {
   clusters: {
     onOff?: OnOffCluster;
