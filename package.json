@@ -1,6 +1,6 @@
 {
   "name": "zigbee-clusters",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Zigbee Cluster Library for Node.js",
   "main": "index.js",
   "types": "index.d.ts",
