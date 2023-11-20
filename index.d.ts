@@ -276,6 +276,12 @@ interface MeteringCluster extends ZCLNodeCluster {}
 
 interface ElectricalMeasurementCluster extends ZCLNodeCluster {}
 
+interface PollControlCluster extends ZCLNodeCluster {
+  fastPollStop(): Promise<void>;
+  setLongPollInterval(opts: { newLongPollInterval: number }): Promise<void>;
+  setShortPollInterval(opts: { newShortPollInterval: number }): Promise<void>;
+}
+
 type ZCLNodeEndpoint = {
   clusters: {
     onOff?: OnOffCluster;
