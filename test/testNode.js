@@ -11,11 +11,11 @@ const Endpoint = require('../lib/Endpoint');
 require('../lib/clusters/basic');
 require('../lib/clusters/onOff');
 
-debug = debug.extend('test-cluster-basic');
+debug = debug.extend('test-node');
 
 const sandbox = sinon.createSandbox();
 
-describe('basicCluster', function() {
+describe('Node', function() {
   let loopbackNode;
   let receivingNode;
   let sendingNode;
