@@ -296,4 +296,24 @@ describe('Node', function() {
     const cmds = await loopbackNode.endpoints[1].clusters['basic'].discoverCommandsReceived();
     assert(cmds.includes('factoryReset'));
   });
+
+  it('should support for attribute with 0x0000 ID', async function() {
+    class MyBoundCluster extends BoundCluster {
+
+      get zclVersion() {
+        return 80;
+      }
+
+    }
+
+    loopbackNode.endpoints[1].bind('basic', new MyBoundCluster());
+
+    try {
+      const res = await loopbackNode.endpoints[1].clusters['basic'].readAttributes(['zclVersion']);
+      console.log('readAttributes succeeded', res);
+    } catch (e) {
+      console.log('readAttributes failed', e);
+      throw e;
+    }
+  });
 });
