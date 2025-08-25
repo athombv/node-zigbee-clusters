@@ -7,6 +7,8 @@ const sinon = require('sinon');
 let { debug } = require('./util');
 const Node = require('../lib/Node');
 const BoundCluster = require('../lib/BoundCluster');
+const Cluster = require('../lib/Cluster');
+const { ZCLDataTypes } = require('../lib/zclTypes');
 const Endpoint = require('../lib/Endpoint');
 require('../lib/clusters/basic');
 require('../lib/clusters/onOff');
@@ -297,23 +299,17 @@ describe('Node', function() {
     assert(cmds.includes('factoryReset'));
   });
 
-  it('should support for attribute with 0x0000 ID', async function() {
-    class MyBoundCluster extends BoundCluster {
+  it('should support adding a Cluster with string attribute with 0x0000 ID', async function() {
+    class MyCluster extends Cluster {
 
-      get zclVersion() {
-        return 80;
+      static get ATTRIBUTES() {
+        return {
+          priceOption: { id: 0x0000, type: ZCLDataTypes.string },
+        };
       }
 
     }
 
-    loopbackNode.endpoints[1].bind('basic', new MyBoundCluster());
-
-    try {
-      const res = await loopbackNode.endpoints[1].clusters['basic'].readAttributes(['zclVersion']);
-      console.log('readAttributes succeeded', res);
-    } catch (e) {
-      console.log('readAttributes failed', e);
-      throw e;
-    }
+    Cluster.addCluster(MyCluster);
   });
 });
