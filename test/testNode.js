@@ -302,6 +302,10 @@ describe('Node', function() {
   it('should support adding a Cluster with string attribute with 0x0000 ID', async function() {
     class MyCluster extends Cluster {
 
+      static get ID() {
+        return 0x1234;
+      }
+
       static get ATTRIBUTES() {
         return {
           priceOption: { id: 0x0000, type: ZCLDataTypes.string },
