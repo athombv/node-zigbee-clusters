@@ -173,6 +173,12 @@ interface ZCLNodeCluster extends EventEmitter {
   discoverAttributesExtended(): Promise<any[]>;
 }
 
+interface BasicCluster extends ZCLNodeCluster {
+  factoryReset(): Promise<void>;
+}
+
+interface PowerConfigurationCluster extends ZCLNodeCluster {}
+
 interface OnOffCluster extends ZCLNodeCluster {
   setOn(): Promise<void>;
   setOff(): Promise<void>;
@@ -309,7 +315,9 @@ declare module "zigbee-clusters" {
     [key: string]: { ID: number; NAME: string; ATTRIBUTES: any; COMMANDS: any };
   };
   export var ZCLNodeCluster;
+  export var BasicCluster;
   export var OnOffCluster;
   export var LevelControlCluster;
   export var ColorControlCluster;
+  export var PowerConfigurationCluster;
 }
