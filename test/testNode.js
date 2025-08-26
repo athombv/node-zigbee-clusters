@@ -7,6 +7,8 @@ const sinon = require('sinon');
 let { debug } = require('./util');
 const Node = require('../lib/Node');
 const BoundCluster = require('../lib/BoundCluster');
+const Cluster = require('../lib/Cluster');
+const { ZCLDataTypes } = require('../lib/zclTypes');
 const Endpoint = require('../lib/Endpoint');
 require('../lib/clusters/basic');
 require('../lib/clusters/onOff');
@@ -295,5 +297,23 @@ describe('Node', function() {
     }());
     const cmds = await loopbackNode.endpoints[1].clusters['basic'].discoverCommandsReceived();
     assert(cmds.includes('factoryReset'));
+  });
+
+  it('should support adding a Cluster with string attribute with 0x0000 ID', async function() {
+    class MyCluster extends Cluster {
+
+      static get ID() {
+        return 0x1234;
+      }
+
+      static get ATTRIBUTES() {
+        return {
+          priceOption: { id: 0x0000, type: ZCLDataTypes.string },
+        };
+      }
+
+    }
+
+    Cluster.addCluster(MyCluster);
   });
 });
