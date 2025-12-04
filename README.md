@@ -87,9 +87,10 @@ class MyDevice extends Homey.Device {
           // Zigbee specification and refuses to send a default response.
           waitForResponse: true,
 
-          // This is an optional property that allows for adjusting the response
-          // timeout (25000ms) before the command is considered rejected.
-          timeout: 10000,
+          // This is an optional property that allows for adjusting the default response
+          // timeout (10000ms) before the command is considered rejected.
+          // The timeout starts after sending the frame and receiving a low-level ack.
+          timeout: 5000,
         }
       );
     });
