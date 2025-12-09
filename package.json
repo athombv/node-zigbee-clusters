@@ -34,7 +34,7 @@
     "@athombv/jsdoc-template": "^1.6.1",
     "@types/sinon": "^17.0.3",
     "concurrently": "^5.2.0",
-    "eslint": "^6.8.0",
+    "eslint": "^9.39.1",
     "eslint-config-athom": "^2.1.0",
     "jsdoc": "^3.6.7",
     "jsdoc-ts-utils": "^2.0.0",
