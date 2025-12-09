@@ -802,7 +802,7 @@ zclNode.endpoints[1].clusters['myClusterName'].doSomething();</code></pre>
   <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#configureReporting"></a>configureReporting</h3>
   <span class="method__function function">
     
-    <span class="function__type-signature">(async) </span>configureReporting<span class="function__parameters">(<span class="function__parameter">attributes</span>)</span><span class="function__type-signature">:  Promise.&lt;void></span>
+    <span class="function__type-signature">(async) </span>configureReporting<span class="function__parameters">(<span class="function__parameter">attributes</span>, <span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;void></span>
     
   </span>
   
@@ -870,6 +870,12 @@ Note: do not mix regular and manufacturer specific attributes.</p>
         
 
         
+        
+
+        
+
+        
+        
 
         
 
@@ -877,6 +883,94 @@ Note: do not mix regular and manufacturer specific attributes.</p>
 
 
       <td class="description last trim"><p>Attribute reporting configuration (e.g. <code>{ onOff: { minInterval: 0, maxInterval: 300, minChange: 1 } }</code>)</p>
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-1"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts=</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">object</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional parameters</p>
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-2"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts.timeout</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">number</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional timeout in milliseconds for waiting for response</p>
       </td>
     </tr>
 
@@ -944,7 +1038,7 @@ Note: do not mix regular and manufacturer specific attributes.</p>
   <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#discoverAttributes"></a>discoverAttributes</h3>
   <span class="method__function function">
     
-    <span class="function__type-signature">(async) </span>discoverAttributes<span class="function__parameters">()</span><span class="function__type-signature">:  Promise.&lt;Array></span>
+    <span class="function__type-signature">(async) </span>discoverAttributes<span class="function__parameters">(<span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array></span>
     
   </span>
   
@@ -964,190 +1058,6 @@ starting from the index where the previous invocation stopped (<code>maxResults<
 <p>TODO: The manufacturer specific sub-field SHALL be set to 0 to discover standard attributes
 in a ZigBee cluster or 1 to discover manufacturer specific attributes in either a standard
 or a manufacturer specific cluster.</p>
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <section class="method__section trim">
-      <h4>Returns</h4>
-      
-      
-  <ul>
-<li>Array with string or number values (depending on if the
-attribute
-is implemented in zigbee-clusters or not).</li>
-</ul>
-
-
-<div class="text-preset-small">
-  
-<span class="param-type">Promise.&lt;Array></span>
-
-
-</div>
-
-    </section>
-    
-
-    
-
-    
-  </div>
-  
-
-</section>
-
-      
-      
-
-
-<section id="discoverAttributesExtended" class="method trim component">
-  
-
-  
-  <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#discoverAttributesExtended"></a>discoverAttributesExtended</h3>
-  <span class="method__function function">
-    
-    <span class="function__type-signature">(async) </span>discoverAttributesExtended<span class="function__parameters">()</span><span class="function__type-signature">:  Promise.&lt;Array></span>
-    
-  </span>
-  
-
-  
-  
-
-  
-  <div class="method__content trim">
-    
-    <div class="method__description">
-      <p>Command which discovers the implemented attributes on the remote cluster, the difference with
-<code>discoverAttributes</code> is that this command also reports the access control field of the
-attribute (whether it is readable/writable/reportable).</p>
-<p>TODO: handle the case where <code>lastResponse===false</code>. It might be possible that there are
-more commands to be reported than can be transmitted in one report (in practice very
-unlikely though). If <code>lastResponse===false</code> invoke <code>discoverCommandsGenerated</code> again
-starting from the index where the previous invocation stopped (<code>maxResults</code>).</p>
-<p>TODO: The manufacturer-specific sub-field SHALL be set to 0 to discover standard attributes
-in a ZigBee cluster or 1 to discover manufacturer-specific attributes in either a standard
-or a manufacturer- specific cluster. A manufacturer ID in this field of 0xffff (wildcard)
-will discover any manufacture-specific attributes.</p>
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <section class="method__section trim">
-      <h4>Returns</h4>
-      
-      
-  <ul>
-<li>Returns an array with objects with attribute names as keys and
-following object as values: <code>{name: string, id: number, acl: { readable: boolean, writable: boolean, reportable: boolean } }</code>. Note that <code>name</code> is optional based on whether the
-attribute is implemented in zigbee-clusters.</li>
-</ul>
-
-
-<div class="text-preset-small">
-  
-<span class="param-type">Promise.&lt;Array></span>
-
-
-</div>
-
-    </section>
-    
-
-    
-
-    
-  </div>
-  
-
-</section>
-
-      
-      
-
-
-<section id="discoverCommandsGenerated" class="method trim component">
-  
-
-  
-  <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#discoverCommandsGenerated"></a>discoverCommandsGenerated</h3>
-  <span class="method__function function">
-    
-    <span class="function__type-signature">(async) </span>discoverCommandsGenerated<span class="function__parameters">(<span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;number>></span>
-    
-  </span>
-  
-
-  
-  
-
-  
-  <div class="method__content trim">
-    
-    <div class="method__description">
-      <p>Command which requests the remote cluster to report its generated commands. Generated
-commands are commands which may be sent by the remote cluster.</p>
-<p>TODO: handle the case where <code>lastResponse===false</code>. It might be possible that there are
-more commands to be reported than can be transmitted in one report (in practice very
-unlikely though). If <code>lastResponse===false</code> invoke <code>discoverCommandsGenerated</code> again
-starting from the index where the previous invocation stopped (<code>maxResults</code>).</p>
-<p>TODO: The manufacturer-specific sub-field SHALL be set to 0 to discover standard commands
-in a ZigBee cluster or 1 to discover manufacturer-specific commands in either a standard or
-a manufacturer-specific cluster. A manufacturer ID in this field of 0xffff (wildcard) will
-discover any manufacture- specific
-commands.</p>
     </div>
     
 
@@ -1212,6 +1122,424 @@ commands.</p>
         
 
         
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional parameters</p>
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-1"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts.timeout</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">number</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional timeout in milliseconds for waiting for response</p>
+      </td>
+    </tr>
+
+    
+
+    
+    
+    </tbody>
+  </table>
+</figure>
+
+
+    </section>
+    
+
+    
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Returns</h4>
+      
+      
+  <ul>
+<li>Array with string or number values (depending on if the
+attribute
+is implemented in zigbee-clusters or not).</li>
+</ul>
+
+
+<div class="text-preset-small">
+  
+<span class="param-type">Promise.&lt;Array></span>
+
+
+</div>
+
+    </section>
+    
+
+    
+
+    
+  </div>
+  
+
+</section>
+
+      
+      
+
+
+<section id="discoverAttributesExtended" class="method trim component">
+  
+
+  
+  <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#discoverAttributesExtended"></a>discoverAttributesExtended</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(async) </span>discoverAttributesExtended<span class="function__parameters">(<span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array></span>
+    
+  </span>
+  
+
+  
+  
+
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Command which discovers the implemented attributes on the remote cluster, the difference with
+<code>discoverAttributes</code> is that this command also reports the access control field of the
+attribute (whether it is readable/writable/reportable).</p>
+<p>TODO: handle the case where <code>lastResponse===false</code>. It might be possible that there are
+more commands to be reported than can be transmitted in one report (in practice very
+unlikely though). If <code>lastResponse===false</code> invoke <code>discoverCommandsGenerated</code> again
+starting from the index where the previous invocation stopped (<code>maxResults</code>).</p>
+<p>TODO: The manufacturer-specific sub-field SHALL be set to 0 to discover standard attributes
+in a ZigBee cluster or 1 to discover manufacturer-specific attributes in either a standard
+or a manufacturer- specific cluster. A manufacturer ID in this field of 0xffff (wildcard)
+will discover any manufacture-specific attributes.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Parameters</h4>
+      
+
+<figure class="table-container trim">
+  <table data-table class="params">
+    <thead>
+    <tr>
+      
+      <th>Name</th>
+      
+
+      <th>Type</th>
+
+      <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-0"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts=</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">object</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional parameters</p>
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-1"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts.timeout</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">number</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional timeout in milliseconds for waiting for response</p>
+      </td>
+    </tr>
+
+    
+
+    
+    
+    </tbody>
+  </table>
+</figure>
+
+
+    </section>
+    
+
+    
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Returns</h4>
+      
+      
+  <ul>
+<li>Returns an array with objects with attribute names as keys and
+following object as values: <code>{name: string, id: number, acl: { readable: boolean, writable: boolean, reportable: boolean } }</code>. Note that <code>name</code> is optional based on whether the
+attribute is implemented in zigbee-clusters.</li>
+</ul>
+
+
+<div class="text-preset-small">
+  
+<span class="param-type">Promise.&lt;Array></span>
+
+
+</div>
+
+    </section>
+    
+
+    
+
+    
+  </div>
+  
+
+</section>
+
+      
+      
+
+
+<section id="discoverCommandsGenerated" class="method trim component">
+  
+
+  
+  <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#discoverCommandsGenerated"></a>discoverCommandsGenerated</h3>
+  <span class="method__function function">
+    
+    <span class="function__type-signature">(async) </span>discoverCommandsGenerated<span class="function__parameters">(<span class="function__parameter"><span class="function__parameter">params=</span></span><span class="function__signature-attributes">opt</span>, <span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;number>></span>
+    
+  </span>
+  
+
+  
+  
+
+  
+  <div class="method__content trim">
+    
+    <div class="method__description">
+      <p>Command which requests the remote cluster to report its generated commands. Generated
+commands are commands which may be sent by the remote cluster.</p>
+<p>TODO: handle the case where <code>lastResponse===false</code>. It might be possible that there are
+more commands to be reported than can be transmitted in one report (in practice very
+unlikely though). If <code>lastResponse===false</code> invoke <code>discoverCommandsGenerated</code> again
+starting from the index where the previous invocation stopped (<code>maxResults</code>).</p>
+<p>TODO: The manufacturer-specific sub-field SHALL be set to 0 to discover standard commands
+in a ZigBee cluster or 1 to discover manufacturer-specific commands in either a standard or
+a manufacturer-specific cluster. A manufacturer ID in this field of 0xffff (wildcard) will
+discover any manufacture- specific
+commands.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <section class="method__section trim">
+      <h4>Parameters</h4>
+      
+
+<figure class="table-container trim">
+  <table data-table class="params">
+    <thead>
+    <tr>
+      
+      <th>Name</th>
+      
+
+      <th>Type</th>
+
+      <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-0"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>params=</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">object</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
         
         
 
@@ -1234,7 +1562,7 @@ commands.</p>
         <div class="lvl">
           
         </div>
-        <code>opts.startValue</code>
+        <code>params.startValue</code>
         
       </td>
       
@@ -1282,7 +1610,7 @@ commands.</p>
         <div class="lvl">
           
         </div>
-        <code>opts.maxResults</code>
+        <code>params.maxResults</code>
         
       </td>
       
@@ -1315,6 +1643,98 @@ commands.</p>
 
 
       <td class="description last trim">
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-3"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts=</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">object</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+        
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional parameters</p>
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-4"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts.timeout</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">number</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+        
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional timeout in milliseconds for waiting for response</p>
       </td>
     </tr>
 
@@ -1382,7 +1802,7 @@ commands.</p>
   <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#discoverCommandsReceived"></a>discoverCommandsReceived</h3>
   <span class="method__function function">
     
-    <span class="function__type-signature">(async) </span>discoverCommandsReceived<span class="function__parameters">(<span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;number>></span>
+    <span class="function__type-signature">(async) </span>discoverCommandsReceived<span class="function__parameters">(<span class="function__parameter"><span class="function__parameter">params=</span></span><span class="function__signature-attributes">opt</span>, <span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;number>></span>
     
   </span>
   
@@ -1444,7 +1864,7 @@ discover any manufacture- specific commands.</p>
         <div class="lvl">
           
         </div>
-        <code>opts=</code>
+        <code>params=</code>
         
       </td>
       
@@ -1490,7 +1910,7 @@ discover any manufacture- specific commands.</p>
         <div class="lvl">
           
         </div>
-        <code>opts.startValue</code>
+        <code>params.startValue</code>
         
       </td>
       
@@ -1538,7 +1958,7 @@ discover any manufacture- specific commands.</p>
         <div class="lvl">
           
         </div>
-        <code>opts.maxResults</code>
+        <code>params.maxResults</code>
         
       </td>
       
@@ -1571,6 +1991,98 @@ discover any manufacture- specific commands.</p>
 
 
       <td class="description last trim">
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-3"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts=</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">object</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+        
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional parameters</p>
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-4"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts.timeout</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">number</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+        
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional timeout in milliseconds for waiting for response</p>
       </td>
     </tr>
 
@@ -1742,7 +2254,7 @@ Note: do not mix regular and manufacturer specific attributes.</p>
       <td class="params__type">
         
         
-<span class="param-type">Object</span>
+<span class="param-type">object</span>
 
 
         
@@ -1762,7 +2274,51 @@ Note: do not mix regular and manufacturer specific attributes.</p>
       </td>
 
 
-      <td class="description last trim">
+      <td class="description last trim"><p>Optional parameters</p>
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-2"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts.timeout</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">number</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional timeout in milliseconds for waiting for response</p>
       </td>
     </tr>
 
@@ -1834,7 +2390,7 @@ Note: do not mix regular and manufacturer specific attributes.</p>
   <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#readReportingConfiguration"></a>readReportingConfiguration</h3>
   <span class="method__function function">
     
-    <span class="function__type-signature">(async) </span>readReportingConfiguration<span class="function__parameters">(<span class="function__parameter">attributes</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;<a href="global.html#ReadReportingConfiguration">ReadReportingConfiguration</a>>></span>
+    <span class="function__type-signature">(async) </span>readReportingConfiguration<span class="function__parameters">(<span class="function__parameter">attributes</span>, <span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Array.&lt;<a href="global.html#ReadReportingConfiguration">ReadReportingConfiguration</a>>></span>
     
   </span>
   
@@ -1905,6 +2461,12 @@ Note: do not mix regular and manufacturer specific attributes.</p>
         
 
         
+        
+
+        
+
+        
+        
 
         
 
@@ -1912,6 +2474,94 @@ Note: do not mix regular and manufacturer specific attributes.</p>
 
 
       <td class="description last trim"><p>Array with number/strings (either attribute id, or attribute name).</p>
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-1"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts=</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">object</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional parameters</p>
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-2"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts.timeout</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">number</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional timeout in milliseconds for waiting for response</p>
       </td>
     </tr>
 
@@ -1984,7 +2634,7 @@ ReadReportingConfiguration objects per attribute.</li>
   <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#writeAttributes"></a>writeAttributes</h3>
   <span class="method__function function">
     
-    <span class="function__type-signature">(async) </span>writeAttributes<span class="function__parameters">(<span class="function__parameter">attributes</span>)</span><span class="function__type-signature">:  Promise.&lt;(*|{attributes: *})></span>
+    <span class="function__type-signature">(async) </span>writeAttributes<span class="function__parameters">(<span class="function__parameter">attributes</span>, <span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;(*|{attributes: *})></span>
     
   </span>
   
@@ -2052,6 +2702,12 @@ Note: do not mix regular and manufacturer specific attributes.</p>
         
 
         
+        
+
+        
+
+        
+        
 
         
 
@@ -2059,6 +2715,94 @@ Note: do not mix regular and manufacturer specific attributes.</p>
 
 
       <td class="description last trim"><p>Object with attribute names as keys and their values (e.g. <code>{ onOff: true, fakeAttributeName: 10 }</code>.</p>
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-1"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts=</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">object</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional parameters</p>
+      </td>
+    </tr>
+
+    
+
+    
+
+    <tr data-table-lvl="0" data-table-row-id="0-2"
+        data-table-row-parent="0" >
+      
+      <td class="name position-relative">
+        
+        <div class="lvl">
+          
+        </div>
+        <code>opts.timeout</code>
+        
+      </td>
+      
+
+      <td class="params__type">
+        
+        
+<span class="param-type">number</span>
+
+
+        
+
+        
+        
+        <span class="color-text-light">&lt;optional></span><br>
+        
+
+        
+
+        
+        
+
+        
+
+      </td>
+
+
+      <td class="description last trim"><p>Optional timeout in milliseconds for waiting for response</p>
       </td>
     </tr>
 
