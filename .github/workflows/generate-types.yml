@@ -1,0 +1,60 @@
+name: Generate TypeScript Types
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'lib/clusters/**/*.js'
+      - 'scripts/generate-types.js'
+
+jobs:
+  generate-types:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate TypeScript types
+        run: npm run generate-types
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if git diff --quiet index.d.ts; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes to index.d.ts"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "index.d.ts has been updated"
+            git diff --stat index.d.ts
+          fi
+
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.d.ts
+          git commit -m "chore(types): auto-generate TypeScript definitions
+
+          Updated by GitHub Actions after cluster changes.
+
+          [skip ci]"
+          git push origin develop
