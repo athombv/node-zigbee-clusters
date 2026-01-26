@@ -6,6 +6,7 @@ const BoundCluster = require('../lib/BoundCluster');
 const IASZoneCluster = require('../lib/clusters/iasZone');
 const Node = require('../lib/Node');
 const { ZCLStandardHeader } = require('../lib/zclFrames');
+const { MOCK_DEVICES, verifyClusterAttributes } = require('./util');
 
 const endpointId = 1;
 
@@ -97,5 +98,52 @@ describe('IAS Zone', function() {
 
     // Feed frame to node
     node.handleFrame(endpointId, IASZoneCluster.ID, frame.toBuffer(), {});
+  });
+
+  describe('Cluster Completeness', function() {
+    it('should have all mandatory IAS Zone attributes', function() {
+      const result = verifyClusterAttributes('iasZone');
+      assert.strictEqual(result.status, 'pass', `Missing: ${result.missing.join(', ')}`);
+    });
+
+    it('should report implemented attributes', function() {
+      const result = verifyClusterAttributes('iasZone');
+      assert(result.implemented.includes('zoneState'), 'zoneState should be implemented');
+      assert(result.implemented.includes('zoneType'), 'zoneType should be implemented');
+      assert(result.implemented.includes('zoneStatus'), 'zoneStatus should be implemented');
+    });
+  });
+
+  describe('Mock Device Factory', function() {
+    it('should create a motion sensor with correct zone type', function() {
+      const sensor = MOCK_DEVICES.motionSensor();
+      // Access bound cluster directly (not via ZCL readAttributes)
+      const boundCluster = sensor.endpoints[1].bindings.iasZone;
+      assert.strictEqual(boundCluster.zoneType, 0x000D, 'Should be motion sensor type');
+      assert.strictEqual(boundCluster.zoneState, 1, 'Should be enrolled');
+    });
+
+    it('should create a contact sensor with correct zone type', function() {
+      const sensor = MOCK_DEVICES.contactSensor();
+      const boundCluster = sensor.endpoints[1].bindings.iasZone;
+      assert.strictEqual(boundCluster.zoneType, 0x0015, 'Should be contact switch type');
+      assert.strictEqual(boundCluster.zoneState, 1, 'Should be enrolled');
+    });
+
+    it('should allow attribute overrides', function() {
+      const sensor = MOCK_DEVICES.motionSensor({
+        iasZone: { zoneStatus: 0x0001 }, // Alarm1 active
+      });
+      const boundCluster = sensor.endpoints[1].bindings.iasZone;
+      assert.strictEqual(boundCluster.zoneStatus, 0x0001, 'Should have alarm1 bit set');
+    });
+
+    it('should create temp/humidity sensor with measurement values', function() {
+      const sensor = MOCK_DEVICES.tempHumiditySensor();
+      const tempCluster = sensor.endpoints[1].bindings.temperatureMeasurement;
+      const humCluster = sensor.endpoints[1].bindings.relativeHumidity;
+      assert.strictEqual(tempCluster.measuredValue, 2150, 'Should be 21.50°C raw');
+      assert.strictEqual(humCluster.measuredValue, 6500, 'Should be 65.00% raw');
+    });
   });
 });
