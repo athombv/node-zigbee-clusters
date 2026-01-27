@@ -371,6 +371,10 @@ function generateClusterInterface(cluster) {
   // Add command methods
   for (const cmd of cluster.commands) {
     if (cmd.args.length > 0) {
+      // Buffer arguments (octstr, securityKey128, buffer) are optional because ZCL allows
+      // empty octet strings (length 0). The data-types library serializes undefined/omitted
+      // Buffer args as empty Buffers. Example: DoorLock.lockDoor({ pinCode }) - pinCode is
+      // optional when the lock doesn't require PIN authentication.
       const argsType = `{ ${cmd.args.map(a => `${a.name}${a.tsType === 'Buffer' ? '?' : ''}: ${a.tsType}`).join('; ')} }`;
       lines.push(`  ${cmd.name}(args: ${argsType}): Promise<void>;`);
     } else {
