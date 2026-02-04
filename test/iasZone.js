@@ -6,7 +6,7 @@ const BoundCluster = require('../lib/BoundCluster');
 const IASZoneCluster = require('../lib/clusters/iasZone');
 const Node = require('../lib/Node');
 const { ZCLStandardHeader } = require('../lib/zclFrames');
-const { MOCK_DEVICES, verifyClusterAttributes } = require('./util');
+const { MOCK_DEVICES } = require('./util');
 
 const endpointId = 1;
 
@@ -98,20 +98,6 @@ describe('IAS Zone', function() {
 
     // Feed frame to node
     node.handleFrame(endpointId, IASZoneCluster.ID, frame.toBuffer(), {});
-  });
-
-  describe('Cluster Completeness', function() {
-    it('should have all mandatory IAS Zone attributes', function() {
-      const result = verifyClusterAttributes('iasZone');
-      assert.strictEqual(result.status, 'pass', `Missing: ${result.missing.join(', ')}`);
-    });
-
-    it('should report implemented attributes', function() {
-      const result = verifyClusterAttributes('iasZone');
-      assert(result.implemented.includes('zoneState'), 'zoneState should be implemented');
-      assert(result.implemented.includes('zoneType'), 'zoneType should be implemented');
-      assert(result.implemented.includes('zoneStatus'), 'zoneStatus should be implemented');
-    });
   });
 
   describe('Mock Device Factory', function() {

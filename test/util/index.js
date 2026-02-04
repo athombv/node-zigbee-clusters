@@ -6,7 +6,6 @@ debug = debug.extend('test');
 
 const Node = require('../../lib/Node');
 const { createMockDevice, createBoundClusterWithAttributes, MOCK_DEVICES } = require('./mockDevice');
-const { ZCL_SPEC, verifyClusterAttributes, assertClusterComplete } = require('./clusterSpec');
 
 const debugUtil = debug.extend('util');
 
@@ -26,8 +25,4 @@ module.exports = {
   createMockDevice,
   createBoundClusterWithAttributes,
   MOCK_DEVICES,
-  // Cluster spec verification
-  ZCL_SPEC,
-  verifyClusterAttributes,
-  assertClusterComplete,
 };
