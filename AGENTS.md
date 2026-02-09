@@ -233,6 +233,9 @@ module.exports = ExampleCluster;
 7. **M/O source for cmds**:
    - Server "receives" → server-side M/O
    - Server "generates" → client-side M/O
+8. **Conditional (M*)**: Use `// Conditional` for attrs/cmds marked "M*" in spec
+   - These are mandatory only when specific features are enabled
+   - Example: attrs required only if Closed Loop control is supported
 
 #### Example
 
@@ -250,7 +253,7 @@ currentLevel: { id: 0x0000, type: ZCLDataTypes.uint8 }, // Mandatory
 |-------|--------|-------|
 | `id` | Hex (`0x0000`) | Always 4-digit format (0x0000); add decimal comment if > 9 |
 | `type` | `ZCLDataTypes.*` | See type reference below |
-| M/O | Inline comment | `// Mandatory` or `// Optional` |
+| M/O | Inline comment | `// Mandatory`, `// Optional`, or `// Conditional` |
 
 #### Hex with Decimal Comments
 
@@ -393,6 +396,7 @@ npm run build
 - [ ] Cluster NAME matches spec (camelCase)
 - [ ] All mandatory attrs present with `// Mandatory`
 - [ ] All mandatory cmds present with `// Mandatory`
+- [ ] Conditional attrs/cmds marked `// Conditional` (M* in spec)
 - [ ] Optional attrs/cmds marked `// Optional`
 - [ ] Descriptions copied from spec (≤5 sentences)
 - [ ] Section comments group related attrs
