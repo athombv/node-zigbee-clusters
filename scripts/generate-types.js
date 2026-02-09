@@ -22,24 +22,35 @@ function zclTypeToTS(dataType) {
 
   const { shortName, args } = dataType;
 
+  // No data
+  if (shortName === 'noData') return 'null';
+
   // Boolean
   if (shortName === 'bool') return 'boolean';
 
   // Numeric types
   if (/^u?int\d+$/.test(shortName)) return 'number';
-  if (/^data\d+$/.test(shortName)) return 'number';
+  // data8-32 use readUIntBE, return number
+  if (/^data(8|16|24|32)$/.test(shortName)) return 'number';
+  // data40-64 use buf.slice, return Buffer
+  if (/^data(40|48|56|64)$/.test(shortName)) return 'Buffer';
+  // Float types
+  if (shortName === 'single' || shortName === 'double') return 'number';
 
   // String types
-  if (shortName === 'string') return 'string';
-  if (shortName === 'EUI64') return 'string';
+  if (shortName === 'string' || shortName === '_FixedString') return 'string';
+  // EUI addresses return colon-separated hex strings
+  if (shortName === 'EUI64' || shortName === 'EUI48') return 'string';
+  // key128 returns colon-separated hex string
+  if (shortName === 'key128') return 'string';
 
   // Buffer types
-  if (shortName === 'octstr' || shortName === '_buffer' || shortName === 'seckey128') {
+  if (shortName === 'octstr' || shortName === '_buffer' || shortName === '_buffer8' || shortName === '_buffer16') {
     return 'Buffer';
   }
 
   // Enum types - extract keys from args[0]
-  if (shortName === 'enum8' || shortName === 'enum16') {
+  if (/^enum(4|8|16|32)$/.test(shortName)) {
     if (args && args[0] && typeof args[0] === 'object') {
       const keys = Object.keys(args[0]);
       if (keys.length > 0) {
@@ -50,7 +61,7 @@ function zclTypeToTS(dataType) {
   }
 
   // Map/bitmap types - extract flag names from args
-  if (/^map\d+$/.test(shortName)) {
+  if (/^map(4|\d+)$/.test(shortName)) {
     if (args && args.length > 0) {
       const flags = args.filter(a => typeof a === 'string');
       if (flags.length > 0) {
@@ -60,8 +71,13 @@ function zclTypeToTS(dataType) {
     return 'Partial<Record<string, boolean>>';
   }
 
-  // Array types
-  if (shortName === 'Array0' || shortName === 'Array8' || shortName === 'Array16') {
+  // Array types (note: shortName has underscore prefix: _Array0, _Array8)
+  // Recursively determine element type from args[0]
+  if (/^_?Array(0|8|16)$/.test(shortName)) {
+    if (args && args[0]) {
+      const elementType = zclTypeToTS(args[0]);
+      return `${elementType}[]`;
+    }
     return 'unknown[]';
   }
 
@@ -310,10 +326,6 @@ export interface ZCLNode {
   }
 
   lines.push('}');
-  lines.push('');
-
-  // Also export at top level for ESM
-  lines.push('export { ZCLNode, ZCLNodeCluster, ZCLNodeEndpoint, ClusterRegistry };');
 
   return lines.join('\n');
 }

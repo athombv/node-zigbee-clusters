@@ -86,12 +86,12 @@ export interface AlarmsCluster extends ZCLNodeCluster {
 
 export interface AnalogInputClusterAttributes {
   description?: string;
-  maxPresentValue?: unknown;
-  minPresentValue?: unknown;
+  maxPresentValue?: number;
+  minPresentValue?: number;
   outOfService?: boolean;
-  presentValue?: unknown;
+  presentValue?: number;
   reliability?: 'noFaultDetected' | 'noSensor' | 'overRange' | 'underRange' | 'openLoop' | 'shortedLoop' | 'noOutput' | 'unreliableOther' | 'processError' | 'configurationError';
-  resolution?: unknown;
+  resolution?: number;
   statusFlags?: Partial<{ inAlarm: boolean; fault: boolean; overridden: boolean; outOfService: boolean }>;
   applicationType?: number;
 }
@@ -103,13 +103,13 @@ export interface AnalogInputCluster extends ZCLNodeCluster {
 
 export interface AnalogOutputClusterAttributes {
   description?: string;
-  maxPresentValue?: unknown;
-  minPresentValue?: unknown;
+  maxPresentValue?: number;
+  minPresentValue?: number;
   outOfService?: boolean;
-  presentValue?: unknown;
+  presentValue?: number;
   reliability?: 'noFaultDetected' | 'overRange' | 'underRange' | 'openLoop' | 'shortedLoop' | 'unreliableOther' | 'processError' | 'configurationError';
-  relinquishDefault?: unknown;
-  resolution?: unknown;
+  relinquishDefault?: number;
+  resolution?: number;
   statusFlags?: Partial<{ inAlarm: boolean; fault: boolean; overridden: boolean; outOfService: boolean }>;
   applicationType?: number;
 }
@@ -122,9 +122,9 @@ export interface AnalogOutputCluster extends ZCLNodeCluster {
 export interface AnalogValueClusterAttributes {
   description?: string;
   outOfService?: boolean;
-  presentValue?: unknown;
+  presentValue?: number;
   reliability?: 'noFaultDetected' | 'overRange' | 'underRange' | 'openLoop' | 'shortedLoop' | 'unreliableOther' | 'processError' | 'configurationError';
-  relinquishDefault?: unknown;
+  relinquishDefault?: number;
   statusFlags?: Partial<{ inAlarm: boolean; fault: boolean; overridden: boolean; outOfService: boolean }>;
   applicationType?: number;
 }
@@ -415,7 +415,7 @@ export interface GroupsCluster extends ZCLNodeCluster {
   writeAttributes(attributes: Partial<GroupsClusterAttributes>): Promise<void>;
   addGroup(args: { groupId: number; groupName: string }): Promise<void>;
   viewGroup(args: { groupId: number }): Promise<void>;
-  getGroupMembership(args: { groupIds: unknown }): Promise<void>;
+  getGroupMembership(args: { groupIds: number[] }): Promise<void>;
   removeGroup(args: { groupId: number }): Promise<void>;
   removeAllGroups(): Promise<void>;
   addGroupIfIdentify(args: { groupId: number; groupName: string }): Promise<void>;
@@ -1111,5 +1111,3 @@ declare module "zigbee-clusters" {
   export const TouchlinkCluster: TouchlinkCluster;
   export const WindowCoveringCluster: WindowCoveringCluster;
 }
-
-export { ZCLNode, ZCLNodeCluster, ZCLNodeEndpoint, ClusterRegistry };
