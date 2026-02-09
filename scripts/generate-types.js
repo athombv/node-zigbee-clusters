@@ -211,43 +211,25 @@ type ConstructorOptions = {
 
   // Base ZCLNodeCluster interface
   lines.push(`export interface ZCLNodeCluster extends EventEmitter {
-  /**
-   * Command which requests the remote cluster to report its generated commands.
-   */
   discoverCommandsGenerated(opts?: {
     startValue?: number;
     maxResults?: number;
   }): Promise<number[]>;
 
-  /**
-   * Command which requests the remote cluster to report its received commands.
-   */
   discoverCommandsReceived(opts?: {
     startValue?: number;
     maxResults?: number;
   }): Promise<number[]>;
 
-  /**
-   * Command which reads a given set of attributes from the remote cluster.
-   */
   readAttributes(
     attributeNames: string[],
     opts?: { timeout?: number }
   ): Promise<{ [x: string]: unknown }>;
 
-  /**
-   * Command which writes a given set of attribute key-value pairs to the remote cluster.
-   */
   writeAttributes(attributes?: object): Promise<void>;
 
-  /**
-   * Command which configures attribute reporting for the given attributes on the remote cluster.
-   */
   configureReporting(attributes?: object): Promise<void>;
 
-  /**
-   * Command which retrieves the reporting configurations for the given attributes.
-   */
   readReportingConfiguration(attributes?: (string | number)[]): Promise<{
     status: string;
     direction: 'reported' | 'received';
@@ -259,14 +241,8 @@ type ConstructorOptions = {
     timeoutPeriod?: number;
   }[]>;
 
-  /**
-   * Command which discovers the implemented attributes on the remote cluster.
-   */
   discoverAttributes(): Promise<(string | number)[]>;
 
-  /**
-   * Command which discovers the implemented attributes with access control info.
-   */
   discoverAttributesExtended(): Promise<{
     name?: string;
     id: number;
