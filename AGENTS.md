@@ -198,6 +198,17 @@ id: 0x0000,
 id: 0x0009,
 ```
 
+For multi-line definitions, decimal goes on the `id:` line, M/O on opening brace:
+```javascript
+operatingMode: { // Optional
+  id: 0x0025, // 37
+  type: ZCLDataTypes.enum8({
+    normal: 0,
+    vacation: 1,
+  }),
+},
+```
+
 #### Section Comments
 
 Group attrs by function with section headers:
