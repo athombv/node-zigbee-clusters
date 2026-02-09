@@ -3,15 +3,15 @@
 const Node = require('../../lib/Node');
 const BoundCluster = require('../../lib/BoundCluster');
 
-// Load all clusters so they can be bound
-require('../../lib/clusters/basic');
-require('../../lib/clusters/powerConfiguration');
-require('../../lib/clusters/iasZone');
-require('../../lib/clusters/temperatureMeasurement');
-require('../../lib/clusters/relativeHumidity');
-require('../../lib/clusters/onOff');
-require('../../lib/clusters/metering');
-require('../../lib/clusters/electricalMeasurement');
+// Load clusters and get their IDs
+const BasicCluster = require('../../lib/clusters/basic');
+const PowerConfigurationCluster = require('../../lib/clusters/powerConfiguration');
+const IASZoneCluster = require('../../lib/clusters/iasZone');
+const TemperatureMeasurementCluster = require('../../lib/clusters/temperatureMeasurement');
+const RelativeHumidityCluster = require('../../lib/clusters/relativeHumidity');
+const OnOffCluster = require('../../lib/clusters/onOff');
+const MeteringCluster = require('../../lib/clusters/metering');
+const ElectricalMeasurementCluster = require('../../lib/clusters/electricalMeasurement');
 
 /**
  * Creates a BoundCluster with getter properties for each attribute.
@@ -175,7 +175,7 @@ const MOCK_DEVICES = {
   motionSensor: (overrides = {}) => createMockNode({
     endpoints: [{
       endpointId: 1,
-      inputClusters: [0x0000, 0x0001, 0x0500],
+      inputClusters: [BasicCluster.ID, PowerConfigurationCluster.ID, IASZoneCluster.ID],
       clusters: {
         basic: {
           zclVersion: 3,
@@ -205,7 +205,7 @@ const MOCK_DEVICES = {
   contactSensor: (overrides = {}) => createMockNode({
     endpoints: [{
       endpointId: 1,
-      inputClusters: [0x0000, 0x0001, 0x0500],
+      inputClusters: [BasicCluster.ID, PowerConfigurationCluster.ID, IASZoneCluster.ID],
       clusters: {
         basic: {
           zclVersion: 3,
@@ -235,7 +235,12 @@ const MOCK_DEVICES = {
   tempHumiditySensor: (overrides = {}) => createMockNode({
     endpoints: [{
       endpointId: 1,
-      inputClusters: [0x0000, 0x0001, 0x0402, 0x0405],
+      inputClusters: [
+        BasicCluster.ID,
+        PowerConfigurationCluster.ID,
+        TemperatureMeasurementCluster.ID,
+        RelativeHumidityCluster.ID,
+      ],
       clusters: {
         basic: {
           zclVersion: 3,
@@ -269,7 +274,12 @@ const MOCK_DEVICES = {
   smartPlug: (overrides = {}) => createMockNode({
     endpoints: [{
       endpointId: 1,
-      inputClusters: [0x0000, 0x0006, 0x0702, 0x0B04],
+      inputClusters: [
+        BasicCluster.ID,
+        OnOffCluster.ID,
+        MeteringCluster.ID,
+        ElectricalMeasurementCluster.ID,
+      ],
       clusters: {
         basic: {
           zclVersion: 3,
