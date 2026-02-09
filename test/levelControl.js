@@ -3,8 +3,8 @@
 
 const assert = require('assert');
 const BoundCluster = require('../lib/BoundCluster');
+const LevelControlCluster = require('../lib/clusters/levelControl');
 const { createMockNode } = require('./util');
-require('../lib/clusters/levelControl');
 
 describe('Level Control', function() {
   it('should receive moveToLevel', async function() {
@@ -12,7 +12,7 @@ describe('Level Control', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [8],
+        inputClusters: [LevelControlCluster.ID],
       }],
     });
 
@@ -39,7 +39,7 @@ describe('Level Control', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [8],
+        inputClusters: [LevelControlCluster.ID],
       }],
     });
 
@@ -68,7 +68,7 @@ describe('Level Control', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [8],
+        inputClusters: [LevelControlCluster.ID],
       }],
     });
 

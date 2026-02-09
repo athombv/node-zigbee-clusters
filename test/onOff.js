@@ -3,8 +3,8 @@
 
 const assert = require('assert');
 const BoundCluster = require('../lib/BoundCluster');
+const OnOffCluster = require('../lib/clusters/onOff');
 const { createMockNode } = require('./util');
-require('../lib/clusters/onOff');
 
 describe('On/Off', function() {
   it('should receive setOn', async function() {
@@ -12,7 +12,7 @@ describe('On/Off', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [6],
+        inputClusters: [OnOffCluster.ID],
       }],
     });
 
@@ -34,7 +34,7 @@ describe('On/Off', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [6],
+        inputClusters: [OnOffCluster.ID],
       }],
     });
 
@@ -56,7 +56,7 @@ describe('On/Off', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [6],
+        inputClusters: [OnOffCluster.ID],
       }],
     });
 
@@ -78,7 +78,7 @@ describe('On/Off', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [6],
+        inputClusters: [OnOffCluster.ID],
       }],
     });
 

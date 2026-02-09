@@ -3,8 +3,8 @@
 
 const assert = require('assert');
 const BoundCluster = require('../lib/BoundCluster');
+const ColorControlCluster = require('../lib/clusters/colorControl');
 const { createMockNode } = require('./util');
-require('../lib/clusters/colorControl');
 
 describe('Color Control', function() {
   it('should receive moveToColor', async function() {
@@ -12,7 +12,7 @@ describe('Color Control', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [0x0300],
+        inputClusters: [ColorControlCluster.ID],
       }],
     });
 
@@ -41,7 +41,7 @@ describe('Color Control', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [0x0300],
+        inputClusters: [ColorControlCluster.ID],
       }],
     });
 
@@ -68,7 +68,7 @@ describe('Color Control', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [0x0300],
+        inputClusters: [ColorControlCluster.ID],
       }],
     });
 

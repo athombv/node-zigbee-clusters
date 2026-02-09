@@ -6,7 +6,7 @@ const sinon = require('sinon');
 
 const Node = require('../lib/Node');
 const BoundCluster = require('../lib/BoundCluster');
-require('../lib/clusters/onOff');
+const OnOffCluster = require('../lib/clusters/onOff');
 
 const sandbox = sinon.createSandbox();
 
@@ -23,7 +23,7 @@ describe('Cluster Response Timeout', function() {
       endpointDescriptors: [
         {
           endpointId: 1,
-          inputClusters: [6],
+          inputClusters: [OnOffCluster.ID],
         },
       ],
     });
@@ -36,7 +36,7 @@ describe('Cluster Response Timeout', function() {
       endpointDescriptors: [
         {
           endpointId: 1,
-          inputClusters: [6],
+          inputClusters: [OnOffCluster.ID],
         },
       ],
     });

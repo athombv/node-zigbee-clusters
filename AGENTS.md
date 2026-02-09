@@ -49,6 +49,19 @@ Example: `lib/clusters/onOff.js`
 - `ZCLStruct` - Composite types for command arguments
 - `CLUSTER` constant - Maps cluster names to `{ID, NAME, ATTRIBUTES, COMMANDS}`
 
+### Cluster ID References
+
+Prefer `Cluster.ID` over hardcoded numbers:
+```javascript
+// Good
+const OnOffCluster = require('../lib/clusters/onOff');
+inputClusters: [OnOffCluster.ID]
+
+// Avoid
+inputClusters: [6]
+inputClusters: [0x0006]
+```
+
 ### Test Pattern
 
 Tests use mock nodes from `test/util/mockNode.js`:
@@ -56,10 +69,11 @@ Tests use mock nodes from `test/util/mockNode.js`:
 **Single node with loopback** (command → same node's BoundCluster):
 ```javascript
 const { createMockNode } = require('./util');
+const OnOffCluster = require('../lib/clusters/onOff');
 
 const node = createMockNode({
   loopback: true,
-  endpoints: [{ endpointId: 1, inputClusters: [6] }],
+  endpoints: [{ endpointId: 1, inputClusters: [OnOffCluster.ID] }],
 });
 
 node.endpoints[1].bind('onOff', new (class extends BoundCluster {

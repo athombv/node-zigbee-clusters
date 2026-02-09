@@ -81,7 +81,7 @@ const node = createMockNode({
   loopback: true,
   endpoints: [{
     endpointId: 1,
-    inputClusters: [5],
+    inputClusters: [SceneCluster.ID],
   }],
 });
 

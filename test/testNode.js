@@ -10,8 +10,8 @@ const BoundCluster = require('../lib/BoundCluster');
 const Cluster = require('../lib/Cluster');
 const { ZCLDataTypes } = require('../lib/zclTypes');
 const Endpoint = require('../lib/Endpoint');
-require('../lib/clusters/basic');
-require('../lib/clusters/onOff');
+const BasicCluster = require('../lib/clusters/basic');
+const OnOffCluster = require('../lib/clusters/onOff');
 
 debug = debug.extend('test-node');
 
@@ -26,7 +26,7 @@ describe('Node', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [0],
+        inputClusters: [BasicCluster.ID],
       }],
     });
 
@@ -34,13 +34,13 @@ describe('Node', function() {
       {
         endpoints: [{
           endpointId: 1,
-          inputClusters: [0, 6],
+          inputClusters: [BasicCluster.ID, OnOffCluster.ID],
         }],
       },
       {
         endpoints: [{
           endpointId: 1,
-          inputClusters: [0, 6],
+          inputClusters: [BasicCluster.ID, OnOffCluster.ID],
         }],
       },
     );

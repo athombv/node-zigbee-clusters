@@ -14,7 +14,7 @@ describe('IAS Zone', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [0x0500],
+        inputClusters: [IASZoneCluster.ID],
       }],
     });
 
@@ -39,7 +39,7 @@ describe('IAS Zone', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [0x0500],
+        inputClusters: [IASZoneCluster.ID],
       }],
     });
 
@@ -67,7 +67,7 @@ describe('IAS Zone', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [0x0500],
+        inputClusters: [IASZoneCluster.ID],
       }],
     });
 

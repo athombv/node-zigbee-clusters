@@ -13,7 +13,7 @@ describe('Door Lock', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [0x0101],
+        inputClusters: [DoorLockCluster.ID],
       }],
     });
 
@@ -38,7 +38,7 @@ describe('Door Lock', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [0x0101],
+        inputClusters: [DoorLockCluster.ID],
       }],
     });
 
@@ -63,7 +63,7 @@ describe('Door Lock', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [0x0101],
+        inputClusters: [DoorLockCluster.ID],
       }],
     });
 
@@ -96,7 +96,7 @@ describe('Door Lock', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [0x0101],
+        inputClusters: [DoorLockCluster.ID],
       }],
     });
 
@@ -129,7 +129,7 @@ describe('Door Lock', function() {
       loopback: true,
       endpoints: [{
         endpointId: 1,
-        inputClusters: [0x0101],
+        inputClusters: [DoorLockCluster.ID],
       }],
     });
 
