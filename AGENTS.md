@@ -233,16 +233,17 @@ module.exports = ExampleCluster;
 7. **M/O source for cmds**:
    - Server "receives" → server-side M/O
    - Server "generates" → client-side M/O
-8. **Conditional (M*)**: Use `// Conditional` for attrs/cmds marked "M*" in spec
-   - These are mandatory only when specific features are enabled
-   - Example: attrs required only if Closed Loop control is supported
+8. **Conditional (M*)**: Use `// Conditional¹` with footnote for attrs/cmds marked "M*" in spec
+   - Reason on new line below: `// ¹ Reason here`
+   - Shared reasons use same footnote number
 
 #### Example
 
 ```javascript
-// The CurrentLevel attribute represents the current level of this device.
-// The meaning of 'level' is device dependent.
 currentLevel: { id: 0x0000, type: ZCLDataTypes.uint8 }, // Mandatory
+pirOccupiedToUnoccupiedDelay: { id: 0x0010, type: ZCLDataTypes.uint16 }, // 16, Conditional¹
+pirUnoccupiedToOccupiedDelay: { id: 0x0011, type: ZCLDataTypes.uint16 }, // 17, Conditional¹
+// ¹ PIR sensor type supported
 ```
 
 ---
