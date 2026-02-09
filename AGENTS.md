@@ -106,13 +106,13 @@ const COMMANDS = {
   // --- Client to Server Commands ---
 
   // Description from spec.
-  commandName: {
-    id: 0x00, // Mandatory
+  commandName: { // Mandatory
+    id: 0x0000,
     args: {
       argName: ZCLDataTypes.uint8,
     },
     response: {
-      id: 0x00,
+      id: 0x0000,
       args: { status: ZCLDataTypes.uint8 },
     },
   },
@@ -120,8 +120,8 @@ const COMMANDS = {
   // --- Server to Client Commands ---
 
   // Description from spec.
-  notificationName: {
-    id: 0x20, // Optional
+  notificationName: { // Optional
+    id: 0x0020, // 32
     direction: Cluster.DIRECTION_SERVER_TO_CLIENT,
     args: {
       argName: ZCLDataTypes.uint8,
@@ -156,7 +156,10 @@ module.exports = ExampleCluster;
 ### Comment Format Rules
 
 1. **Description placement**: ABOVE the attribute/command
-2. **M/O marker**: Inline at END of definition line (`// Mandatory` or `// Optional`)
+2. **M/O marker placement**:
+   - Single-line: at END of line (`attrName: { ... }, // Mandatory`)
+   - Multi-line: on OPENING brace (`attrName: { // Mandatory`)
+   - NEVER on closing brace
 3. **Copy exactly**: Text from spec, 1-on-1
 4. **Skip if >5 sentences**: Skip and only refer to section in spec
 5. **Line wrap**: Respect 100 char limit (ESLint)
@@ -179,7 +182,7 @@ currentLevel: { id: 0x0000, type: ZCLDataTypes.uint8 }, // Mandatory
 
 | Field | Format | Notes |
 |-------|--------|-------|
-| `id` | Hex (`0x0000`) | Consistent hex format; add decimal comment if > 9 |
+| `id` | Hex (`0x0000`) | Always 4-digit format (0x0000); add decimal comment if > 9 |
 | `type` | `ZCLDataTypes.*` | See type reference below |
 | M/O | Inline comment | `// Mandatory` or `// Optional` |
 
@@ -227,7 +230,7 @@ attr3: { ... },
 
 | Field | Required | Notes |
 |-------|----------|-------|
-| `id` | Yes | Hex format; add decimal comment if > 9 |
+| `id` | Yes | Always 4-digit hex format (0x0000); add decimal comment if > 9 |
 | `args` | If has params | Object with typed fields |
 | `response` | If expects response | Has own `id` and `args` |
 | `direction` | For server→client | `Cluster.DIRECTION_SERVER_TO_CLIENT` |
@@ -236,14 +239,14 @@ attr3: { ... },
 
 ```javascript
 // --- Client to Server Commands ---
-lockDoor: { id: 0x00, ... }, // Mandatory
+lockDoor: { id: 0x0000, ... }, // Mandatory
 
 // --- Server to Client Commands ---
-operationEventNotification: {
-  id: 0x20, // 32
+operationEventNotification: { // Optional
+  id: 0x0020, // 32
   direction: Cluster.DIRECTION_SERVER_TO_CLIENT,
   ...
-}, // Optional
+},
 ```
 
 ---
