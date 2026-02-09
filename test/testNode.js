@@ -4,8 +4,8 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
+const { createMockNode, createConnectedNodePair } = require('./util');
 let { debug } = require('./util');
-const Node = require('../lib/Node');
 const BoundCluster = require('../lib/BoundCluster');
 const Cluster = require('../lib/Cluster');
 const { ZCLDataTypes } = require('../lib/zclTypes');
@@ -18,42 +18,36 @@ debug = debug.extend('test-node');
 const sandbox = sinon.createSandbox();
 
 describe('Node', function() {
-  let loopbackNode;
+  let mockNode;
   let receivingNode;
   let sendingNode;
   before(function() {
-    // eslint-disable-next-line global-require
-    const { loopbackNode: loopbackNodeBuilder } = require('./util');
-    loopbackNode = loopbackNodeBuilder([
-      {
+    mockNode = createMockNode({
+      loopback: true,
+      endpoints: [{
         endpointId: 1,
         inputClusters: [0],
-      },
-    ]);
-    sendingNode = new Node({
-      // Forward frames to receiving node
-      sendFrame: (...args) => receivingNode.handleFrame(...args),
-      endpointDescriptors: [
-        {
+      }],
+    });
+
+    [sendingNode, receivingNode] = createConnectedNodePair(
+      {
+        endpoints: [{
           endpointId: 1,
           inputClusters: [0, 6],
-        },
-      ],
-    });
+        }],
+      },
+      {
+        endpoints: [{
+          endpointId: 1,
+          inputClusters: [0, 6],
+        }],
+      },
+    );
     // Override log id for sending node
     const sendingNodeLog = (...args) => `sending-node:${args.join(':')}`;
     sendingNode.getLogId = sendingNodeLog;
     sendingNode.endpoints[1].getLogId = sendingNodeLog;
-    receivingNode = new Node({
-      // Forward frames to sending node
-      sendFrame: (...args) => sendingNode.handleFrame(...args),
-      endpointDescriptors: [
-        {
-          endpointId: 1,
-          inputClusters: [0, 6],
-        },
-      ],
-    });
     // Override log id for receiving node
     const receivingNodeLog = (...args) => `receiving-node:${args.join(':')}`;
     receivingNode.getLogId = receivingNodeLog;
@@ -64,7 +58,7 @@ describe('Node', function() {
   });
   it('should fail for unbound cluster', async function() {
     try {
-      await loopbackNode.endpoints[1].clusters['basic'].configureReporting({
+      await mockNode.endpoints[1].clusters['basic'].configureReporting({
         zclVersion: {
           minInterval: 1234,
           maxInterval: 4321,
@@ -77,10 +71,10 @@ describe('Node', function() {
   });
 
   it('should fail for unimplemented command', async function() {
-    loopbackNode.endpoints[1].bind('basic', new BoundCluster());
+    mockNode.endpoints[1].bind('basic', new BoundCluster());
 
     try {
-      await loopbackNode.endpoints[1].clusters['basic'].factoryReset();
+      await mockNode.endpoints[1].clusters['basic'].factoryReset();
     } catch (e) {
       return;
     }
@@ -88,7 +82,7 @@ describe('Node', function() {
   });
 
   it('should invoke command', async function() {
-    loopbackNode.endpoints[1].bind('basic', new class extends BoundCluster {
+    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
 
       async factoryReset() {
         debug('factory reset');
@@ -96,11 +90,11 @@ describe('Node', function() {
 
     }());
 
-    await loopbackNode.endpoints[1].clusters['basic'].factoryReset();
+    await mockNode.endpoints[1].clusters['basic'].factoryReset();
   });
 
   it('should configure reporting', async function() {
-    loopbackNode.endpoints[1].bind('basic', new class extends BoundCluster {
+    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
 
       async configureReporting({ reports }) {
         assert.equal(reports.length, 1, 'exactly 1 report');
@@ -108,7 +102,7 @@ describe('Node', function() {
 
     }());
 
-    await loopbackNode.endpoints[1].clusters['basic'].configureReporting({
+    await mockNode.endpoints[1].clusters['basic'].configureReporting({
       zclVersion: {
         minInterval: 10,
         maxInterval: 4321,
@@ -117,7 +111,7 @@ describe('Node', function() {
   });
 
   it('should read attributes', async function() {
-    loopbackNode.endpoints[1].bind('basic', new class extends BoundCluster {
+    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
 
       constructor() {
         super();
@@ -134,7 +128,7 @@ describe('Node', function() {
 
     }());
 
-    const res = await loopbackNode.endpoints[1].clusters['basic'].readAttributes(['modelId', 'manufacturerName', 'clusterRevision', 'zclVersion', 'dateCode']);
+    const res = await mockNode.endpoints[1].clusters['basic'].readAttributes(['modelId', 'manufacturerName', 'clusterRevision', 'zclVersion', 'dateCode']);
     assert.equal(res.modelId, 'test', 'modelId should be test');
     assert.equal(res.manufacturerName, 'Athom', 'manufacturerName should be test');
     assert.equal(res.clusterRevision, 1, 'clusterRevision should be test');
@@ -243,7 +237,7 @@ describe('Node', function() {
   });
 
   it('should write attributes', async function() {
-    loopbackNode.endpoints[1].bind('basic', new class extends BoundCluster {
+    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
 
       get modelId() {
         return 'test';
@@ -259,13 +253,13 @@ describe('Node', function() {
 
     }());
 
-    await loopbackNode.endpoints[1].clusters['basic'].writeAttributes({
+    await mockNode.endpoints[1].clusters['basic'].writeAttributes({
       modelId: 'test1',
     });
   });
 
   it('should discover attributes', async function() {
-    loopbackNode.endpoints[1].bind('basic', new class extends BoundCluster {
+    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
 
       get modelId() {
         return 'test';
@@ -281,21 +275,21 @@ describe('Node', function() {
 
     }());
 
-    const attrs = await loopbackNode.endpoints[1].clusters['basic'].discoverAttributes();
+    const attrs = await mockNode.endpoints[1].clusters['basic'].discoverAttributes();
     ['modelId', 'manufacturerName'].forEach(a => {
       assert(attrs.includes(a), `${a} is missing`);
     });
   });
 
   it('should discover received commands', async function() {
-    loopbackNode.endpoints[1].bind('basic', new class extends BoundCluster {
+    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
 
       async factoryReset() {
         debug('factory reset');
       }
 
     }());
-    const cmds = await loopbackNode.endpoints[1].clusters['basic'].discoverCommandsReceived();
+    const cmds = await mockNode.endpoints[1].clusters['basic'].discoverCommandsReceived();
     assert(cmds.includes('factoryReset'));
   });
 

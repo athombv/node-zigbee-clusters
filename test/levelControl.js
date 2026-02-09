@@ -3,104 +3,85 @@
 
 const assert = require('assert');
 const BoundCluster = require('../lib/BoundCluster');
-const LevelControlCluster = require('../lib/clusters/levelControl');
-const Node = require('../lib/Node');
-const { ZCLStandardHeader } = require('../lib/zclFrames');
-
-const endpointId = 1;
+const { createMockNode } = require('./util');
+require('../lib/clusters/levelControl');
 
 describe('Level Control', function() {
-  it('should receive moveToLevel', function(done) {
-    const node = new Node({
-      sendFrame: () => null,
-      endpointDescriptors: [{
-        endpointId,
-        inputClusters: [LevelControlCluster.ID],
+  it('should receive moveToLevel', async function() {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [8],
       }],
     });
 
-    node.endpoints[endpointId].bind(
-      LevelControlCluster.NAME,
-      new (class extends BoundCluster {
+    let receivedData = null;
+    node.endpoints[1].bind('levelControl', new (class extends BoundCluster {
 
-        async moveToLevel(data) {
-          assert.strictEqual(data.level, 128);
-          assert.strictEqual(data.transitionTime, 10);
-          done();
-        }
+      async moveToLevel(data) {
+        receivedData = data;
+      }
 
-      })(),
-    );
+    })());
 
-    const frame = new ZCLStandardHeader();
-    frame.cmdId = LevelControlCluster.COMMANDS.moveToLevel.id;
-    frame.frameControl.directionToClient = false;
-    frame.frameControl.clusterSpecific = true;
-    // level (uint8): 128 = 0x80, transitionTime (uint16 LE): 10 = 0x0A 0x00
-    frame.data = Buffer.from([0x80, 0x0A, 0x00]);
+    await node.endpoints[1].clusters.levelControl.moveToLevel({
+      level: 128,
+      transitionTime: 10,
+    });
 
-    node.handleFrame(endpointId, LevelControlCluster.ID, frame.toBuffer(), {});
+    assert.strictEqual(receivedData.level, 128);
+    assert.strictEqual(receivedData.transitionTime, 10);
   });
 
-  it('should receive step', function(done) {
-    const node = new Node({
-      sendFrame: () => null,
-      endpointDescriptors: [{
-        endpointId,
-        inputClusters: [LevelControlCluster.ID],
+  it('should receive step', async function() {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [8],
       }],
     });
 
-    node.endpoints[endpointId].bind(
-      LevelControlCluster.NAME,
-      new (class extends BoundCluster {
+    let receivedData = null;
+    node.endpoints[1].bind('levelControl', new (class extends BoundCluster {
 
-        async step(data) {
-          assert.strictEqual(data.mode, 'up');
-          assert.strictEqual(data.stepSize, 50);
-          assert.strictEqual(data.transitionTime, 5);
-          done();
-        }
+      async step(data) {
+        receivedData = data;
+      }
 
-      })(),
-    );
+    })());
 
-    const frame = new ZCLStandardHeader();
-    frame.cmdId = LevelControlCluster.COMMANDS.step.id;
-    frame.frameControl.directionToClient = false;
-    frame.frameControl.clusterSpecific = true;
-    // mode (enum8): up = 0, stepSize (uint8): 50 = 0x32, transitionTime (uint16 LE): 5 = 0x05 0x00
-    frame.data = Buffer.from([0x00, 0x32, 0x05, 0x00]);
+    await node.endpoints[1].clusters.levelControl.step({
+      mode: 'up',
+      stepSize: 50,
+      transitionTime: 5,
+    });
 
-    node.handleFrame(endpointId, LevelControlCluster.ID, frame.toBuffer(), {});
+    assert.strictEqual(receivedData.mode, 'up');
+    assert.strictEqual(receivedData.stepSize, 50);
+    assert.strictEqual(receivedData.transitionTime, 5);
   });
 
-  it('should receive stop', function(done) {
-    const node = new Node({
-      sendFrame: () => null,
-      endpointDescriptors: [{
-        endpointId,
-        inputClusters: [LevelControlCluster.ID],
+  it('should receive stop', async function() {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [8],
       }],
     });
 
-    node.endpoints[endpointId].bind(
-      LevelControlCluster.NAME,
-      new (class extends BoundCluster {
+    let called = false;
+    node.endpoints[1].bind('levelControl', new (class extends BoundCluster {
 
-        async stop() {
-          done();
-        }
+      async stop() {
+        called = true;
+      }
 
-      })(),
-    );
+    })());
 
-    const frame = new ZCLStandardHeader();
-    frame.cmdId = LevelControlCluster.COMMANDS.stop.id;
-    frame.frameControl.directionToClient = false;
-    frame.frameControl.clusterSpecific = true;
-    frame.data = Buffer.alloc(0);
-
-    node.handleFrame(endpointId, LevelControlCluster.ID, frame.toBuffer(), {});
+    await node.endpoints[1].clusters.levelControl.stop();
+    assert.strictEqual(called, true);
   });
 });

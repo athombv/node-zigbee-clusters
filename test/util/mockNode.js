@@ -74,21 +74,26 @@ function createBoundClusterWithAttributes(attributes) {
  * @param {number[]} config.endpoints[].inputClusters - Input cluster IDs
  * @param {number[]} [config.endpoints[].outputClusters] - Output cluster IDs
  * @param {Object} [config.endpoints[].clusters] - Cluster attribute values keyed by cluster name
+ * @param {boolean} [config.loopback] - If true, frames are looped back to the node's handleFrame
  * @returns {Node} Configured mock Node
  */
-function createMockDevice(config) {
+function createMockNode(config) {
   const endpointDescriptors = config.endpoints.map(ep => ({
     endpointId: ep.endpointId,
     inputClusters: ep.inputClusters || [],
     outputClusters: ep.outputClusters || [],
   }));
 
+  // Create node reference first so sendFrame can reference it
+  let node;
   const mockNode = {
-    sendFrame: () => Promise.resolve(), // No-op by default
+    sendFrame: config.loopback
+      ? (...args) => node.handleFrame(...args)
+      : () => Promise.resolve(),
     endpointDescriptors,
   };
 
-  const node = new Node(mockNode);
+  node = new Node(mockNode);
 
   // Bind clusters with preset attribute values
   config.endpoints.forEach(ep => {
@@ -104,13 +109,70 @@ function createMockDevice(config) {
 }
 
 /**
+ * Creates a pair of connected mock nodes that can send frames to each other.
+ *
+ * @param {Object} config1 - Configuration for first node
+ * @param {Object} config2 - Configuration for second node
+ * @returns {[Node, Node]} Tuple of connected nodes
+ */
+function createConnectedNodePair(config1, config2) {
+  const endpointDescriptors1 = config1.endpoints.map(ep => ({
+    endpointId: ep.endpointId,
+    inputClusters: ep.inputClusters || [],
+    outputClusters: ep.outputClusters || [],
+  }));
+
+  const endpointDescriptors2 = config2.endpoints.map(ep => ({
+    endpointId: ep.endpointId,
+    inputClusters: ep.inputClusters || [],
+    outputClusters: ep.outputClusters || [],
+  }));
+
+  let node1;
+  let node2;
+
+  const mockNode1 = {
+    sendFrame: (...args) => node2.handleFrame(...args),
+    endpointDescriptors: endpointDescriptors1,
+  };
+
+  const mockNode2 = {
+    sendFrame: (...args) => node1.handleFrame(...args),
+    endpointDescriptors: endpointDescriptors2,
+  };
+
+  node1 = new Node(mockNode1);
+  node2 = new Node(mockNode2);
+
+  // Bind clusters for node1
+  config1.endpoints.forEach(ep => {
+    if (!ep.clusters) return;
+    Object.entries(ep.clusters).forEach(([clusterName, attributes]) => {
+      const boundCluster = createBoundClusterWithAttributes(attributes);
+      node1.endpoints[ep.endpointId].bind(clusterName, boundCluster);
+    });
+  });
+
+  // Bind clusters for node2
+  config2.endpoints.forEach(ep => {
+    if (!ep.clusters) return;
+    Object.entries(ep.clusters).forEach(([clusterName, attributes]) => {
+      const boundCluster = createBoundClusterWithAttributes(attributes);
+      node2.endpoints[ep.endpointId].bind(clusterName, boundCluster);
+    });
+  });
+
+  return [node1, node2];
+}
+
+/**
  * Preset device configurations for common device types.
  */
 const MOCK_DEVICES = {
   /**
    * IAS Zone Motion Sensor
    */
-  motionSensor: (overrides = {}) => createMockDevice({
+  motionSensor: (overrides = {}) => createMockNode({
     endpoints: [{
       endpointId: 1,
       inputClusters: [0x0000, 0x0001, 0x0500],
@@ -140,7 +202,7 @@ const MOCK_DEVICES = {
   /**
    * IAS Zone Contact Sensor (door/window)
    */
-  contactSensor: (overrides = {}) => createMockDevice({
+  contactSensor: (overrides = {}) => createMockNode({
     endpoints: [{
       endpointId: 1,
       inputClusters: [0x0000, 0x0001, 0x0500],
@@ -170,7 +232,7 @@ const MOCK_DEVICES = {
   /**
    * Temperature + Humidity Sensor
    */
-  tempHumiditySensor: (overrides = {}) => createMockDevice({
+  tempHumiditySensor: (overrides = {}) => createMockNode({
     endpoints: [{
       endpointId: 1,
       inputClusters: [0x0000, 0x0001, 0x0402, 0x0405],
@@ -204,7 +266,7 @@ const MOCK_DEVICES = {
   /**
    * Smart Plug with Power Metering
    */
-  smartPlug: (overrides = {}) => createMockDevice({
+  smartPlug: (overrides = {}) => createMockNode({
     endpoints: [{
       endpointId: 1,
       inputClusters: [0x0000, 0x0006, 0x0702, 0x0B04],
@@ -237,7 +299,8 @@ const MOCK_DEVICES = {
 };
 
 module.exports = {
-  createMockDevice,
+  createMockNode,
+  createConnectedNodePair,
   createBoundClusterWithAttributes,
   MOCK_DEVICES,
 };

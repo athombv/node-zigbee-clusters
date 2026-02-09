@@ -51,7 +51,59 @@ Example: `lib/clusters/onOff.js`
 
 ### Test Pattern
 
-Tests mock a Node with `endpointDescriptors`, bind a BoundCluster to handle commands, then call `node.handleFrame()` with crafted ZCL frames.
+Tests use mock nodes from `test/util/mockNode.js`:
+
+**Single node with loopback** (command → same node's BoundCluster):
+```javascript
+const { createMockNode } = require('./util');
+
+const node = createMockNode({
+  loopback: true,
+  endpoints: [{ endpointId: 1, inputClusters: [6] }],
+});
+
+node.endpoints[1].bind('onOff', new (class extends BoundCluster {
+  async setOn() { /* handle command */ }
+})());
+
+await node.endpoints[1].clusters.onOff.setOn(); // loops back to BoundCluster
+```
+
+**Connected node pair** (node A sends → node B receives):
+```javascript
+const { createConnectedNodePair } = require('./util');
+
+const [sender, receiver] = createConnectedNodePair(
+  { endpoints: [{ endpointId: 1, inputClusters: [6] }] },
+  { endpoints: [{ endpointId: 1, inputClusters: [6] }] },
+);
+
+receiver.endpoints[1].bind('onOff', new BoundCluster());
+await sender.endpoints[1].clusters.onOff.toggle();
+```
+
+**Server-to-client notifications** (device → controller) still require manual frames:
+```javascript
+const { ZCLStandardHeader } = require('../lib/zclFrames');
+
+node.endpoints[1].clusters.iasZone.onZoneStatusChangeNotification = data => { ... };
+
+const frame = new ZCLStandardHeader();
+frame.cmdId = IASZoneCluster.COMMANDS.zoneStatusChangeNotification.id;
+frame.frameControl.directionToClient = true;
+frame.frameControl.clusterSpecific = true;
+frame.data = Buffer.from([...]);
+
+node.handleFrame(1, IASZoneCluster.ID, frame.toBuffer(), {});
+```
+
+**Preset mock devices** for common sensor types:
+```javascript
+const { MOCK_DEVICES } = require('./util');
+
+const sensor = MOCK_DEVICES.motionSensor();
+const boundCluster = sensor.endpoints[1].bindings.iasZone;
+```
 
 ## Key Files
 

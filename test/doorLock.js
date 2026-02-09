@@ -4,122 +4,103 @@
 const assert = require('assert');
 const BoundCluster = require('../lib/BoundCluster');
 const DoorLockCluster = require('../lib/clusters/doorLock');
-const Node = require('../lib/Node');
+const { createMockNode } = require('./util');
 const { ZCLStandardHeader } = require('../lib/zclFrames');
 
-const endpointId = 1;
-
 describe('Door Lock', function() {
-  it('should receive lockDoor', function(done) {
-    const node = new Node({
-      sendFrame: () => null,
-      endpointDescriptors: [{
-        endpointId,
-        inputClusters: [DoorLockCluster.ID],
+  it('should receive lockDoor', async function() {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [0x0101],
       }],
     });
 
-    node.endpoints[endpointId].bind(
-      DoorLockCluster.NAME,
-      new (class extends BoundCluster {
+    let receivedData = null;
+    node.endpoints[1].bind('doorLock', new (class extends BoundCluster {
 
-        async lockDoor(data) {
-          assert.deepStrictEqual(data.pinCode, Buffer.from([0x31, 0x32, 0x33, 0x34]));
-          done();
-        }
+      async lockDoor(data) {
+        receivedData = data;
+      }
 
-      })(),
-    );
+    })());
 
-    const frame = new ZCLStandardHeader();
-    frame.cmdId = DoorLockCluster.COMMANDS.lockDoor.id;
-    frame.frameControl.directionToClient = false;
-    frame.frameControl.clusterSpecific = true;
-    // pinCode (octstr): length 4, data "1234" = 0x31 0x32 0x33 0x34
-    frame.data = Buffer.from([0x04, 0x31, 0x32, 0x33, 0x34]);
+    await node.endpoints[1].clusters.doorLock.lockDoor({
+      pinCode: Buffer.from([0x31, 0x32, 0x33, 0x34]),
+    });
 
-    node.handleFrame(endpointId, DoorLockCluster.ID, frame.toBuffer(), {});
+    assert.deepStrictEqual(receivedData.pinCode, Buffer.from([0x31, 0x32, 0x33, 0x34]));
   });
 
-  it('should receive unlockDoor', function(done) {
-    const node = new Node({
-      sendFrame: () => null,
-      endpointDescriptors: [{
-        endpointId,
-        inputClusters: [DoorLockCluster.ID],
+  it('should receive unlockDoor', async function() {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [0x0101],
       }],
     });
 
-    node.endpoints[endpointId].bind(
-      DoorLockCluster.NAME,
-      new (class extends BoundCluster {
+    let receivedData = null;
+    node.endpoints[1].bind('doorLock', new (class extends BoundCluster {
 
-        async unlockDoor(data) {
-          assert.deepStrictEqual(data.pinCode, Buffer.from([0x30, 0x30, 0x30, 0x30]));
-          done();
-        }
+      async unlockDoor(data) {
+        receivedData = data;
+      }
 
-      })(),
-    );
+    })());
 
-    const frame = new ZCLStandardHeader();
-    frame.cmdId = DoorLockCluster.COMMANDS.unlockDoor.id;
-    frame.frameControl.directionToClient = false;
-    frame.frameControl.clusterSpecific = true;
-    // pinCode (octstr): length 4, data "0000" = 0x30 0x30 0x30 0x30
-    frame.data = Buffer.from([0x04, 0x30, 0x30, 0x30, 0x30]);
+    await node.endpoints[1].clusters.doorLock.unlockDoor({
+      pinCode: Buffer.from([0x30, 0x30, 0x30, 0x30]),
+    });
 
-    node.handleFrame(endpointId, DoorLockCluster.ID, frame.toBuffer(), {});
+    assert.deepStrictEqual(receivedData.pinCode, Buffer.from([0x30, 0x30, 0x30, 0x30]));
   });
 
-  it('should receive setPINCode', function(done) {
-    const node = new Node({
-      sendFrame: () => null,
-      endpointDescriptors: [{
-        endpointId,
-        inputClusters: [DoorLockCluster.ID],
+  it('should receive setPINCode', async function() {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [0x0101],
       }],
     });
 
-    node.endpoints[endpointId].bind(
-      DoorLockCluster.NAME,
-      new (class extends BoundCluster {
+    let receivedData = null;
+    node.endpoints[1].bind('doorLock', new (class extends BoundCluster {
 
-        async setPINCode(data) {
-          assert.strictEqual(data.userId, 1);
-          assert.strictEqual(data.userStatus, 'occupiedEnabled');
-          assert.strictEqual(data.userType, 'unrestricted');
-          assert.deepStrictEqual(data.pinCode, Buffer.from([0x35, 0x36, 0x37, 0x38]));
-          done();
-        }
+      async setPINCode(data) {
+        receivedData = data;
+      }
 
-      })(),
-    );
+    })());
 
-    const frame = new ZCLStandardHeader();
-    frame.cmdId = DoorLockCluster.COMMANDS.setPINCode.id;
-    frame.frameControl.directionToClient = false;
-    frame.frameControl.clusterSpecific = true;
-    // userId (uint16 LE): 1 = 0x01 0x00
-    // userStatus (enum8): occupiedEnabled = 1
-    // userType (enum8): unrestricted = 0
-    // pinCode (octstr): length 4, data "5678" = 0x35 0x36 0x37 0x38
-    frame.data = Buffer.from([0x01, 0x00, 0x01, 0x00, 0x04, 0x35, 0x36, 0x37, 0x38]);
+    await node.endpoints[1].clusters.doorLock.setPINCode({
+      userId: 1,
+      userStatus: 'occupiedEnabled',
+      userType: 'unrestricted',
+      pinCode: Buffer.from([0x35, 0x36, 0x37, 0x38]),
+    });
 
-    node.handleFrame(endpointId, DoorLockCluster.ID, frame.toBuffer(), {});
+    assert.strictEqual(receivedData.userId, 1);
+    assert.strictEqual(receivedData.userStatus, 'occupiedEnabled');
+    assert.strictEqual(receivedData.userType, 'unrestricted');
+    assert.deepStrictEqual(receivedData.pinCode, Buffer.from([0x35, 0x36, 0x37, 0x38]));
   });
 
+  // Server-to-client notifications require manual frame construction
+  // since they are sent BY the device TO the controller
   it('should receive operationEventNotification', function(done) {
-    const node = new Node({
-      sendFrame: () => null,
-      endpointDescriptors: [{
-        endpointId,
-        inputClusters: [DoorLockCluster.ID],
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [0x0101],
       }],
     });
 
-    // Listen for incoming operationEventNotification
-    node.endpoints[endpointId].clusters.doorLock.onOperationEventNotification = data => {
+    node.endpoints[1].clusters.doorLock.onOperationEventNotification = data => {
       assert.strictEqual(data.operationEventSource, 1); // Keypad
       assert.strictEqual(data.operationEventCode, 2); // Unlock
       assert.strictEqual(data.userId, 3);
@@ -129,17 +110,10 @@ describe('Door Lock', function() {
       done();
     };
 
-    // Create operationEventNotification frame
     const frame = new ZCLStandardHeader();
     frame.cmdId = DoorLockCluster.COMMANDS.operationEventNotification.id;
     frame.frameControl.directionToClient = true;
     frame.frameControl.clusterSpecific = true;
-    // operationEventSource (uint8): 1
-    // operationEventCode (uint8): 2
-    // userId (uint16 LE): 3 = 0x03 0x00
-    // pin (octstr): length 4, data "1234"
-    // zigBeeLocalTime (uint32 LE): 0x12345678
-    // data (octstr): empty = 0x00
     frame.data = Buffer.from([
       0x01, 0x02, 0x03, 0x00,
       0x04, 0x31, 0x32, 0x33, 0x34,
@@ -147,20 +121,19 @@ describe('Door Lock', function() {
       0x00,
     ]);
 
-    node.handleFrame(endpointId, DoorLockCluster.ID, frame.toBuffer(), {});
+    node.handleFrame(1, DoorLockCluster.ID, frame.toBuffer(), {});
   });
 
   it('should receive programmingEventNotification', function(done) {
-    const node = new Node({
-      sendFrame: () => null,
-      endpointDescriptors: [{
-        endpointId,
-        inputClusters: [DoorLockCluster.ID],
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [0x0101],
       }],
     });
 
-    // Listen for incoming programmingEventNotification
-    node.endpoints[endpointId].clusters.doorLock.onProgrammingEventNotification = data => {
+    node.endpoints[1].clusters.doorLock.onProgrammingEventNotification = data => {
       assert.strictEqual(data.programEventSource, 2); // RF
       assert.strictEqual(data.programEventCode, 3); // PIN added
       assert.strictEqual(data.userId, 7);
@@ -172,19 +145,10 @@ describe('Door Lock', function() {
       done();
     };
 
-    // Create programmingEventNotification frame
     const frame = new ZCLStandardHeader();
     frame.cmdId = DoorLockCluster.COMMANDS.programmingEventNotification.id;
     frame.frameControl.directionToClient = true;
     frame.frameControl.clusterSpecific = true;
-    // programEventSource (uint8): 2
-    // programEventCode (uint8): 3
-    // userId (uint16 LE): 7 = 0x07 0x00
-    // pin (octstr): length 4, data "5678"
-    // userType (enum8): unrestricted = 0
-    // userStatus (enum8): occupiedEnabled = 1
-    // zigBeeLocalTime (uint32 LE): 0xAABBCCDD
-    // data (octstr): empty = 0x00
     frame.data = Buffer.from([
       0x02, 0x03, 0x07, 0x00,
       0x04, 0x35, 0x36, 0x37, 0x38,
@@ -193,6 +157,6 @@ describe('Door Lock', function() {
       0x00,
     ]);
 
-    node.handleFrame(endpointId, DoorLockCluster.ID, frame.toBuffer(), {});
+    node.handleFrame(1, DoorLockCluster.ID, frame.toBuffer(), {});
   });
 });

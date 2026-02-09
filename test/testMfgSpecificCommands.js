@@ -75,14 +75,15 @@ class IkeaSceneCluster extends SceneCluster {
 }
 
 Cluster.addCluster(IkeaSceneCluster);
-const { loopbackNode } = require('./util');
+const { createMockNode } = require('./util');
 
-const node = loopbackNode([
-  {
+const node = createMockNode({
+  loopback: true,
+  endpoints: [{
     endpointId: 1,
     inputClusters: [5],
-  },
-]);
+  }],
+});
 
 class IkeaBoundCluster extends BoundCluster {
 

@@ -3,130 +3,102 @@
 
 const assert = require('assert');
 const BoundCluster = require('../lib/BoundCluster');
-const OnOffCluster = require('../lib/clusters/onOff');
-const Node = require('../lib/Node');
-const { ZCLStandardHeader } = require('../lib/zclFrames');
-
-const endpointId = 1;
+const { createMockNode } = require('./util');
+require('../lib/clusters/onOff');
 
 describe('On/Off', function() {
-  it('should receive setOn', function(done) {
-    const node = new Node({
-      sendFrame: () => null,
-      endpointDescriptors: [{
-        endpointId,
-        inputClusters: [OnOffCluster.ID],
+  it('should receive setOn', async function() {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [6],
       }],
     });
 
-    node.endpoints[endpointId].bind(
-      OnOffCluster.NAME,
-      new (class extends BoundCluster {
+    let called = false;
+    node.endpoints[1].bind('onOff', new (class extends BoundCluster {
 
-        async setOn() {
-          done();
-        }
+      async setOn() {
+        called = true;
+      }
 
-      })(),
-    );
+    })());
 
-    const frame = new ZCLStandardHeader();
-    frame.cmdId = OnOffCluster.COMMANDS.setOn.id;
-    frame.frameControl.directionToClient = false;
-    frame.frameControl.clusterSpecific = true;
-    frame.data = Buffer.alloc(0);
-
-    node.handleFrame(endpointId, OnOffCluster.ID, frame.toBuffer(), {});
+    await node.endpoints[1].clusters.onOff.setOn();
+    assert.strictEqual(called, true);
   });
 
-  it('should receive setOff', function(done) {
-    const node = new Node({
-      sendFrame: () => null,
-      endpointDescriptors: [{
-        endpointId,
-        inputClusters: [OnOffCluster.ID],
+  it('should receive setOff', async function() {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [6],
       }],
     });
 
-    node.endpoints[endpointId].bind(
-      OnOffCluster.NAME,
-      new (class extends BoundCluster {
+    let called = false;
+    node.endpoints[1].bind('onOff', new (class extends BoundCluster {
 
-        async setOff() {
-          done();
-        }
+      async setOff() {
+        called = true;
+      }
 
-      })(),
-    );
+    })());
 
-    const frame = new ZCLStandardHeader();
-    frame.cmdId = OnOffCluster.COMMANDS.setOff.id;
-    frame.frameControl.directionToClient = false;
-    frame.frameControl.clusterSpecific = true;
-    frame.data = Buffer.alloc(0);
-
-    node.handleFrame(endpointId, OnOffCluster.ID, frame.toBuffer(), {});
+    await node.endpoints[1].clusters.onOff.setOff();
+    assert.strictEqual(called, true);
   });
 
-  it('should receive toggle', function(done) {
-    const node = new Node({
-      sendFrame: () => null,
-      endpointDescriptors: [{
-        endpointId,
-        inputClusters: [OnOffCluster.ID],
+  it('should receive toggle', async function() {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [6],
       }],
     });
 
-    node.endpoints[endpointId].bind(
-      OnOffCluster.NAME,
-      new (class extends BoundCluster {
+    let called = false;
+    node.endpoints[1].bind('onOff', new (class extends BoundCluster {
 
-        async toggle() {
-          done();
-        }
+      async toggle() {
+        called = true;
+      }
 
-      })(),
-    );
+    })());
 
-    const frame = new ZCLStandardHeader();
-    frame.cmdId = OnOffCluster.COMMANDS.toggle.id;
-    frame.frameControl.directionToClient = false;
-    frame.frameControl.clusterSpecific = true;
-    frame.data = Buffer.alloc(0);
-
-    node.handleFrame(endpointId, OnOffCluster.ID, frame.toBuffer(), {});
+    await node.endpoints[1].clusters.onOff.toggle();
+    assert.strictEqual(called, true);
   });
 
-  it('should receive onWithTimedOff', function(done) {
-    const node = new Node({
-      sendFrame: () => null,
-      endpointDescriptors: [{
-        endpointId,
-        inputClusters: [OnOffCluster.ID],
+  it('should receive onWithTimedOff', async function() {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [6],
       }],
     });
 
-    node.endpoints[endpointId].bind(
-      OnOffCluster.NAME,
-      new (class extends BoundCluster {
+    let receivedData = null;
+    node.endpoints[1].bind('onOff', new (class extends BoundCluster {
 
-        async onWithTimedOff(data) {
-          assert.strictEqual(data.onOffControl, 0x01);
-          assert.strictEqual(data.onTime, 100);
-          assert.strictEqual(data.offWaitTime, 50);
-          done();
-        }
+      async onWithTimedOff(data) {
+        receivedData = data;
+      }
 
-      })(),
-    );
+    })());
 
-    const frame = new ZCLStandardHeader();
-    frame.cmdId = OnOffCluster.COMMANDS.onWithTimedOff.id;
-    frame.frameControl.directionToClient = false;
-    frame.frameControl.clusterSpecific = true;
-    // onOffControl: 0x01, onTime (uint16 LE): 100, offWaitTime (uint16 LE): 50
-    frame.data = Buffer.from([0x01, 0x64, 0x00, 0x32, 0x00]);
+    await node.endpoints[1].clusters.onOff.onWithTimedOff({
+      onOffControl: 0x01,
+      onTime: 100,
+      offWaitTime: 50,
+    });
 
-    node.handleFrame(endpointId, OnOffCluster.ID, frame.toBuffer(), {});
+    assert.strictEqual(receivedData.onOffControl, 0x01);
+    assert.strictEqual(receivedData.onTime, 100);
+    assert.strictEqual(receivedData.offWaitTime, 50);
   });
 });
