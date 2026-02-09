@@ -131,7 +131,7 @@ const COMMANDS = {
 
 class ExampleCluster extends Cluster {
   static get ID() {
-    return 0x0000;
+    return 0x0000; // Add decimal comment if > 9, e.g.: return 0x0101; // 257
   }
 
   static get NAME() {
@@ -179,9 +179,24 @@ currentLevel: { id: 0x0000, type: ZCLDataTypes.uint8 }, // Mandatory
 
 | Field | Format | Notes |
 |-------|--------|-------|
-| `id` | Hex (`0x0000`) | Consistent hex format |
+| `id` | Hex (`0x0000`) | Consistent hex format; add decimal comment if > 9 |
 | `type` | `ZCLDataTypes.*` | See type reference below |
 | M/O | Inline comment | `// Mandatory` or `// Optional` |
+
+#### Hex with Decimal Comments
+
+For hex values > 9 (where hex differs from decimal), add decimal in comment:
+```javascript
+id: 0x000A, // 10
+id: 0x0010, // 16
+id: 0x0100, // 256
+```
+
+For values 0-9, no decimal comment needed:
+```javascript
+id: 0x0000,
+id: 0x0009,
+```
 
 #### Section Comments
 
@@ -201,7 +216,7 @@ attr3: { ... },
 
 | Field | Required | Notes |
 |-------|----------|-------|
-| `id` | Yes | Hex format |
+| `id` | Yes | Hex format; add decimal comment if > 9 |
 | `args` | If has params | Object with typed fields |
 | `response` | If expects response | Has own `id` and `args` |
 | `direction` | For server→client | `Cluster.DIRECTION_SERVER_TO_CLIENT` |
@@ -214,7 +229,7 @@ lockDoor: { id: 0x00, ... }, // Mandatory
 
 // --- Server to Client Commands ---
 operationEventNotification: {
-  id: 0x20,
+  id: 0x20, // 32
   direction: Cluster.DIRECTION_SERVER_TO_CLIENT,
   ...
 }, // Optional
@@ -305,7 +320,7 @@ npm run build
 - [ ] Server→client cmds have `direction` field
 - [ ] Responses defined where applicable
 - [ ] Reusable enums extracted if used 2+ times
-- [ ] Hex IDs used consistently
+- [ ] Hex IDs used consistently (with decimal comments if > 9)
 - [ ] Lint passes
 - [ ] Tests pass
 
