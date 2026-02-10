@@ -309,32 +309,32 @@ export interface DoorLockClusterAttributes {
 export interface DoorLockCluster extends ZCLNodeCluster {
   readAttributes<K extends 'lockState' | 'lockType' | 'actuatorEnabled' | 'doorState' | 'doorOpenEvents' | 'doorClosedEvents' | 'openPeriod' | 'numberOfLogRecordsSupported' | 'numberOfTotalUsersSupported' | 'numberOfPINUsersSupported' | 'numberOfRFIDUsersSupported' | 'numberOfWeekDaySchedulesSupportedPerUser' | 'numberOfYearDaySchedulesSupportedPerUser' | 'numberOfHolidaySchedulesSupported' | 'maxPINCodeLength' | 'minPINCodeLength' | 'maxRFIDCodeLength' | 'minRFIDCodeLength' | 'enableLogging' | 'language' | 'ledSettings' | 'autoRelockTime' | 'soundVolume' | 'operatingMode' | 'supportedOperatingModes' | 'defaultConfigurationRegister' | 'enableLocalProgramming' | 'enableOneTouchLocking' | 'enableInsideStatusLED' | 'enablePrivacyModeButton' | 'wrongCodeEntryLimit' | 'userCodeTemporaryDisableTime' | 'sendPINOverTheAir' | 'requirePINforRFOperation' | 'securityLevel' | 'alarmMask' | 'keypadOperationEventMask' | 'rfOperationEventMask' | 'manualOperationEventMask' | 'rfidOperationEventMask' | 'keypadProgrammingEventMask' | 'rfProgrammingEventMask' | 'rfidProgrammingEventMask'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<DoorLockClusterAttributes, K>>;
   writeAttributes(attributes: Partial<DoorLockClusterAttributes>): Promise<void>;
-  lockDoor(args: { pinCode?: Buffer }): Promise<void>;
-  unlockDoor(args: { pinCode?: Buffer }): Promise<void>;
-  toggle(args: { pinCode?: Buffer }): Promise<void>;
-  unlockWithTimeout(args: { timeout: number; pinCode?: Buffer }): Promise<void>;
-  getLogRecord(args: { logIndex: number }): Promise<void>;
-  setPINCode(args: { userId: number; userStatus: 'available' | 'occupiedEnabled' | 'occupiedDisabled' | 'notSupported'; userType: 'unrestricted' | 'yearDayScheduleUser' | 'weekDayScheduleUser' | 'masterUser' | 'nonAccessUser' | 'notSupported'; pinCode?: Buffer }): Promise<void>;
-  getPINCode(args: { userId: number }): Promise<void>;
-  clearPINCode(args: { userId: number }): Promise<void>;
-  clearAllPINCodes(): Promise<void>;
-  setUserStatus(args: { userId: number; userStatus: 'available' | 'occupiedEnabled' | 'occupiedDisabled' | 'notSupported' }): Promise<void>;
-  getUserStatus(args: { userId: number }): Promise<void>;
-  setWeekDaySchedule(args: { scheduleId: number; userId: number; daysMask: Partial<{ sunday: boolean; monday: boolean; tuesday: boolean; wednesday: boolean; thursday: boolean; friday: boolean; saturday: boolean }>; startHour: number; startMinute: number; endHour: number; endMinute: number }): Promise<void>;
-  getWeekDaySchedule(args: { scheduleId: number; userId: number }): Promise<void>;
-  clearWeekDaySchedule(args: { scheduleId: number; userId: number }): Promise<void>;
-  setYearDaySchedule(args: { scheduleId: number; userId: number; localStartTime: number; localEndTime: number }): Promise<void>;
-  getYearDaySchedule(args: { scheduleId: number; userId: number }): Promise<void>;
-  clearYearDaySchedule(args: { scheduleId: number; userId: number }): Promise<void>;
-  setHolidaySchedule(args: { holidayScheduleId: number; localStartTime: number; localEndTime: number; operatingModeDuringHoliday: 'normal' | 'vacation' | 'privacy' | 'noRFLockOrUnlock' | 'passage' }): Promise<void>;
-  getHolidaySchedule(args: { holidayScheduleId: number }): Promise<void>;
-  clearHolidaySchedule(args: { holidayScheduleId: number }): Promise<void>;
-  setUserType(args: { userId: number; userType: 'unrestricted' | 'yearDayScheduleUser' | 'weekDayScheduleUser' | 'masterUser' | 'nonAccessUser' | 'notSupported' }): Promise<void>;
-  getUserType(args: { userId: number }): Promise<void>;
-  setRFIDCode(args: { userId: number; userStatus: 'available' | 'occupiedEnabled' | 'occupiedDisabled' | 'notSupported'; userType: 'unrestricted' | 'yearDayScheduleUser' | 'weekDayScheduleUser' | 'masterUser' | 'nonAccessUser' | 'notSupported'; rfidCode?: Buffer }): Promise<void>;
-  getRFIDCode(args: { userId: number }): Promise<void>;
-  clearRFIDCode(args: { userId: number }): Promise<void>;
-  clearAllRFIDCodes(): Promise<void>;
+  lockDoor(args: { pinCode?: Buffer }): Promise<{ status: number }>;
+  unlockDoor(args: { pinCode?: Buffer }): Promise<{ status: number }>;
+  toggle(args: { pinCode?: Buffer }): Promise<{ status: number }>;
+  unlockWithTimeout(args: { timeout: number; pinCode?: Buffer }): Promise<{ status: number }>;
+  getLogRecord(args: { logIndex: number }): Promise<{ logEntryId: number; timestamp: number; eventType: number; source: number; eventIdOrAlarmCode: number; userId: number; pin: Buffer }>;
+  setPINCode(args: { userId: number; userStatus: 'available' | 'occupiedEnabled' | 'occupiedDisabled' | 'notSupported'; userType: 'unrestricted' | 'yearDayScheduleUser' | 'weekDayScheduleUser' | 'masterUser' | 'nonAccessUser' | 'notSupported'; pinCode?: Buffer }): Promise<{ status: number }>;
+  getPINCode(args: { userId: number }): Promise<{ userId: number; userStatus: 'available' | 'occupiedEnabled' | 'occupiedDisabled' | 'notSupported'; userType: 'unrestricted' | 'yearDayScheduleUser' | 'weekDayScheduleUser' | 'masterUser' | 'nonAccessUser' | 'notSupported'; pinCode: Buffer }>;
+  clearPINCode(args: { userId: number }): Promise<{ status: number }>;
+  clearAllPINCodes(): Promise<{ status: number }>;
+  setUserStatus(args: { userId: number; userStatus: 'available' | 'occupiedEnabled' | 'occupiedDisabled' | 'notSupported' }): Promise<{ status: number }>;
+  getUserStatus(args: { userId: number }): Promise<{ userId: number; userStatus: 'available' | 'occupiedEnabled' | 'occupiedDisabled' | 'notSupported' }>;
+  setWeekDaySchedule(args: { scheduleId: number; userId: number; daysMask: Partial<{ sunday: boolean; monday: boolean; tuesday: boolean; wednesday: boolean; thursday: boolean; friday: boolean; saturday: boolean }>; startHour: number; startMinute: number; endHour: number; endMinute: number }): Promise<{ status: number }>;
+  getWeekDaySchedule(args: { scheduleId: number; userId: number }): Promise<{ scheduleId: number; userId: number; status: number; daysMask: Partial<{ sunday: boolean; monday: boolean; tuesday: boolean; wednesday: boolean; thursday: boolean; friday: boolean; saturday: boolean }>; startHour: number; startMinute: number; endHour: number; endMinute: number }>;
+  clearWeekDaySchedule(args: { scheduleId: number; userId: number }): Promise<{ status: number }>;
+  setYearDaySchedule(args: { scheduleId: number; userId: number; localStartTime: number; localEndTime: number }): Promise<{ status: number }>;
+  getYearDaySchedule(args: { scheduleId: number; userId: number }): Promise<{ scheduleId: number; userId: number; status: number; localStartTime: number; localEndTime: number }>;
+  clearYearDaySchedule(args: { scheduleId: number; userId: number }): Promise<{ status: number }>;
+  setHolidaySchedule(args: { holidayScheduleId: number; localStartTime: number; localEndTime: number; operatingModeDuringHoliday: 'normal' | 'vacation' | 'privacy' | 'noRFLockOrUnlock' | 'passage' }): Promise<{ status: number }>;
+  getHolidaySchedule(args: { holidayScheduleId: number }): Promise<{ holidayScheduleId: number; status: number; localStartTime: number; localEndTime: number; operatingMode: 'normal' | 'vacation' | 'privacy' | 'noRFLockOrUnlock' | 'passage' }>;
+  clearHolidaySchedule(args: { holidayScheduleId: number }): Promise<{ status: number }>;
+  setUserType(args: { userId: number; userType: 'unrestricted' | 'yearDayScheduleUser' | 'weekDayScheduleUser' | 'masterUser' | 'nonAccessUser' | 'notSupported' }): Promise<{ status: number }>;
+  getUserType(args: { userId: number }): Promise<{ userId: number; userType: 'unrestricted' | 'yearDayScheduleUser' | 'weekDayScheduleUser' | 'masterUser' | 'nonAccessUser' | 'notSupported' }>;
+  setRFIDCode(args: { userId: number; userStatus: 'available' | 'occupiedEnabled' | 'occupiedDisabled' | 'notSupported'; userType: 'unrestricted' | 'yearDayScheduleUser' | 'weekDayScheduleUser' | 'masterUser' | 'nonAccessUser' | 'notSupported'; rfidCode?: Buffer }): Promise<{ status: number }>;
+  getRFIDCode(args: { userId: number }): Promise<{ userId: number; userStatus: 'available' | 'occupiedEnabled' | 'occupiedDisabled' | 'notSupported'; userType: 'unrestricted' | 'yearDayScheduleUser' | 'weekDayScheduleUser' | 'masterUser' | 'nonAccessUser' | 'notSupported'; rfidCode: Buffer }>;
+  clearRFIDCode(args: { userId: number }): Promise<{ status: number }>;
+  clearAllRFIDCodes(): Promise<{ status: number }>;
   operationEventNotification(args: { operationEventSource: number; operationEventCode: number; userId: number; pin?: Buffer; zigBeeLocalTime: number; data?: Buffer }): Promise<void>;
   programmingEventNotification(args: { programEventSource: number; programEventCode: number; userId: number; pin?: Buffer; userType: 'unrestricted' | 'yearDayScheduleUser' | 'weekDayScheduleUser' | 'masterUser' | 'nonAccessUser' | 'notSupported'; userStatus: 'available' | 'occupiedEnabled' | 'occupiedDisabled' | 'notSupported'; zigBeeLocalTime: number; data?: Buffer }): Promise<void>;
 }
@@ -389,10 +389,10 @@ export interface GroupsClusterAttributes {
 export interface GroupsCluster extends ZCLNodeCluster {
   readAttributes<K extends 'nameSupport'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<GroupsClusterAttributes, K>>;
   writeAttributes(attributes: Partial<GroupsClusterAttributes>): Promise<void>;
-  addGroup(args: { groupId: number; groupName: string }): Promise<void>;
-  viewGroup(args: { groupId: number }): Promise<void>;
-  getGroupMembership(args: { groupIds: number[] }): Promise<void>;
-  removeGroup(args: { groupId: number }): Promise<void>;
+  addGroup(args: { groupId: number; groupName: string }): Promise<{ status: 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER'; groupId: number }>;
+  viewGroup(args: { groupId: number }): Promise<{ status: 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER'; groupId: number; groupNames: string }>;
+  getGroupMembership(args: { groupIds: number[] }): Promise<{ capacity: number; groups: number[] }>;
+  removeGroup(args: { groupId: number }): Promise<{ status: 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER'; groupId: number }>;
   removeAllGroups(): Promise<void>;
   addGroupIfIdentify(args: { groupId: number; groupName: string }): Promise<void>;
 }
@@ -428,7 +428,7 @@ export interface IdentifyCluster extends ZCLNodeCluster {
   readAttributes<K extends 'identifyTime'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<IdentifyClusterAttributes, K>>;
   writeAttributes(attributes: Partial<IdentifyClusterAttributes>): Promise<void>;
   identify(args: { identifyTime: number }): Promise<void>;
-  identifyQuery(): Promise<void>;
+  identifyQuery(): Promise<{ timeout: number }>;
   triggerEffect(args: { effectIdentifier: 'blink' | 'breathe' | 'okay' | 'channelChange' | 'finish' | 'stop'; effectVariant: number }): Promise<void>;
 }
 
@@ -928,7 +928,7 @@ export interface TimeCluster extends ZCLNodeCluster {
 }
 
 export interface TouchlinkCluster extends ZCLNodeCluster {
-  getGroups(args: { startIdx: number }): Promise<void>;
+  getGroups(args: { startIdx: number }): Promise<{ total: number; startIndex: number; groups: unknown[] }>;
 }
 
 export interface WindowCoveringClusterAttributes {

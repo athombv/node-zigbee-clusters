@@ -110,6 +110,7 @@ function parseCluster(ClusterClass) {
   const cmds = ClusterClass.COMMANDS || {};
   for (const [name, def] of Object.entries(cmds)) {
     const cmdArgs = [];
+    const responseArgs = [];
     if (def && def.args) {
       for (const [argName, argType] of Object.entries(def.args)) {
         cmdArgs.push({
@@ -118,7 +119,16 @@ function parseCluster(ClusterClass) {
         });
       }
     }
-    commands.push({ name, args: cmdArgs });
+    // Parse response type if present
+    if (def && def.response && def.response.args) {
+      for (const [argName, argType] of Object.entries(def.response.args)) {
+        responseArgs.push({
+          name: argName,
+          tsType: zclTypeToTS(argType),
+        });
+      }
+    }
+    commands.push({ name, args: cmdArgs, responseArgs });
   }
 
   return {
@@ -167,12 +177,18 @@ function generateClusterInterface(cluster) {
 
   // Add command methods
   for (const cmd of cluster.commands) {
+    // Determine return type based on response args
+    let returnType = 'void';
+    if (cmd.responseArgs && cmd.responseArgs.length > 0) {
+      returnType = `{ ${cmd.responseArgs.map(a => `${a.name}: ${a.tsType}`).join('; ')} }`;
+    }
+
     if (cmd.args.length > 0) {
       // Buffer arguments are optional - ZCL allows empty octet strings
       const argsType = `{ ${cmd.args.map(a => `${a.name}${a.tsType === 'Buffer' ? '?' : ''}: ${a.tsType}`).join('; ')} }`;
-      lines.push(`  ${cmd.name}(args: ${argsType}): Promise<void>;`);
+      lines.push(`  ${cmd.name}(args: ${argsType}): Promise<${returnType}>;`);
     } else {
-      lines.push(`  ${cmd.name}(): Promise<void>;`);
+      lines.push(`  ${cmd.name}(): Promise<${returnType}>;`);
     }
   }
 
