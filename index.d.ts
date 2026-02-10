@@ -309,9 +309,9 @@ export interface DoorLockClusterAttributes {
 export interface DoorLockCluster extends ZCLNodeCluster {
   readAttributes<K extends 'lockState' | 'lockType' | 'actuatorEnabled' | 'doorState' | 'doorOpenEvents' | 'doorClosedEvents' | 'openPeriod' | 'numberOfLogRecordsSupported' | 'numberOfTotalUsersSupported' | 'numberOfPINUsersSupported' | 'numberOfRFIDUsersSupported' | 'numberOfWeekDaySchedulesSupportedPerUser' | 'numberOfYearDaySchedulesSupportedPerUser' | 'numberOfHolidaySchedulesSupported' | 'maxPINCodeLength' | 'minPINCodeLength' | 'maxRFIDCodeLength' | 'minRFIDCodeLength' | 'enableLogging' | 'language' | 'ledSettings' | 'autoRelockTime' | 'soundVolume' | 'operatingMode' | 'supportedOperatingModes' | 'defaultConfigurationRegister' | 'enableLocalProgramming' | 'enableOneTouchLocking' | 'enableInsideStatusLED' | 'enablePrivacyModeButton' | 'wrongCodeEntryLimit' | 'userCodeTemporaryDisableTime' | 'sendPINOverTheAir' | 'requirePINforRFOperation' | 'securityLevel' | 'alarmMask' | 'keypadOperationEventMask' | 'rfOperationEventMask' | 'manualOperationEventMask' | 'rfidOperationEventMask' | 'keypadProgrammingEventMask' | 'rfProgrammingEventMask' | 'rfidProgrammingEventMask'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<DoorLockClusterAttributes, K>>;
   writeAttributes(attributes: Partial<DoorLockClusterAttributes>): Promise<void>;
-  lockDoor(args: { pinCode?: Buffer }): Promise<{ status: number }>;
-  unlockDoor(args: { pinCode?: Buffer }): Promise<{ status: number }>;
-  toggle(args: { pinCode?: Buffer }): Promise<{ status: number }>;
+  lockDoor(args?: { pinCode?: Buffer }): Promise<{ status: number }>;
+  unlockDoor(args?: { pinCode?: Buffer }): Promise<{ status: number }>;
+  toggle(args?: { pinCode?: Buffer }): Promise<{ status: number }>;
   unlockWithTimeout(args: { timeout: number; pinCode?: Buffer }): Promise<{ status: number }>;
   getLogRecord(args: { logIndex: number }): Promise<{ logEntryId: number; timestamp: number; eventType: number; source: number; eventIdOrAlarmCode: number; userId: number; pin: Buffer }>;
   setPINCode(args: { userId: number; userStatus: 'available' | 'occupiedEnabled' | 'occupiedDisabled' | 'notSupported'; userType: 'unrestricted' | 'yearDayScheduleUser' | 'weekDayScheduleUser' | 'masterUser' | 'nonAccessUser' | 'notSupported'; pinCode?: Buffer }): Promise<{ status: number }>;

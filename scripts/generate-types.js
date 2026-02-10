@@ -185,8 +185,10 @@ function generateClusterInterface(cluster) {
 
     if (cmd.args.length > 0) {
       // Buffer arguments are optional - ZCL allows empty octet strings
+      const allArgsOptional = cmd.args.every(a => a.tsType === 'Buffer');
       const argsType = `{ ${cmd.args.map(a => `${a.name}${a.tsType === 'Buffer' ? '?' : ''}: ${a.tsType}`).join('; ')} }`;
-      lines.push(`  ${cmd.name}(args: ${argsType}): Promise<${returnType}>;`);
+      // If all args are optional, make the entire args object optional
+      lines.push(`  ${cmd.name}(args${allArgsOptional ? '?' : ''}: ${argsType}): Promise<${returnType}>;`);
     } else {
       lines.push(`  ${cmd.name}(): Promise<${returnType}>;`);
     }
