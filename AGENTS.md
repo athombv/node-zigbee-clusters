@@ -319,6 +319,25 @@ operationEventNotification: { // Optional
 },
 ```
 
+#### Command Direction Rules
+
+Focus on **client→server commands** with inline `response:` when applicable:
+```javascript
+lockDoor: {
+  id: 0x0000,
+  args: { pinCode: ZCLDataTypes.octstr },
+  response: {
+    id: 0x0000,
+    args: { status: ZCLDataTypes.uint8 },
+  },
+},
+```
+
+**Server→client commands** (events/notifications) should be evaluated per case:
+- Implement if commonly needed (e.g., `operationEventNotification` for door locks)
+- Skip obscure or rarely-used notifications unless specifically requested
+- These require `direction: Cluster.DIRECTION_SERVER_TO_CLIENT`
+
 ---
 
 ### ZCLDataTypes Reference
@@ -359,6 +378,20 @@ const USER_STATUS_ENUM = ZCLDataTypes.enum8({
 
 // Then use in commands:
 args: { userStatus: USER_STATUS_ENUM }
+```
+
+#### Reusable Bitmaps
+Same pattern for bitmaps used multiple times:
+```javascript
+const ALARM_MASK = ZCLDataTypes.map8(
+  'generalHardwareFault',
+  'generalSoftwareFault',
+  'reserved2',
+  'reserved3',
+);
+
+// Then use in attributes/commands:
+alarmMask: { id: 0x0010, type: ALARM_MASK },
 ```
 
 ---
@@ -404,7 +437,7 @@ npm run build
 - [ ] Client/server cmd sections separated
 - [ ] Server→client cmds have `direction` field
 - [ ] Responses defined where applicable
-- [ ] Reusable enums extracted if used 2+ times
+- [ ] Reusable enums/bitmaps extracted if used 2+ times
 - [ ] Hex IDs used consistently (with decimal comments if > 9)
 - [ ] Lint passes
 - [ ] Tests pass
