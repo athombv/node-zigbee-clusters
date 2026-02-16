@@ -33,6 +33,31 @@ describe('Door Lock', function() {
     assert.deepStrictEqual(receivedData.pinCode, Buffer.from([0x31, 0x32, 0x33, 0x34]));
   });
 
+  it('should receive lockDoor without arguments', async function() {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [DoorLockCluster.ID],
+      }],
+    });
+
+    let called = false;
+    node.endpoints[1].bind('doorLock', new (class extends BoundCluster {
+
+      async lockDoor(data) {
+        called = true;
+        // pinCode should be empty buffer when not provided
+        assert.deepStrictEqual(data.pinCode, Buffer.from([]));
+      }
+
+    })());
+
+    // Call without any arguments - should not throw
+    await node.endpoints[1].clusters.doorLock.lockDoor();
+    assert.strictEqual(called, true);
+  });
+
   it('should receive unlockDoor', async function() {
     const node = createMockNode({
       loopback: true,
