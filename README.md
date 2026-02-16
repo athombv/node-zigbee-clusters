@@ -301,6 +301,28 @@ zclNode.endpoints[1].clusters["scenes"].ikeaSceneMove({ mode: 0, transitionTime:
 
 This also works for `BoundClusters`, if a node sends commands to Homey using a custom cluster it is necessary to implement a custom `BoundCluster` and bind it to the `ZCLNode` instance. For an example check the implementation in the `com.ikea.tradfri` driver [remote_control](https://github.com/athombv/com.ikea.tradfri-example/tree/master/drivers/remote_control/device.js).
 
+## TypeScript Types
+
+This project includes auto-generated TypeScript definitions (`index.d.ts`) for all clusters, attributes, and commands.
+
+### Manual Generation
+
+To regenerate TypeScript types after modifying cluster definitions:
+
+```bash
+npm run generate-types
+```
+
+This runs `scripts/generate-types.js` which loads all cluster modules and generates typed interfaces.
+
+### Automatic Generation (GitHub Actions)
+
+TypeScript types are automatically regenerated when changes are pushed to the `develop` branch that affect:
+- `lib/clusters/**/*.js` - cluster definitions
+- `scripts/generate-types.js` - the generator script
+
+The workflow commits updated types back to `develop` if changes are detected.
+
 ## Contributing
 
 Great if you'd like to contribute to this project, a few things to take note of before submitting a PR:
