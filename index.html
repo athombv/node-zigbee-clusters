@@ -369,6 +369,20 @@ Cluster.addCluster(IkeaSpecificSceneCluster);
 zclNode.endpoints[1].clusters[&quot;scenes&quot;].ikeaSceneMove({ mode: 0, transitionTime: 10 });
 </code></pre>
 <p>This also works for <code>BoundClusters</code>, if a node sends commands to Homey using a custom cluster it is necessary to implement a custom <code>BoundCluster</code> and bind it to the <code>ZCLNode</code> instance. For an example check the implementation in the <code>com.ikea.tradfri</code> driver <a href="https://github.com/athombv/com.ikea.tradfri-example/tree/master/drivers/remote_control/device.js">remote_control</a>.</p>
+<h2>TypeScript Types</h2>
+<p>This project includes auto-generated TypeScript definitions (<code>index.d.ts</code>) for all clusters, attributes, and commands.</p>
+<h3>Manual Generation</h3>
+<p>To regenerate TypeScript types after modifying cluster definitions:</p>
+<pre class="prettyprint source lang-bash"><code>npm run generate-types
+</code></pre>
+<p>This runs <code>scripts/generate-types.js</code> which loads all cluster modules and generates typed interfaces.</p>
+<h3>Automatic Generation (GitHub Actions)</h3>
+<p>TypeScript types are automatically regenerated when changes are pushed to the <code>develop</code> branch that affect:</p>
+<ul>
+<li><code>lib/clusters/**/*.js</code> - cluster definitions</li>
+<li><code>scripts/generate-types.js</code> - the generator script</li>
+</ul>
+<p>The workflow commits updated types back to <code>develop</code> if changes are detected.</p>
 <h2>Contributing</h2>
 <p>Great if you'd like to contribute to this project, a few things to take note of before submitting a PR:</p>
 <ul>
