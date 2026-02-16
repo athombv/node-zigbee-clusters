@@ -3,7 +3,7 @@ name: Generate TypeScript Types
 on:
   push:
     branches:
-      - develop
+      - master
     paths:
       - 'lib/clusters/**/*.js'
       - 'scripts/generate-types.js'
