@@ -169,6 +169,49 @@ describe('Node', function() {
     assert.equal(res[5], 'mixedTest', 'numeric ID 5 should return modelId value');
   });
 
+  it('should return both name and numeric key when same attribute requested both ways', async function() {
+    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
+
+      get modelId() {
+        return 'both';
+      }
+
+    }());
+
+    const res = await mockNode.endpoints[1].clusters['basic'].readAttributes(['modelId', 5]);
+    assert.equal(res.modelId, 'both', 'modelId key should exist');
+    assert.equal(res[5], 'both', 'numeric key 5 should also exist');
+  });
+
+  it('should read an unregistered attribute by numeric ID', async function() {
+    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {}());
+
+    // 0x1234 is not registered in the basic cluster, expect no error and empty/missing result
+    const res = await mockNode.endpoints[1].clusters['basic'].readAttributes([0x1234]);
+    assert.equal(res[0x1234], undefined, 'unregistered attribute should not have a value');
+  });
+
+  it('should throw for invalid numeric attribute IDs', async function() {
+    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {}());
+
+    await assert.rejects(
+      () => mockNode.endpoints[1].clusters['basic'].readAttributes([-1]),
+      { name: 'TypeError' },
+    );
+    await assert.rejects(
+      () => mockNode.endpoints[1].clusters['basic'].readAttributes([0x10000]),
+      { name: 'TypeError' },
+    );
+    await assert.rejects(
+      () => mockNode.endpoints[1].clusters['basic'].readAttributes([1.5]),
+      { name: 'TypeError' },
+    );
+    await assert.rejects(
+      () => mockNode.endpoints[1].clusters['basic'].readAttributes([NaN]),
+      { name: 'TypeError' },
+    );
+  });
+
   it('should respond with read attribute response when disableDefaultResponse is true', async function() {
     receivingNode.endpoints[1].bind('basic', new class extends BoundCluster {
 
