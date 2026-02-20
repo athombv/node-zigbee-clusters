@@ -136,6 +136,39 @@ describe('Node', function() {
     assert.equal(res.dateCode, '1234', 'dateCode should not be present');
   });
 
+  it('should read attributes by numeric ID', async function() {
+    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
+
+      get modelId() {
+        return 'numericTest';
+      }
+
+    }());
+
+    // modelId has attribute ID 5
+    const res = await mockNode.endpoints[1].clusters['basic'].readAttributes([5]);
+    assert.equal(res[5], 'numericTest', 'numeric ID 5 should return modelId value');
+  });
+
+  it('should read attributes with mixed strings and numeric IDs', async function() {
+    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
+
+      get modelId() {
+        return 'mixedTest';
+      }
+
+      get manufacturerName() {
+        return 'Athom';
+      }
+
+    }());
+
+    // manufacturerName by name, modelId (ID 5) by numeric ID
+    const res = await mockNode.endpoints[1].clusters['basic'].readAttributes(['manufacturerName', 5]);
+    assert.equal(res.manufacturerName, 'Athom', 'manufacturerName should resolve by name');
+    assert.equal(res[5], 'mixedTest', 'numeric ID 5 should return modelId value');
+  });
+
   it('should respond with read attribute response when disableDefaultResponse is true', async function() {
     receivingNode.endpoints[1].bind('basic', new class extends BoundCluster {
 
