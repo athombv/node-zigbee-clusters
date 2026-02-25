@@ -2150,7 +2150,7 @@ discover any manufacture- specific commands.</p>
   <h3 class="method__name"><a data-hash-link class="method__hash-link" href="#readAttributes"></a>readAttributes</h3>
   <span class="method__function function">
     
-    <span class="function__type-signature">(async) </span>readAttributes<span class="function__parameters">(<span class="function__parameter">attributeNames</span>, <span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Object.&lt;string, unknown>></span>
+    <span class="function__type-signature">(async) </span>readAttributes<span class="function__parameters">(<span class="function__parameter">attributes</span>, <span class="function__parameter"><span class="function__parameter">opts=</span></span><span class="function__signature-attributes">opt</span>)</span><span class="function__type-signature">:  Promise.&lt;Object.&lt;string, unknown>></span>
     
   </span>
   
@@ -2204,7 +2204,7 @@ Note: do not mix regular and manufacturer specific attributes.</p>
         <div class="lvl">
           
         </div>
-        <code>attributeNames</code>
+        <code>attributes</code>
         
       </td>
       
@@ -2212,7 +2212,7 @@ Note: do not mix regular and manufacturer specific attributes.</p>
       <td class="params__type">
         
         
-<span class="param-type">Array.&lt;string></span>
+<span class="param-type">Array.&lt;(string|number)></span>
 
 
         
@@ -2230,7 +2230,7 @@ Note: do not mix regular and manufacturer specific attributes.</p>
       </td>
 
 
-      <td class="description last trim">
+      <td class="description last trim"><p>Attribute names or numeric IDs</p>
       </td>
     </tr>
 
@@ -2318,7 +2318,7 @@ Note: do not mix regular and manufacturer specific attributes.</p>
       </td>
 
 
-      <td class="description last trim"><p>Optional timeout in milliseconds for waiting for response</p>
+      <td class="description last trim"><p>Optional timeout in ms</p>
       </td>
     </tr>
 
@@ -2357,7 +2357,8 @@ Note: do not mix regular and manufacturer specific attributes.</p>
       
       
   <ul>
-<li>Object with values (e.g. <code>{ onOff: true }</code>)</li>
+<li>Keyed by attribute name or
+numeric ID</li>
 </ul>
 
 
