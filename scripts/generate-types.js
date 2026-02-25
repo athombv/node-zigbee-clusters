@@ -89,7 +89,7 @@ function zclTypeToTS(dataType) {
  * @param {Function} ClusterClass - Cluster class with static ATTRIBUTES/COMMANDS
  * @returns {object} Cluster definition
  */
-function parseCluster(ClusterClass) {
+function parseCluster(ClusterClass, exportName) {
   const clusterName = ClusterClass.NAME;
   const clusterId = ClusterClass.ID;
   const attributes = [];
@@ -132,7 +132,11 @@ function parseCluster(ClusterClass) {
   }
 
   return {
-    clusterName, clusterId, attributes, commands,
+    exportName,
+    clusterName,
+    clusterId,
+    attributes,
+    commands,
   };
 }
 
@@ -141,8 +145,9 @@ function parseCluster(ClusterClass) {
  * @param {string} clusterName
  * @returns {string}
  */
-function toInterfaceName(clusterName) {
-  const name = clusterName.charAt(0).toUpperCase() + clusterName.slice(1);
+function toInterfaceName(cluster) {
+  if (cluster.exportName) return cluster.exportName;
+  const name = cluster.clusterName.charAt(0).toUpperCase() + cluster.clusterName.slice(1);
   return `${name}Cluster`;
 }
 
@@ -152,7 +157,7 @@ function toInterfaceName(clusterName) {
  * @returns {string} TypeScript interface code
  */
 function generateClusterInterface(cluster) {
-  const interfaceName = toInterfaceName(cluster.clusterName);
+  const interfaceName = toInterfaceName(cluster);
   const lines = [];
 
   // Generate attributes interface
@@ -172,7 +177,8 @@ function generateClusterInterface(cluster) {
   if (cluster.attributes.length > 0) {
     const attrNames = cluster.attributes.map(a => `'${a.name}'`).join(' | ');
     lines.push(`  readAttributes<K extends ${attrNames}>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<${interfaceName}Attributes, K>>;`);
-    lines.push(`  writeAttributes(attributes: Partial<${interfaceName}Attributes>): Promise<void>;`);
+    lines.push(`  readAttributes(attributeNames: Array<keyof ${interfaceName}Attributes | number>, opts?: { timeout?: number }): Promise<Partial<${interfaceName}Attributes> & Record<number, unknown>>;`);
+    lines.push(`  writeAttributes(attributes: Partial<${interfaceName}Attributes>, opts?: { timeout?: number }): Promise<unknown>;`);
   }
 
   // Add command methods
@@ -188,9 +194,9 @@ function generateClusterInterface(cluster) {
       const allArgsOptional = cmd.args.every(a => a.tsType === 'Buffer');
       const argsType = `{ ${cmd.args.map(a => `${a.name}${a.tsType === 'Buffer' ? '?' : ''}: ${a.tsType}`).join('; ')} }`;
       // If all args are optional, make the entire args object optional
-      lines.push(`  ${cmd.name}(args${allArgsOptional ? '?' : ''}: ${argsType}): Promise<${returnType}>;`);
+      lines.push(`  ${cmd.name}(args${allArgsOptional ? '?' : ''}: ${argsType}, opts?: ClusterCommandOptions): Promise<${returnType}>;`);
     } else {
-      lines.push(`  ${cmd.name}(): Promise<${returnType}>;`);
+      lines.push(`  ${cmd.name}(opts?: ClusterCommandOptions): Promise<${returnType}>;`);
     }
   }
 
@@ -225,30 +231,47 @@ type ConstructorOptions = {
   endpointDescriptors: EndpointDescriptor[];
   sendFrame: (endpointId: number, clusterId: number, frame: Buffer) => Promise<void>;
 };
+
+type ClusterCommandOptions = {
+  timeout?: number;
+  waitForResponse?: boolean;
+  disableDefaultResponse?: boolean;
+};
+
+type ZCLNodeConstructorInput = {
+  endpointDescriptors?: EndpointDescriptor[];
+  sendFrame: (endpointId: number, clusterId: number, frame: Buffer) => Promise<void>;
+  handleFrame?: (
+    endpointId: number,
+    clusterId: number,
+    frame: Buffer,
+    meta?: unknown
+  ) => Promise<void>;
+};
 `);
 
   // Base ZCLNodeCluster interface
   lines.push(`export interface ZCLNodeCluster extends EventEmitter {
-  discoverCommandsGenerated(opts?: {
+  discoverCommandsGenerated(params?: {
     startValue?: number;
     maxResults?: number;
-  }): Promise<number[]>;
+  }, opts?: { timeout?: number }): Promise<(string | number)[]>;
 
-  discoverCommandsReceived(opts?: {
+  discoverCommandsReceived(params?: {
     startValue?: number;
     maxResults?: number;
-  }): Promise<number[]>;
+  }, opts?: { timeout?: number }): Promise<(string | number)[]>;
 
   readAttributes(
-    attributeNames: string[],
+    attributes: Array<string | number>,
     opts?: { timeout?: number }
   ): Promise<{ [x: string]: unknown }>;
 
-  writeAttributes(attributes?: object): Promise<void>;
+  writeAttributes(attributes?: object, opts?: { timeout?: number }): Promise<unknown>;
 
-  configureReporting(attributes?: object): Promise<void>;
+  configureReporting(attributes?: object, opts?: { timeout?: number }): Promise<void>;
 
-  readReportingConfiguration(attributes?: (string | number)[]): Promise<{
+  readReportingConfiguration(attributes?: (string | number)[], opts?: { timeout?: number }): Promise<{
     status: string;
     direction: 'reported' | 'received';
     attributeId: number;
@@ -259,11 +282,12 @@ type ConstructorOptions = {
     timeoutPeriod?: number;
   }[]>;
 
-  discoverAttributes(): Promise<(string | number)[]>;
+  discoverAttributes(opts?: { timeout?: number }): Promise<(string | number)[]>;
 
-  discoverAttributesExtended(): Promise<{
+  discoverAttributesExtended(opts?: { timeout?: number }): Promise<{
     name?: string;
     id: number;
+    dataTypeId: number;
     acl: { readable: boolean; writable: boolean; reportable: boolean };
   }[]>;
 }
@@ -279,7 +303,7 @@ type ConstructorOptions = {
   lines.push('/** Type-safe cluster registry */');
   lines.push('export interface ClusterRegistry {');
   for (const cluster of clusters) {
-    const interfaceName = toInterfaceName(cluster.clusterName);
+    const interfaceName = toInterfaceName(cluster);
     lines.push(`  ${cluster.clusterName}?: ${interfaceName};`);
   }
   lines.push('}');
@@ -306,7 +330,7 @@ export interface ZCLNode {
   // Module declaration for CommonJS compatibility
   lines.push(`declare module "zigbee-clusters" {
   export const ZCLNode: {
-    new (options: ConstructorOptions): ZCLNode;
+    new (node: ZCLNodeConstructorInput): ZCLNode;
   };
   export const CLUSTER: {
     [key: string]: { ID: number; NAME: string; ATTRIBUTES: unknown; COMMANDS: unknown };
@@ -315,8 +339,15 @@ export interface ZCLNode {
 
   // Export all cluster classes
   for (const cluster of clusters) {
-    const interfaceName = toInterfaceName(cluster.clusterName);
-    lines.push(`  export const ${interfaceName}: ${interfaceName};`);
+    const interfaceName = toInterfaceName(cluster);
+    const exportName = cluster.exportName || interfaceName;
+    lines.push(`  export const ${exportName}: {`);
+    lines.push(`    new (...args: any[]): ${interfaceName};`);
+    lines.push('    ID: number;');
+    lines.push('    NAME: string;');
+    lines.push('    ATTRIBUTES: unknown;');
+    lines.push('    COMMANDS: unknown;');
+    lines.push('  };');
   }
 
   lines.push('}');
@@ -338,7 +369,7 @@ function main() {
   for (const [name, value] of Object.entries(clustersModule)) {
     if (name.endsWith('Cluster') && typeof value === 'function' && value.NAME) {
       try {
-        const cluster = parseCluster(value);
+        const cluster = parseCluster(value, name);
         clusters.push(cluster);
         console.log(`  ✓ ${cluster.clusterName} (${cluster.attributes.length} attrs, ${cluster.commands.length} cmds)`);
       } catch (err) {
