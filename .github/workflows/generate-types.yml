@@ -2,11 +2,10 @@ name: Generate TypeScript Types
 
 on:
   push:
-    branches:
-      - master
     paths:
-      - 'lib/clusters/**/*.js'
-      - 'scripts/generate-types.js'
+      - "lib/clusters/**/*.js"
+      - "scripts/generate-types.js"
+  workflow_dispatch:
 
 jobs:
   generate-types:
@@ -19,13 +18,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -59,4 +59,4 @@ jobs:
           Updated by GitHub Actions after cluster changes.
 
           [skip ci]"
-          git push origin develop
+          git push origin HEAD:${{ github.ref_name }}
