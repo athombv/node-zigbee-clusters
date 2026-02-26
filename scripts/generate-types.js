@@ -210,6 +210,11 @@ function generateClusterInterface(cluster) {
 /**
  * Generate the full index.d.ts file
  * @param {object[]} clusters - Array of parsed cluster definitions
+ * @param {Array<{
+ *   constantName: string;
+ *   clusterId: number;
+ *   clusterName: string;
+ * }>} clusterDefinitions - Array of CLUSTER constant definitions used to generate typed CLUSTER exports
  * @returns {string} Complete TypeScript definitions file
  */
 function generateTypesFile(clusters, clusterDefinitions) {
