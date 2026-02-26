@@ -94,6 +94,8 @@ export interface AnalogInputCluster extends ZCLNodeCluster {
   readAttributes<K extends 'description' | 'maxPresentValue' | 'minPresentValue' | 'outOfService' | 'presentValue' | 'reliability' | 'resolution' | 'statusFlags' | 'applicationType'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<AnalogInputClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof AnalogInputClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<AnalogInputClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<AnalogInputClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof AnalogInputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: AnalogInputClusterAttributes[K]) => void): this;
+  once<K extends keyof AnalogInputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: AnalogInputClusterAttributes[K]) => void): this;
 }
 
 export interface AnalogOutputClusterAttributes {
@@ -113,6 +115,8 @@ export interface AnalogOutputCluster extends ZCLNodeCluster {
   readAttributes<K extends 'description' | 'maxPresentValue' | 'minPresentValue' | 'outOfService' | 'presentValue' | 'reliability' | 'relinquishDefault' | 'resolution' | 'statusFlags' | 'applicationType'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<AnalogOutputClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof AnalogOutputClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<AnalogOutputClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<AnalogOutputClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof AnalogOutputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: AnalogOutputClusterAttributes[K]) => void): this;
+  once<K extends keyof AnalogOutputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: AnalogOutputClusterAttributes[K]) => void): this;
 }
 
 export interface AnalogValueClusterAttributes {
@@ -129,6 +133,8 @@ export interface AnalogValueCluster extends ZCLNodeCluster {
   readAttributes<K extends 'description' | 'outOfService' | 'presentValue' | 'reliability' | 'relinquishDefault' | 'statusFlags' | 'applicationType'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<AnalogValueClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof AnalogValueClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<AnalogValueClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<AnalogValueClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof AnalogValueClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: AnalogValueClusterAttributes[K]) => void): this;
+  once<K extends keyof AnalogValueClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: AnalogValueClusterAttributes[K]) => void): this;
 }
 
 export interface BallastConfigurationClusterAttributes {
@@ -154,6 +160,8 @@ export interface BallastConfigurationCluster extends ZCLNodeCluster {
   readAttributes<K extends 'physicalMinLevel' | 'physicalMaxLevel' | 'ballastStatus' | 'minLevel' | 'maxLevel' | 'powerOnLevel' | 'powerOnFadeTime' | 'intrinsicBallastFactor' | 'ballastFactorAdjustment' | 'lampQuantity' | 'lampType' | 'lampManufacturer' | 'lampRatedHours' | 'lampBurnHours' | 'lampAlarmMode' | 'lampBurnHoursTripPoint'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<BallastConfigurationClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof BallastConfigurationClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<BallastConfigurationClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<BallastConfigurationClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof BallastConfigurationClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BallastConfigurationClusterAttributes[K]) => void): this;
+  once<K extends keyof BallastConfigurationClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BallastConfigurationClusterAttributes[K]) => void): this;
 }
 
 export interface BasicClusterAttributes {
@@ -178,6 +186,8 @@ export interface BasicCluster extends ZCLNodeCluster {
   readAttributes<K extends 'zclVersion' | 'appVersion' | 'stackVersion' | 'hwVersion' | 'manufacturerName' | 'modelId' | 'dateCode' | 'powerSource' | 'appProfileVersion' | 'locationDesc' | 'physicalEnv' | 'deviceEnabled' | 'alarmMask' | 'disableLocalConfig' | 'swBuildId'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<BasicClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof BasicClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<BasicClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<BasicClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof BasicClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BasicClusterAttributes[K]) => void): this;
+  once<K extends keyof BasicClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BasicClusterAttributes[K]) => void): this;
   factoryReset(opts?: ClusterCommandOptions): Promise<void>;
 }
 
@@ -197,6 +207,8 @@ export interface BinaryInputCluster extends ZCLNodeCluster {
   readAttributes<K extends 'activeText' | 'description' | 'inactiveText' | 'outOfService' | 'polarity' | 'presentValue' | 'reliability' | 'statusFlags' | 'applicationType'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<BinaryInputClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof BinaryInputClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<BinaryInputClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<BinaryInputClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof BinaryInputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BinaryInputClusterAttributes[K]) => void): this;
+  once<K extends keyof BinaryInputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BinaryInputClusterAttributes[K]) => void): this;
 }
 
 export interface BinaryOutputClusterAttributes {
@@ -218,6 +230,8 @@ export interface BinaryOutputCluster extends ZCLNodeCluster {
   readAttributes<K extends 'activeText' | 'description' | 'inactiveText' | 'minimumOffTime' | 'minimumOnTime' | 'outOfService' | 'polarity' | 'presentValue' | 'reliability' | 'relinquishDefault' | 'statusFlags' | 'applicationType'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<BinaryOutputClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof BinaryOutputClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<BinaryOutputClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<BinaryOutputClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof BinaryOutputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BinaryOutputClusterAttributes[K]) => void): this;
+  once<K extends keyof BinaryOutputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BinaryOutputClusterAttributes[K]) => void): this;
 }
 
 export interface BinaryValueClusterAttributes {
@@ -239,6 +253,8 @@ export interface BinaryValueCluster extends ZCLNodeCluster {
   readAttributes<K extends 'activeText' | 'description' | 'inactiveText' | 'minimumOffTime' | 'minimumOnTime' | 'outOfService' | 'polarity' | 'presentValue' | 'reliability' | 'relinquishDefault' | 'statusFlags' | 'applicationType'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<BinaryValueClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof BinaryValueClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<BinaryValueClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<BinaryValueClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof BinaryValueClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BinaryValueClusterAttributes[K]) => void): this;
+  once<K extends keyof BinaryValueClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BinaryValueClusterAttributes[K]) => void): this;
 }
 
 export interface ColorControlClusterAttributes {
@@ -257,6 +273,8 @@ export interface ColorControlCluster extends ZCLNodeCluster {
   readAttributes<K extends 'currentHue' | 'currentSaturation' | 'currentX' | 'currentY' | 'colorTemperatureMireds' | 'colorMode' | 'colorCapabilities' | 'colorTempPhysicalMinMireds' | 'colorTempPhysicalMaxMireds'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<ColorControlClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof ColorControlClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<ColorControlClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<ColorControlClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof ColorControlClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: ColorControlClusterAttributes[K]) => void): this;
+  once<K extends keyof ColorControlClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: ColorControlClusterAttributes[K]) => void): this;
   moveToHue(args: { hue: number; direction: 'shortestDistance' | 'longestDistance' | 'up' | 'down'; transitionTime: number }, opts?: ClusterCommandOptions): Promise<void>;
   moveToSaturation(args: { saturation: number; transitionTime: number }, opts?: ClusterCommandOptions): Promise<void>;
   moveToHueAndSaturation(args: { hue: number; saturation: number; transitionTime: number }, opts?: ClusterCommandOptions): Promise<void>;
@@ -283,6 +301,8 @@ export interface DeviceTemperatureCluster extends ZCLNodeCluster {
   readAttributes<K extends 'currentTemperature' | 'minTempExperienced' | 'maxTempExperienced' | 'overTempTotalDwell' | 'deviceTempAlarmMask' | 'lowTempThreshold' | 'highTempThreshold' | 'lowTempDwellTripPoint' | 'highTempDwellTripPoint'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<DeviceTemperatureClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof DeviceTemperatureClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<DeviceTemperatureClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<DeviceTemperatureClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof DeviceTemperatureClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: DeviceTemperatureClusterAttributes[K]) => void): this;
+  once<K extends keyof DeviceTemperatureClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: DeviceTemperatureClusterAttributes[K]) => void): this;
 }
 
 export interface DiagnosticsCluster extends ZCLNodeCluster {
@@ -338,6 +358,8 @@ export interface DoorLockCluster extends ZCLNodeCluster {
   readAttributes<K extends 'lockState' | 'lockType' | 'actuatorEnabled' | 'doorState' | 'doorOpenEvents' | 'doorClosedEvents' | 'openPeriod' | 'numberOfLogRecordsSupported' | 'numberOfTotalUsersSupported' | 'numberOfPINUsersSupported' | 'numberOfRFIDUsersSupported' | 'numberOfWeekDaySchedulesSupportedPerUser' | 'numberOfYearDaySchedulesSupportedPerUser' | 'numberOfHolidaySchedulesSupported' | 'maxPINCodeLength' | 'minPINCodeLength' | 'maxRFIDCodeLength' | 'minRFIDCodeLength' | 'enableLogging' | 'language' | 'ledSettings' | 'autoRelockTime' | 'soundVolume' | 'operatingMode' | 'supportedOperatingModes' | 'defaultConfigurationRegister' | 'enableLocalProgramming' | 'enableOneTouchLocking' | 'enableInsideStatusLED' | 'enablePrivacyModeButton' | 'wrongCodeEntryLimit' | 'userCodeTemporaryDisableTime' | 'sendPINOverTheAir' | 'requirePINforRFOperation' | 'securityLevel' | 'alarmMask' | 'keypadOperationEventMask' | 'rfOperationEventMask' | 'manualOperationEventMask' | 'rfidOperationEventMask' | 'keypadProgrammingEventMask' | 'rfProgrammingEventMask' | 'rfidProgrammingEventMask'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<DoorLockClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof DoorLockClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<DoorLockClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<DoorLockClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof DoorLockClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: DoorLockClusterAttributes[K]) => void): this;
+  once<K extends keyof DoorLockClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: DoorLockClusterAttributes[K]) => void): this;
   lockDoor(args?: { pinCode?: Buffer }, opts?: ClusterCommandOptions): Promise<{ status: number }>;
   unlockDoor(args?: { pinCode?: Buffer }, opts?: ClusterCommandOptions): Promise<{ status: number }>;
   toggle(args?: { pinCode?: Buffer }, opts?: ClusterCommandOptions): Promise<{ status: number }>;
@@ -395,6 +417,8 @@ export interface ElectricalMeasurementCluster extends ZCLNodeCluster {
   readAttributes<K extends 'measurementType' | 'acFrequency' | 'measuredPhase1stHarmonicCurrent' | 'acFrequencyMultiplier' | 'acFrequencyDivisor' | 'phaseHarmonicCurrentMultiplier' | 'rmsVoltage' | 'rmsCurrent' | 'activePower' | 'reactivePower' | 'acVoltageMultiplier' | 'acVoltageDivisor' | 'acCurrentMultiplier' | 'acCurrentDivisor' | 'acPowerMultiplier' | 'acPowerDivisor' | 'acAlarmsMask' | 'acVoltageOverload' | 'acCurrentOverload' | 'acActivePowerOverload'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<ElectricalMeasurementClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof ElectricalMeasurementClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<ElectricalMeasurementClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<ElectricalMeasurementClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof ElectricalMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: ElectricalMeasurementClusterAttributes[K]) => void): this;
+  once<K extends keyof ElectricalMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: ElectricalMeasurementClusterAttributes[K]) => void): this;
 }
 
 export interface FanControlCluster extends ZCLNodeCluster {
@@ -411,6 +435,8 @@ export interface FlowMeasurementCluster extends ZCLNodeCluster {
   readAttributes<K extends 'measuredValue' | 'minMeasuredValue' | 'maxMeasuredValue' | 'tolerance'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<FlowMeasurementClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof FlowMeasurementClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<FlowMeasurementClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<FlowMeasurementClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof FlowMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: FlowMeasurementClusterAttributes[K]) => void): this;
+  once<K extends keyof FlowMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: FlowMeasurementClusterAttributes[K]) => void): this;
 }
 
 export interface GroupsClusterAttributes {
@@ -421,6 +447,8 @@ export interface GroupsCluster extends ZCLNodeCluster {
   readAttributes<K extends 'nameSupport'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<GroupsClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof GroupsClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<GroupsClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<GroupsClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof GroupsClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: GroupsClusterAttributes[K]) => void): this;
+  once<K extends keyof GroupsClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: GroupsClusterAttributes[K]) => void): this;
   addGroup(args: { groupId: number; groupName: string }, opts?: ClusterCommandOptions): Promise<{ status: 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER'; groupId: number }>;
   viewGroup(args: { groupId: number }, opts?: ClusterCommandOptions): Promise<{ status: 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER'; groupId: number; groupNames: string }>;
   getGroupMembership(args: { groupIds: number[] }, opts?: ClusterCommandOptions): Promise<{ capacity: number; groups: number[] }>;
@@ -447,6 +475,8 @@ export interface IASZoneCluster extends ZCLNodeCluster {
   readAttributes<K extends 'zoneState' | 'zoneType' | 'zoneStatus' | 'iasCIEAddress' | 'zoneId'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<IASZoneClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof IASZoneClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<IASZoneClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<IASZoneClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof IASZoneClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: IASZoneClusterAttributes[K]) => void): this;
+  once<K extends keyof IASZoneClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: IASZoneClusterAttributes[K]) => void): this;
   zoneStatusChangeNotification(args: { zoneStatus: Partial<{ alarm1: boolean; alarm2: boolean; tamper: boolean; battery: boolean; supervisionReports: boolean; restoreReports: boolean; trouble: boolean; acMains: boolean; test: boolean; batteryDefect: boolean }>; extendedStatus: number; zoneId: number; delay: number }, opts?: ClusterCommandOptions): Promise<void>;
   zoneEnrollResponse(args: { enrollResponseCode: 'success' | 'notSupported' | 'noEnrollPermit' | 'tooManyZones'; zoneId: number }, opts?: ClusterCommandOptions): Promise<void>;
   zoneEnrollRequest(args: { zoneType: 'standard' | 'motionSensor' | 'contactSwitch' | 'fireSensor' | 'waterSensor' | 'carbonMonoxideSensor' | 'personalEmergencyDevice' | 'vibrationMovementSensor' | 'remoteControl' | 'keyFob' | 'keyPad' | 'standardWarningDevice' | 'glassBreakSensor' | 'securityRepeater' | 'invalid'; manufacturerCode: number }, opts?: ClusterCommandOptions): Promise<void>;
@@ -461,6 +491,8 @@ export interface IdentifyCluster extends ZCLNodeCluster {
   readAttributes<K extends 'identifyTime'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<IdentifyClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof IdentifyClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<IdentifyClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<IdentifyClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof IdentifyClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: IdentifyClusterAttributes[K]) => void): this;
+  once<K extends keyof IdentifyClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: IdentifyClusterAttributes[K]) => void): this;
   identify(args: { identifyTime: number }, opts?: ClusterCommandOptions): Promise<void>;
   identifyQuery(opts?: ClusterCommandOptions): Promise<{ timeout: number }>;
   triggerEffect(args: { effectIdentifier: 'blink' | 'breathe' | 'okay' | 'channelChange' | 'finish' | 'stop'; effectVariant: number }, opts?: ClusterCommandOptions): Promise<void>;
@@ -476,6 +508,8 @@ export interface IlluminanceLevelSensingCluster extends ZCLNodeCluster {
   readAttributes<K extends 'levelStatus' | 'lightSensorType' | 'illuminanceTargetLevel'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<IlluminanceLevelSensingClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof IlluminanceLevelSensingClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<IlluminanceLevelSensingClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<IlluminanceLevelSensingClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof IlluminanceLevelSensingClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: IlluminanceLevelSensingClusterAttributes[K]) => void): this;
+  once<K extends keyof IlluminanceLevelSensingClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: IlluminanceLevelSensingClusterAttributes[K]) => void): this;
 }
 
 export interface IlluminanceMeasurementClusterAttributes {
@@ -490,6 +524,8 @@ export interface IlluminanceMeasurementCluster extends ZCLNodeCluster {
   readAttributes<K extends 'measuredValue' | 'minMeasuredValue' | 'maxMeasuredValue' | 'tolerance' | 'lightSensorType'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<IlluminanceMeasurementClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof IlluminanceMeasurementClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<IlluminanceMeasurementClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<IlluminanceMeasurementClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof IlluminanceMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: IlluminanceMeasurementClusterAttributes[K]) => void): this;
+  once<K extends keyof IlluminanceMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: IlluminanceMeasurementClusterAttributes[K]) => void): this;
 }
 
 export interface LevelControlClusterAttributes {
@@ -506,6 +542,8 @@ export interface LevelControlCluster extends ZCLNodeCluster {
   readAttributes<K extends 'currentLevel' | 'remainingTime' | 'onOffTransitionTime' | 'onLevel' | 'onTransitionTime' | 'offTransitionTime' | 'defaultMoveRate'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<LevelControlClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof LevelControlClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<LevelControlClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<LevelControlClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof LevelControlClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: LevelControlClusterAttributes[K]) => void): this;
+  once<K extends keyof LevelControlClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: LevelControlClusterAttributes[K]) => void): this;
   moveToLevel(args: { level: number; transitionTime: number }, opts?: ClusterCommandOptions): Promise<void>;
   move(args: { moveMode: 'up' | 'down'; rate: number }, opts?: ClusterCommandOptions): Promise<void>;
   step(args: { mode: 'up' | 'down'; stepSize: number; transitionTime: number }, opts?: ClusterCommandOptions): Promise<void>;
@@ -724,6 +762,8 @@ export interface MeteringCluster extends ZCLNodeCluster {
   readAttributes<K extends 'currentSummationDelivered' | 'currentSummationReceived' | 'currentMaxDemandDelivered' | 'currentMaxDemandReceived' | 'dftSummation' | 'dailyFreezeTime' | 'powerFactor' | 'readingSnapShotTime' | 'currentMaxDemandDeliveredTime' | 'currentMaxDemandReceivedTime' | 'defaultUpdatePeriod' | 'fastPollUpdatePeriod' | 'currentBlockPeriodConsumptionDelivered' | 'dailyConsumptionTarget' | 'currentBlock' | 'profileIntervalPeriod' | 'currentTier1SummationDelivered' | 'currentTier1SummationReceived' | 'currentTier2SummationDelivered' | 'currentTier2SummationReceived' | 'currentTier3SummationDelivered' | 'currentTier3SummationReceived' | 'currentTier4SummationDelivered' | 'currentTier4SummationReceived' | 'status' | 'remainingBatteryLife' | 'hoursInOperation' | 'hoursInFault' | 'extendedStatus' | 'unitOfMeasure' | 'multiplier' | 'divisor' | 'summationFormatting' | 'demandFormatting' | 'historicalConsumptionFormatting' | 'meteringDeviceType' | 'siteId' | 'meterSerialNumber' | 'energyCarrierUnitOfMeasure' | 'energyCarrierSummationFormatting' | 'energyCarrierDemandFormatting' | 'temperatureUnitOfMeasure' | 'temperatureFormatting' | 'moduleSerialNumber' | 'operatingTariffLabelDelivered' | 'operatingTariffLabelReceived' | 'customerIdNumber' | 'alternativeUnitOfMeasure' | 'alternativeDemandFormatting' | 'alternativeConsumptionFormatting' | 'instantaneousDemand' | 'currentDayConsumptionDelivered' | 'currentDayConsumptionReceived' | 'previousDayConsumptionDelivered' | 'previousDayConsumptionReceived' | 'currentPartialProfileIntervalStartTimeDelivered' | 'currentPartialProfileIntervalStartTimeReceived' | 'currentPartialProfileIntervalValueDelivered' | 'currentPartialProfileIntervalValueReceived' | 'currentDayMaxPressure' | 'currentDayMinPressure' | 'previousDayMaxPressure' | 'previousDayMinPressure' | 'currentDayMaxDemand' | 'previousDayMaxDemand' | 'currentMonthMaxDemand' | 'currentYearMaxDemand' | 'currentDayMaxEnergyCarrierDemand' | 'previousDayMaxEnergyCarrierDemand' | 'currentMonthMaxEnergyCarrierDemand' | 'currentMonthMinEnergyCarrierDemand' | 'currentYearMaxEnergyCarrierDemand' | 'currentYearMinEnergyCarrierDemand' | 'maxNumberOfPeriodsDelivered' | 'currentDemandDelivered' | 'demandLimit' | 'demandIntegrationPeriod' | 'numberOfDemandSubintervals' | 'demandLimitArmDuration' | 'currentNoTierBlock1SummationDelivered' | 'currentNoTierBlock2SummationDelivered' | 'currentNoTierBlock3SummationDelivered' | 'currentNoTierBlock4SummationDelivered' | 'currentNoTierBlock5SummationDelivered' | 'currentNoTierBlock6SummationDelivered' | 'currentNoTierBlock7SummationDelivered' | 'currentNoTierBlock8SummationDelivered' | 'currentNoTierBlock9SummationDelivered' | 'currentNoTierBlock10SummationDelivered' | 'currentNoTierBlock11SummationDelivered' | 'currentNoTierBlock12SummationDelivered' | 'currentNoTierBlock13SummationDelivered' | 'currentNoTierBlock14SummationDelivered' | 'currentNoTierBlock15SummationDelivered' | 'currentNoTierBlock16SummationDelivered' | 'currentTier1Block1SummationDelivered' | 'currentTier1Block2SummationDelivered' | 'currentTier1Block3SummationDelivered' | 'currentTier1Block4SummationDelivered' | 'currentTier1Block5SummationDelivered' | 'currentTier1Block6SummationDelivered' | 'currentTier1Block7SummationDelivered' | 'currentTier1Block8SummationDelivered' | 'currentTier1Block9SummationDelivered' | 'currentTier1Block10SummationDelivered' | 'currentTier1Block11SummationDelivered' | 'currentTier1Block12SummationDelivered' | 'currentTier1Block13SummationDelivered' | 'currentTier1Block14SummationDelivered' | 'currentTier1Block15SummationDelivered' | 'currentTier1Block16SummationDelivered' | 'currentTier2Block1SummationDelivered' | 'currentTier2Block2SummationDelivered' | 'currentTier2Block3SummationDelivered' | 'currentTier2Block4SummationDelivered' | 'currentTier2Block5SummationDelivered' | 'currentTier2Block6SummationDelivered' | 'currentTier2Block7SummationDelivered' | 'currentTier2Block8SummationDelivered' | 'currentTier2Block9SummationDelivered' | 'currentTier2Block10SummationDelivered' | 'currentTier2Block11SummationDelivered' | 'currentTier2Block12SummationDelivered' | 'currentTier2Block13SummationDelivered' | 'currentTier2Block14SummationDelivered' | 'currentTier2Block15SummationDelivered' | 'currentTier2Block16SummationDelivered' | 'currentTier3Block1SummationDelivered' | 'currentTier3Block2SummationDelivered' | 'currentTier3Block3SummationDelivered' | 'currentTier3Block4SummationDelivered' | 'currentTier3Block5SummationDelivered' | 'currentTier3Block6SummationDelivered' | 'currentTier3Block7SummationDelivered' | 'currentTier3Block8SummationDelivered' | 'currentTier3Block9SummationDelivered' | 'currentTier3Block10SummationDelivered' | 'currentTier3Block11SummationDelivered' | 'currentTier3Block12SummationDelivered' | 'currentTier3Block13SummationDelivered' | 'currentTier3Block14SummationDelivered' | 'currentTier3Block15SummationDelivered' | 'currentTier3Block16SummationDelivered' | 'currentTier4Block1SummationDelivered' | 'currentTier4Block2SummationDelivered' | 'currentTier4Block3SummationDelivered' | 'currentTier4Block4SummationDelivered' | 'currentTier4Block5SummationDelivered' | 'currentTier4Block6SummationDelivered' | 'currentTier4Block7SummationDelivered' | 'currentTier4Block8SummationDelivered' | 'currentTier4Block9SummationDelivered' | 'currentTier4Block10SummationDelivered' | 'currentTier4Block11SummationDelivered' | 'currentTier4Block12SummationDelivered' | 'currentTier4Block13SummationDelivered' | 'currentTier4Block14SummationDelivered' | 'currentTier4Block15SummationDelivered' | 'currentTier4Block16SummationDelivered' | 'genericAlarmMask' | 'electricityAlarmMask' | 'genericFlowPressureAlarmMask' | 'waterSpecificAlarmMask' | 'heatAndCoolingSpecificAlarmMask' | 'gasSpecificAlarmMask' | 'extendedGenericAlarmMask' | 'manufacturerAlarmMask' | 'currentNoTierBlock1SummationReceived' | 'currentNoTierBlock2SummationReceived' | 'currentNoTierBlock3SummationReceived' | 'currentNoTierBlock4SummationReceived' | 'currentNoTierBlock5SummationReceived' | 'currentNoTierBlock6SummationReceived' | 'currentNoTierBlock7SummationReceived' | 'currentNoTierBlock8SummationReceived' | 'currentNoTierBlock9SummationReceived' | 'currentNoTierBlock10SummationReceived' | 'currentNoTierBlock11SummationReceived' | 'currentNoTierBlock12SummationReceived' | 'currentNoTierBlock13SummationReceived' | 'currentNoTierBlock14SummationReceived' | 'currentNoTierBlock15SummationReceived' | 'currentNoTierBlock16SummationReceived' | 'billToDateDelivered' | 'billToDateTimeStampDelivered' | 'projectedBillDelivered' | 'projectedBillTimeStampDelivered' | 'billDeliveredTrailingDigit' | 'billToDateReceived' | 'billToDateTimeStampReceived' | 'projectedBillReceived' | 'projectedBillTimeStampReceived' | 'billReceivedTrailingDigit' | 'proposedChangeSupplyImplementationTime' | 'proposedChangeSupplyStatus' | 'uncontrolledFlowThreshold' | 'uncontrolledFlowThresholdUnitOfMeasure' | 'uncontrolledFlowMultiplier' | 'uncontrolledFlowDivisor' | 'flowStabilisationPeriod' | 'flowMeasurementPeriod'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<MeteringClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof MeteringClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<MeteringClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<MeteringClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof MeteringClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: MeteringClusterAttributes[K]) => void): this;
+  once<K extends keyof MeteringClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: MeteringClusterAttributes[K]) => void): this;
 }
 
 export interface MultistateInputClusterAttributes {
@@ -740,6 +780,8 @@ export interface MultistateInputCluster extends ZCLNodeCluster {
   readAttributes<K extends 'description' | 'numberOfStates' | 'outOfService' | 'presentValue' | 'reliability' | 'statusFlags' | 'applicationType'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<MultistateInputClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof MultistateInputClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<MultistateInputClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<MultistateInputClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof MultistateInputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: MultistateInputClusterAttributes[K]) => void): this;
+  once<K extends keyof MultistateInputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: MultistateInputClusterAttributes[K]) => void): this;
 }
 
 export interface MultistateOutputClusterAttributes {
@@ -757,6 +799,8 @@ export interface MultistateOutputCluster extends ZCLNodeCluster {
   readAttributes<K extends 'description' | 'numberOfStates' | 'outOfService' | 'presentValue' | 'reliability' | 'relinquishDefault' | 'statusFlags' | 'applicationType'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<MultistateOutputClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof MultistateOutputClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<MultistateOutputClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<MultistateOutputClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof MultistateOutputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: MultistateOutputClusterAttributes[K]) => void): this;
+  once<K extends keyof MultistateOutputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: MultistateOutputClusterAttributes[K]) => void): this;
 }
 
 export interface MultistateValueClusterAttributes {
@@ -774,6 +818,8 @@ export interface MultistateValueCluster extends ZCLNodeCluster {
   readAttributes<K extends 'description' | 'numberOfStates' | 'outOfService' | 'presentValue' | 'reliability' | 'relinquishDefault' | 'statusFlags' | 'applicationType'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<MultistateValueClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof MultistateValueClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<MultistateValueClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<MultistateValueClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof MultistateValueClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: MultistateValueClusterAttributes[K]) => void): this;
+  once<K extends keyof MultistateValueClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: MultistateValueClusterAttributes[K]) => void): this;
 }
 
 export interface OccupancySensingClusterAttributes {
@@ -795,6 +841,8 @@ export interface OccupancySensingCluster extends ZCLNodeCluster {
   readAttributes<K extends 'occupancy' | 'occupancySensorType' | 'occupancySensorTypeBitmap' | 'pirOccupiedToUnoccupiedDelay' | 'pirUnoccupiedToOccupiedDelay' | 'pirUnoccupiedToOccupiedThreshold' | 'ultrasonicOccupiedToUnoccupiedDelay' | 'ultrasonicUnoccupiedToOccupiedDelay' | 'ultrasonicUnoccupiedToOccupiedThreshold' | 'physicalContactOccupiedToUnoccupiedDelay' | 'physicalContactUnoccupiedToOccupiedDelay' | 'physicalContactUnoccupiedToOccupiedThreshold'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<OccupancySensingClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof OccupancySensingClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<OccupancySensingClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<OccupancySensingClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof OccupancySensingClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: OccupancySensingClusterAttributes[K]) => void): this;
+  once<K extends keyof OccupancySensingClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: OccupancySensingClusterAttributes[K]) => void): this;
 }
 
 export interface OnOffClusterAttributes {
@@ -807,6 +855,8 @@ export interface OnOffCluster extends ZCLNodeCluster {
   readAttributes<K extends 'onOff' | 'onTime' | 'offWaitTime'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<OnOffClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof OnOffClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<OnOffClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<OnOffClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof OnOffClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: OnOffClusterAttributes[K]) => void): this;
+  once<K extends keyof OnOffClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: OnOffClusterAttributes[K]) => void): this;
   setOff(opts?: ClusterCommandOptions): Promise<void>;
   setOn(opts?: ClusterCommandOptions): Promise<void>;
   toggle(opts?: ClusterCommandOptions): Promise<void>;
@@ -835,6 +885,8 @@ export interface PollControlCluster extends ZCLNodeCluster {
   readAttributes<K extends 'checkInInterval' | 'longPollInterval' | 'shortPollInterval' | 'fastPollTimeout' | 'checkInIntervalMin' | 'longPollIntervalMin' | 'fastPollTimeoutMax'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<PollControlClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof PollControlClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<PollControlClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<PollControlClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof PollControlClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: PollControlClusterAttributes[K]) => void): this;
+  once<K extends keyof PollControlClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: PollControlClusterAttributes[K]) => void): this;
   fastPollStop(opts?: ClusterCommandOptions): Promise<void>;
   setLongPollInterval(args: { newLongPollInterval: number }, opts?: ClusterCommandOptions): Promise<void>;
   setShortPollInterval(args: { newShortPollInterval: number }, opts?: ClusterCommandOptions): Promise<void>;
@@ -854,6 +906,8 @@ export interface PowerConfigurationCluster extends ZCLNodeCluster {
   readAttributes<K extends 'batteryVoltage' | 'batteryPercentageRemaining' | 'batterySize' | 'batteryQuantity' | 'batteryRatedVoltage' | 'batteryVoltageMinThreshold' | 'batteryAlarmState'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<PowerConfigurationClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof PowerConfigurationClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<PowerConfigurationClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<PowerConfigurationClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof PowerConfigurationClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: PowerConfigurationClusterAttributes[K]) => void): this;
+  once<K extends keyof PowerConfigurationClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: PowerConfigurationClusterAttributes[K]) => void): this;
 }
 
 export interface PowerProfileCluster extends ZCLNodeCluster {
@@ -875,6 +929,8 @@ export interface PressureMeasurementCluster extends ZCLNodeCluster {
   readAttributes<K extends 'measuredValue' | 'minMeasuredValue' | 'maxMeasuredValue' | 'tolerance' | 'scaledValue' | 'minScaledValue' | 'maxScaledValue' | 'scaledTolerance' | 'scale'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<PressureMeasurementClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof PressureMeasurementClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<PressureMeasurementClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<PressureMeasurementClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof PressureMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: PressureMeasurementClusterAttributes[K]) => void): this;
+  once<K extends keyof PressureMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: PressureMeasurementClusterAttributes[K]) => void): this;
 }
 
 export interface PumpConfigurationAndControlCluster extends ZCLNodeCluster {
@@ -891,6 +947,8 @@ export interface RelativeHumidityCluster extends ZCLNodeCluster {
   readAttributes<K extends 'measuredValue' | 'minMeasuredValue' | 'maxMeasuredValue' | 'tolerance'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<RelativeHumidityClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof RelativeHumidityClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<RelativeHumidityClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<RelativeHumidityClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof RelativeHumidityClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: RelativeHumidityClusterAttributes[K]) => void): this;
+  once<K extends keyof RelativeHumidityClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: RelativeHumidityClusterAttributes[K]) => void): this;
 }
 
 export interface ScenesCluster extends ZCLNodeCluster {
@@ -909,6 +967,8 @@ export interface TemperatureMeasurementCluster extends ZCLNodeCluster {
   readAttributes<K extends 'measuredValue' | 'minMeasuredValue' | 'maxMeasuredValue'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<TemperatureMeasurementClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof TemperatureMeasurementClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<TemperatureMeasurementClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<TemperatureMeasurementClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof TemperatureMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: TemperatureMeasurementClusterAttributes[K]) => void): this;
+  once<K extends keyof TemperatureMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: TemperatureMeasurementClusterAttributes[K]) => void): this;
 }
 
 export interface ThermostatClusterAttributes {
@@ -941,6 +1001,8 @@ export interface ThermostatCluster extends ZCLNodeCluster {
   readAttributes<K extends 'localTemperature' | 'outdoorTemperature' | 'occupancy' | 'absMinHeatSetpointLimit' | 'absMaxHeatSetpointLimit' | 'absMinCoolSetpointLimit' | 'absMaxCoolSetpointLimit' | 'pICoolingDemand' | 'pIHeatingDemand' | 'localTemperatureCalibration' | 'occupiedCoolingSetpoint' | 'occupiedHeatingSetpoint' | 'unoccupiedCoolingSetpoint' | 'unoccupiedHeatingSetpoint' | 'minHeatSetpointLimit' | 'maxHeatSetpointLimit' | 'minCoolSetpointLimit' | 'maxCoolSetpointLimit' | 'minSetpointDeadBand' | 'remoteSensing' | 'controlSequenceOfOperation' | 'systemMode' | 'alarmMask'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<ThermostatClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof ThermostatClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<ThermostatClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<ThermostatClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof ThermostatClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: ThermostatClusterAttributes[K]) => void): this;
+  once<K extends keyof ThermostatClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: ThermostatClusterAttributes[K]) => void): this;
   setSetpoint(args: { mode: 'heat' | 'cool' | 'both'; amount: number }, opts?: ClusterCommandOptions): Promise<void>;
 }
 
@@ -978,6 +1040,8 @@ export interface WindowCoveringCluster extends ZCLNodeCluster {
   readAttributes<K extends 'windowCoveringType' | 'physicalClosedLimitLift' | 'physicalClosedLimitTilt' | 'currentPositionLift' | 'currentPositionTilt' | 'numberofActuationsLift' | 'numberofActuationsTilt' | 'configStatus' | 'currentPositionLiftPercentage' | 'currentPositionTiltPercentage' | 'installedOpenLimitLift' | 'installedClosedLimitLift' | 'installedOpenLimitTilt' | 'installedClosedLimitTilt' | 'velocityLift' | 'accelerationTimeLift' | 'decelerationTimeLift' | 'mode' | 'intermediateSetpointsLift' | 'intermediateSetpointsTilt'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<WindowCoveringClusterAttributes, K>>;
   readAttributes(attributeNames: Array<keyof WindowCoveringClusterAttributes | number>, opts?: { timeout?: number }): Promise<Partial<WindowCoveringClusterAttributes> & Record<number, unknown>>;
   writeAttributes(attributes: Partial<WindowCoveringClusterAttributes>, opts?: { timeout?: number }): Promise<unknown>;
+  on<K extends keyof WindowCoveringClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: WindowCoveringClusterAttributes[K]) => void): this;
+  once<K extends keyof WindowCoveringClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: WindowCoveringClusterAttributes[K]) => void): this;
   upOpen(opts?: ClusterCommandOptions): Promise<void>;
   downClose(opts?: ClusterCommandOptions): Promise<void>;
   stop(opts?: ClusterCommandOptions): Promise<void>;
@@ -1037,6 +1101,118 @@ export interface ClusterRegistry {
   windowCovering?: WindowCoveringCluster;
 }
 
+/** Cluster type lookup by cluster NAME */
+export interface ClusterTypeByName {
+  alarms: AlarmsCluster;
+  analogInput: AnalogInputCluster;
+  analogOutput: AnalogOutputCluster;
+  analogValue: AnalogValueCluster;
+  ballastConfiguration: BallastConfigurationCluster;
+  basic: BasicCluster;
+  binaryInput: BinaryInputCluster;
+  binaryOutput: BinaryOutputCluster;
+  binaryValue: BinaryValueCluster;
+  colorControl: ColorControlCluster;
+  dehumidificationControl: DehumidificationControlCluster;
+  deviceTemperature: DeviceTemperatureCluster;
+  diagnostics: DiagnosticsCluster;
+  doorLock: DoorLockCluster;
+  electricalMeasurement: ElectricalMeasurementCluster;
+  fanControl: FanControlCluster;
+  flowMeasurement: FlowMeasurementCluster;
+  groups: GroupsCluster;
+  iasACE: IASACECluster;
+  iasWD: IASWDCluster;
+  iasZone: IASZoneCluster;
+  identify: IdentifyCluster;
+  illuminanceLevelSensing: IlluminanceLevelSensingCluster;
+  illuminanceMeasurement: IlluminanceMeasurementCluster;
+  levelControl: LevelControlCluster;
+  metering: MeteringCluster;
+  multistateInput: MultistateInputCluster;
+  multistateOutput: MultistateOutputCluster;
+  multistateValue: MultistateValueCluster;
+  occupancySensing: OccupancySensingCluster;
+  onOff: OnOffCluster;
+  onOffSwitch: OnOffSwitchCluster;
+  ota: OTACluster;
+  pollControl: PollControlCluster;
+  powerConfiguration: PowerConfigurationCluster;
+  powerProfile: PowerProfileCluster;
+  pressureMeasurement: PressureMeasurementCluster;
+  pumpConfigurationAndControl: PumpConfigurationAndControlCluster;
+  relativeHumidity: RelativeHumidityCluster;
+  scenes: ScenesCluster;
+  shadeConfiguration: ShadeConfigurationCluster;
+  temperatureMeasurement: TemperatureMeasurementCluster;
+  thermostat: ThermostatCluster;
+  time: TimeCluster;
+  touchlink: TouchLinkCluster;
+  windowCovering: WindowCoveringCluster;
+}
+
+/** Cluster attributes lookup by cluster NAME */
+export interface ClusterAttributesByName {
+  alarms: Record<string, unknown>;
+  analogInput: AnalogInputClusterAttributes;
+  analogOutput: AnalogOutputClusterAttributes;
+  analogValue: AnalogValueClusterAttributes;
+  ballastConfiguration: BallastConfigurationClusterAttributes;
+  basic: BasicClusterAttributes;
+  binaryInput: BinaryInputClusterAttributes;
+  binaryOutput: BinaryOutputClusterAttributes;
+  binaryValue: BinaryValueClusterAttributes;
+  colorControl: ColorControlClusterAttributes;
+  dehumidificationControl: Record<string, unknown>;
+  deviceTemperature: DeviceTemperatureClusterAttributes;
+  diagnostics: Record<string, unknown>;
+  doorLock: DoorLockClusterAttributes;
+  electricalMeasurement: ElectricalMeasurementClusterAttributes;
+  fanControl: Record<string, unknown>;
+  flowMeasurement: FlowMeasurementClusterAttributes;
+  groups: GroupsClusterAttributes;
+  iasACE: Record<string, unknown>;
+  iasWD: Record<string, unknown>;
+  iasZone: IASZoneClusterAttributes;
+  identify: IdentifyClusterAttributes;
+  illuminanceLevelSensing: IlluminanceLevelSensingClusterAttributes;
+  illuminanceMeasurement: IlluminanceMeasurementClusterAttributes;
+  levelControl: LevelControlClusterAttributes;
+  metering: MeteringClusterAttributes;
+  multistateInput: MultistateInputClusterAttributes;
+  multistateOutput: MultistateOutputClusterAttributes;
+  multistateValue: MultistateValueClusterAttributes;
+  occupancySensing: OccupancySensingClusterAttributes;
+  onOff: OnOffClusterAttributes;
+  onOffSwitch: Record<string, unknown>;
+  ota: Record<string, unknown>;
+  pollControl: PollControlClusterAttributes;
+  powerConfiguration: PowerConfigurationClusterAttributes;
+  powerProfile: Record<string, unknown>;
+  pressureMeasurement: PressureMeasurementClusterAttributes;
+  pumpConfigurationAndControl: Record<string, unknown>;
+  relativeHumidity: RelativeHumidityClusterAttributes;
+  scenes: Record<string, unknown>;
+  shadeConfiguration: Record<string, unknown>;
+  temperatureMeasurement: TemperatureMeasurementClusterAttributes;
+  thermostat: ThermostatClusterAttributes;
+  time: Record<string, unknown>;
+  touchlink: Record<string, unknown>;
+  windowCovering: WindowCoveringClusterAttributes;
+}
+
+/** Infer a typed cluster interface from a CLUSTER definition object. */
+export type ClusterTypeFromDefinition<TDef extends { NAME: string; ID: number }> =
+  TDef['NAME'] extends keyof ClusterTypeByName
+    ? ClusterTypeByName[TDef['NAME']]
+    : ZCLNodeCluster;
+
+/** Infer typed cluster attribute map from a CLUSTER definition object. */
+export type ClusterAttributesFromDefinition<TDef extends { NAME: string; ID: number }> =
+  TDef['NAME'] extends keyof ClusterAttributesByName
+    ? ClusterAttributesByName[TDef['NAME']]
+    : Record<string, unknown>;
+
 export type ZCLNodeEndpoint = {
   clusters: ClusterRegistry & {
     [clusterName: string]: ZCLNodeCluster | undefined;
@@ -1053,334 +1229,654 @@ export interface ZCLNode {
   ) => Promise<void>;
 }
 
-declare module "zigbee-clusters" {
-  export const ZCLNode: {
-    new (node: ZCLNodeConstructorInput): ZCLNode;
-  };
-  export const CLUSTER: {
-    [key: string]: { ID: number; NAME: string; ATTRIBUTES: unknown; COMMANDS: unknown };
-  };
-  export { ZCLNodeCluster };
-  export const AlarmsCluster: {
-    new (...args: any[]): AlarmsCluster;
+export const ZCLNode: {
+  new (node: ZCLNodeConstructorInput): ZCLNode;
+};
+
+export const CLUSTER: {
+
+  ALARMS: {
     ID: number;
-    NAME: string;
+    NAME: 'alarms';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const AnalogInputCluster: {
-    new (...args: any[]): AnalogInputCluster;
+  ANALOG_INPUT: {
     ID: number;
-    NAME: string;
+    NAME: 'analogInput';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const AnalogOutputCluster: {
-    new (...args: any[]): AnalogOutputCluster;
+  ANALOG_OUTPUT: {
     ID: number;
-    NAME: string;
+    NAME: 'analogOutput';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const AnalogValueCluster: {
-    new (...args: any[]): AnalogValueCluster;
+  ANALOG_VALUE: {
     ID: number;
-    NAME: string;
+    NAME: 'analogValue';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const BallastConfigurationCluster: {
-    new (...args: any[]): BallastConfigurationCluster;
+  BALLAST_CONFIGURATION: {
     ID: number;
-    NAME: string;
+    NAME: 'ballastConfiguration';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const BasicCluster: {
-    new (...args: any[]): BasicCluster;
+  BASIC: {
     ID: number;
-    NAME: string;
+    NAME: 'basic';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const BinaryInputCluster: {
-    new (...args: any[]): BinaryInputCluster;
+  BINARY_INPUT: {
     ID: number;
-    NAME: string;
+    NAME: 'binaryInput';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const BinaryOutputCluster: {
-    new (...args: any[]): BinaryOutputCluster;
+  BINARY_OUTPUT: {
     ID: number;
-    NAME: string;
+    NAME: 'binaryOutput';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const BinaryValueCluster: {
-    new (...args: any[]): BinaryValueCluster;
+  BINARY_VALUE: {
     ID: number;
-    NAME: string;
+    NAME: 'binaryValue';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const ColorControlCluster: {
-    new (...args: any[]): ColorControlCluster;
+  COLOR_CONTROL: {
     ID: number;
-    NAME: string;
+    NAME: 'colorControl';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const DehumidificationControlCluster: {
-    new (...args: any[]): DehumidificationControlCluster;
+  DEVICE_TEMPERATURE: {
     ID: number;
-    NAME: string;
+    NAME: 'deviceTemperature';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const DeviceTemperatureCluster: {
-    new (...args: any[]): DeviceTemperatureCluster;
+  DIAGNOSTICS: {
     ID: number;
-    NAME: string;
+    NAME: 'diagnostics';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const DiagnosticsCluster: {
-    new (...args: any[]): DiagnosticsCluster;
+  DOOR_LOCK: {
     ID: number;
-    NAME: string;
+    NAME: 'doorLock';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const DoorLockCluster: {
-    new (...args: any[]): DoorLockCluster;
+  ELECTRICAL_MEASUREMENT: {
     ID: number;
-    NAME: string;
+    NAME: 'electricalMeasurement';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const ElectricalMeasurementCluster: {
-    new (...args: any[]): ElectricalMeasurementCluster;
+  FAN_CONTROL: {
     ID: number;
-    NAME: string;
+    NAME: 'fanControl';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const FanControlCluster: {
-    new (...args: any[]): FanControlCluster;
+  FLOW_MEASUREMENT: {
     ID: number;
-    NAME: string;
+    NAME: 'flowMeasurement';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const FlowMeasurementCluster: {
-    new (...args: any[]): FlowMeasurementCluster;
+  GROUPS: {
     ID: number;
-    NAME: string;
+    NAME: 'groups';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const GroupsCluster: {
-    new (...args: any[]): GroupsCluster;
+  IAS_ACE: {
     ID: number;
-    NAME: string;
+    NAME: 'iasACE';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const IASACECluster: {
-    new (...args: any[]): IASACECluster;
+  IAS_WD: {
     ID: number;
-    NAME: string;
+    NAME: 'iasWD';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const IASWDCluster: {
-    new (...args: any[]): IASWDCluster;
+  IAS_ZONE: {
     ID: number;
-    NAME: string;
+    NAME: 'iasZone';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const IASZoneCluster: {
-    new (...args: any[]): IASZoneCluster;
+  IDENTIFY: {
     ID: number;
-    NAME: string;
+    NAME: 'identify';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const IdentifyCluster: {
-    new (...args: any[]): IdentifyCluster;
+  ILLUMINANCE_LEVEL_SENSING: {
     ID: number;
-    NAME: string;
+    NAME: 'illuminanceLevelSensing';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const IlluminanceLevelSensingCluster: {
-    new (...args: any[]): IlluminanceLevelSensingCluster;
+  ILLUMINANCE_MEASUREMENT: {
     ID: number;
-    NAME: string;
+    NAME: 'illuminanceMeasurement';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const IlluminanceMeasurementCluster: {
-    new (...args: any[]): IlluminanceMeasurementCluster;
+  LEVEL_CONTROL: {
     ID: number;
-    NAME: string;
+    NAME: 'levelControl';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const LevelControlCluster: {
-    new (...args: any[]): LevelControlCluster;
+  METERING: {
     ID: number;
-    NAME: string;
+    NAME: 'metering';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const MeteringCluster: {
-    new (...args: any[]): MeteringCluster;
+  MULTI_STATE_INPUT: {
     ID: number;
-    NAME: string;
+    NAME: 'multistateInput';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const MultistateInputCluster: {
-    new (...args: any[]): MultistateInputCluster;
+  MULTI_STATE_OUTPUT: {
     ID: number;
-    NAME: string;
+    NAME: 'multistateOutput';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const MultistateOutputCluster: {
-    new (...args: any[]): MultistateOutputCluster;
+  MULTI_STATE_VALUE: {
     ID: number;
-    NAME: string;
+    NAME: 'multistateValue';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const MultistateValueCluster: {
-    new (...args: any[]): MultistateValueCluster;
+  OCCUPANCY_SENSING: {
     ID: number;
-    NAME: string;
+    NAME: 'occupancySensing';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const OccupancySensingCluster: {
-    new (...args: any[]): OccupancySensingCluster;
+  ON_OFF: {
     ID: number;
-    NAME: string;
+    NAME: 'onOff';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const OnOffCluster: {
-    new (...args: any[]): OnOffCluster;
+  ON_OFF_SWITCH: {
     ID: number;
-    NAME: string;
+    NAME: 'onOffSwitch';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const OnOffSwitchCluster: {
-    new (...args: any[]): OnOffSwitchCluster;
+  OTA: {
     ID: number;
-    NAME: string;
+    NAME: 'ota';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const OTACluster: {
-    new (...args: any[]): OTACluster;
+  POLL_CONTROL: {
     ID: number;
-    NAME: string;
+    NAME: 'pollControl';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const PollControlCluster: {
-    new (...args: any[]): PollControlCluster;
+  POWER_CONFIGURATION: {
     ID: number;
-    NAME: string;
+    NAME: 'powerConfiguration';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const PowerConfigurationCluster: {
-    new (...args: any[]): PowerConfigurationCluster;
+  POWER_PROFILE: {
     ID: number;
-    NAME: string;
+    NAME: 'powerProfile';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const PowerProfileCluster: {
-    new (...args: any[]): PowerProfileCluster;
+  PRESSURE_MEASUREMENT: {
     ID: number;
-    NAME: string;
+    NAME: 'pressureMeasurement';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const PressureMeasurementCluster: {
-    new (...args: any[]): PressureMeasurementCluster;
+  PUMP_CONFIGURATION_AND_CONTROL: {
     ID: number;
-    NAME: string;
+    NAME: 'pumpConfigurationAndControl';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const PumpConfigurationAndControlCluster: {
-    new (...args: any[]): PumpConfigurationAndControlCluster;
+  RELATIVE_HUMIDITY_MEASUREMENT: {
     ID: number;
-    NAME: string;
+    NAME: 'relativeHumidity';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const RelativeHumidityCluster: {
-    new (...args: any[]): RelativeHumidityCluster;
+  SCENES: {
     ID: number;
-    NAME: string;
+    NAME: 'scenes';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const ScenesCluster: {
-    new (...args: any[]): ScenesCluster;
+  SHADE_CONFIGURATION: {
     ID: number;
-    NAME: string;
+    NAME: 'shadeConfiguration';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const ShadeConfigurationCluster: {
-    new (...args: any[]): ShadeConfigurationCluster;
+  TEMPERATURE_MEASUREMENT: {
     ID: number;
-    NAME: string;
+    NAME: 'temperatureMeasurement';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const TemperatureMeasurementCluster: {
-    new (...args: any[]): TemperatureMeasurementCluster;
+  THERMOSTAT: {
     ID: number;
-    NAME: string;
+    NAME: 'thermostat';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const ThermostatCluster: {
-    new (...args: any[]): ThermostatCluster;
+  TIME: {
     ID: number;
-    NAME: string;
+    NAME: 'time';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const TimeCluster: {
-    new (...args: any[]): TimeCluster;
+  TOUCHLINK: {
     ID: number;
-    NAME: string;
+    NAME: 'touchlink';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const TouchLinkCluster: {
-    new (...args: any[]): TouchLinkCluster;
+  WINDOW_COVERING: {
     ID: number;
-    NAME: string;
+    NAME: 'windowCovering';
     ATTRIBUTES: unknown;
     COMMANDS: unknown;
   };
-  export const WindowCoveringCluster: {
-    new (...args: any[]): WindowCoveringCluster;
-    ID: number;
-    NAME: string;
-    ATTRIBUTES: unknown;
-    COMMANDS: unknown;
-  };
-}
+};
+export const AlarmsCluster: {
+  new (...args: any[]): AlarmsCluster;
+  ID: 9;
+  NAME: 'alarms';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const AnalogInputCluster: {
+  new (...args: any[]): AnalogInputCluster;
+  ID: 12;
+  NAME: 'analogInput';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const AnalogOutputCluster: {
+  new (...args: any[]): AnalogOutputCluster;
+  ID: 13;
+  NAME: 'analogOutput';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const AnalogValueCluster: {
+  new (...args: any[]): AnalogValueCluster;
+  ID: 14;
+  NAME: 'analogValue';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const BallastConfigurationCluster: {
+  new (...args: any[]): BallastConfigurationCluster;
+  ID: 769;
+  NAME: 'ballastConfiguration';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const BasicCluster: {
+  new (...args: any[]): BasicCluster;
+  ID: 0;
+  NAME: 'basic';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const BinaryInputCluster: {
+  new (...args: any[]): BinaryInputCluster;
+  ID: 15;
+  NAME: 'binaryInput';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const BinaryOutputCluster: {
+  new (...args: any[]): BinaryOutputCluster;
+  ID: 16;
+  NAME: 'binaryOutput';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const BinaryValueCluster: {
+  new (...args: any[]): BinaryValueCluster;
+  ID: 17;
+  NAME: 'binaryValue';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const ColorControlCluster: {
+  new (...args: any[]): ColorControlCluster;
+  ID: 768;
+  NAME: 'colorControl';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const DehumidificationControlCluster: {
+  new (...args: any[]): DehumidificationControlCluster;
+  ID: 515;
+  NAME: 'dehumidificationControl';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const DeviceTemperatureCluster: {
+  new (...args: any[]): DeviceTemperatureCluster;
+  ID: 2;
+  NAME: 'deviceTemperature';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const DiagnosticsCluster: {
+  new (...args: any[]): DiagnosticsCluster;
+  ID: 2821;
+  NAME: 'diagnostics';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const DoorLockCluster: {
+  new (...args: any[]): DoorLockCluster;
+  ID: 257;
+  NAME: 'doorLock';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const ElectricalMeasurementCluster: {
+  new (...args: any[]): ElectricalMeasurementCluster;
+  ID: 2820;
+  NAME: 'electricalMeasurement';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const FanControlCluster: {
+  new (...args: any[]): FanControlCluster;
+  ID: 514;
+  NAME: 'fanControl';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const FlowMeasurementCluster: {
+  new (...args: any[]): FlowMeasurementCluster;
+  ID: 1028;
+  NAME: 'flowMeasurement';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const GroupsCluster: {
+  new (...args: any[]): GroupsCluster;
+  ID: 4;
+  NAME: 'groups';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const IASACECluster: {
+  new (...args: any[]): IASACECluster;
+  ID: 1281;
+  NAME: 'iasACE';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const IASWDCluster: {
+  new (...args: any[]): IASWDCluster;
+  ID: 1282;
+  NAME: 'iasWD';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const IASZoneCluster: {
+  new (...args: any[]): IASZoneCluster;
+  ID: 1280;
+  NAME: 'iasZone';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const IdentifyCluster: {
+  new (...args: any[]): IdentifyCluster;
+  ID: 3;
+  NAME: 'identify';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const IlluminanceLevelSensingCluster: {
+  new (...args: any[]): IlluminanceLevelSensingCluster;
+  ID: 1025;
+  NAME: 'illuminanceLevelSensing';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const IlluminanceMeasurementCluster: {
+  new (...args: any[]): IlluminanceMeasurementCluster;
+  ID: 1024;
+  NAME: 'illuminanceMeasurement';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const LevelControlCluster: {
+  new (...args: any[]): LevelControlCluster;
+  ID: 8;
+  NAME: 'levelControl';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const MeteringCluster: {
+  new (...args: any[]): MeteringCluster;
+  ID: 1794;
+  NAME: 'metering';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const MultistateInputCluster: {
+  new (...args: any[]): MultistateInputCluster;
+  ID: 18;
+  NAME: 'multistateInput';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const MultistateOutputCluster: {
+  new (...args: any[]): MultistateOutputCluster;
+  ID: 19;
+  NAME: 'multistateOutput';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const MultistateValueCluster: {
+  new (...args: any[]): MultistateValueCluster;
+  ID: 20;
+  NAME: 'multistateValue';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const OccupancySensingCluster: {
+  new (...args: any[]): OccupancySensingCluster;
+  ID: 1030;
+  NAME: 'occupancySensing';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const OnOffCluster: {
+  new (...args: any[]): OnOffCluster;
+  ID: 6;
+  NAME: 'onOff';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const OnOffSwitchCluster: {
+  new (...args: any[]): OnOffSwitchCluster;
+  ID: 7;
+  NAME: 'onOffSwitch';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const OTACluster: {
+  new (...args: any[]): OTACluster;
+  ID: 25;
+  NAME: 'ota';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const PollControlCluster: {
+  new (...args: any[]): PollControlCluster;
+  ID: 32;
+  NAME: 'pollControl';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const PowerConfigurationCluster: {
+  new (...args: any[]): PowerConfigurationCluster;
+  ID: 1;
+  NAME: 'powerConfiguration';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const PowerProfileCluster: {
+  new (...args: any[]): PowerProfileCluster;
+  ID: 26;
+  NAME: 'powerProfile';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const PressureMeasurementCluster: {
+  new (...args: any[]): PressureMeasurementCluster;
+  ID: 1027;
+  NAME: 'pressureMeasurement';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const PumpConfigurationAndControlCluster: {
+  new (...args: any[]): PumpConfigurationAndControlCluster;
+  ID: 512;
+  NAME: 'pumpConfigurationAndControl';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const RelativeHumidityCluster: {
+  new (...args: any[]): RelativeHumidityCluster;
+  ID: 1029;
+  NAME: 'relativeHumidity';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const ScenesCluster: {
+  new (...args: any[]): ScenesCluster;
+  ID: 5;
+  NAME: 'scenes';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const ShadeConfigurationCluster: {
+  new (...args: any[]): ShadeConfigurationCluster;
+  ID: 256;
+  NAME: 'shadeConfiguration';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const TemperatureMeasurementCluster: {
+  new (...args: any[]): TemperatureMeasurementCluster;
+  ID: 1026;
+  NAME: 'temperatureMeasurement';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const ThermostatCluster: {
+  new (...args: any[]): ThermostatCluster;
+  ID: 513;
+  NAME: 'thermostat';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const TimeCluster: {
+  new (...args: any[]): TimeCluster;
+  ID: 10;
+  NAME: 'time';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const TouchLinkCluster: {
+  new (...args: any[]): TouchLinkCluster;
+  ID: 4096;
+  NAME: 'touchlink';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+export const WindowCoveringCluster: {
+  new (...args: any[]): WindowCoveringCluster;
+  ID: 258;
+  NAME: 'windowCovering';
+  ATTRIBUTES: unknown;
+  COMMANDS: unknown;
+};
+
+declare const _default: {
+  ZCLNode: typeof ZCLNode;
+  CLUSTER: typeof CLUSTER;
+  AlarmsCluster: typeof AlarmsCluster;
+  AnalogInputCluster: typeof AnalogInputCluster;
+  AnalogOutputCluster: typeof AnalogOutputCluster;
+  AnalogValueCluster: typeof AnalogValueCluster;
+  BallastConfigurationCluster: typeof BallastConfigurationCluster;
+  BasicCluster: typeof BasicCluster;
+  BinaryInputCluster: typeof BinaryInputCluster;
+  BinaryOutputCluster: typeof BinaryOutputCluster;
+  BinaryValueCluster: typeof BinaryValueCluster;
+  ColorControlCluster: typeof ColorControlCluster;
+  DehumidificationControlCluster: typeof DehumidificationControlCluster;
+  DeviceTemperatureCluster: typeof DeviceTemperatureCluster;
+  DiagnosticsCluster: typeof DiagnosticsCluster;
+  DoorLockCluster: typeof DoorLockCluster;
+  ElectricalMeasurementCluster: typeof ElectricalMeasurementCluster;
+  FanControlCluster: typeof FanControlCluster;
+  FlowMeasurementCluster: typeof FlowMeasurementCluster;
+  GroupsCluster: typeof GroupsCluster;
+  IASACECluster: typeof IASACECluster;
+  IASWDCluster: typeof IASWDCluster;
+  IASZoneCluster: typeof IASZoneCluster;
+  IdentifyCluster: typeof IdentifyCluster;
+  IlluminanceLevelSensingCluster: typeof IlluminanceLevelSensingCluster;
+  IlluminanceMeasurementCluster: typeof IlluminanceMeasurementCluster;
+  LevelControlCluster: typeof LevelControlCluster;
+  MeteringCluster: typeof MeteringCluster;
+  MultistateInputCluster: typeof MultistateInputCluster;
+  MultistateOutputCluster: typeof MultistateOutputCluster;
+  MultistateValueCluster: typeof MultistateValueCluster;
+  OccupancySensingCluster: typeof OccupancySensingCluster;
+  OnOffCluster: typeof OnOffCluster;
+  OnOffSwitchCluster: typeof OnOffSwitchCluster;
+  OTACluster: typeof OTACluster;
+  PollControlCluster: typeof PollControlCluster;
+  PowerConfigurationCluster: typeof PowerConfigurationCluster;
+  PowerProfileCluster: typeof PowerProfileCluster;
+  PressureMeasurementCluster: typeof PressureMeasurementCluster;
+  PumpConfigurationAndControlCluster: typeof PumpConfigurationAndControlCluster;
+  RelativeHumidityCluster: typeof RelativeHumidityCluster;
+  ScenesCluster: typeof ScenesCluster;
+  ShadeConfigurationCluster: typeof ShadeConfigurationCluster;
+  TemperatureMeasurementCluster: typeof TemperatureMeasurementCluster;
+  ThermostatCluster: typeof ThermostatCluster;
+  TimeCluster: typeof TimeCluster;
+  TouchLinkCluster: typeof TouchLinkCluster;
+  WindowCoveringCluster: typeof WindowCoveringCluster;
+};
+export default _default;
