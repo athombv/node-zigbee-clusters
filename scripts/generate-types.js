@@ -179,6 +179,8 @@ function generateClusterInterface(cluster) {
     lines.push(`  readAttributes<K extends ${attrNames}>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<${interfaceName}Attributes, K>>;`);
     lines.push(`  readAttributes(attributeNames: Array<keyof ${interfaceName}Attributes | number>, opts?: { timeout?: number }): Promise<Partial<${interfaceName}Attributes> & Record<number, unknown>>;`);
     lines.push(`  writeAttributes(attributes: Partial<${interfaceName}Attributes>, opts?: { timeout?: number }): Promise<unknown>;`);
+    lines.push(`  on<K extends keyof ${interfaceName}Attributes & string>(eventName: \`attr.\${K}\`, listener: (value: ${interfaceName}Attributes[K]) => void): this;`);
+    lines.push(`  once<K extends keyof ${interfaceName}Attributes & string>(eventName: \`attr.\${K}\`, listener: (value: ${interfaceName}Attributes[K]) => void): this;`);
   }
 
   // Add command methods
@@ -210,7 +212,7 @@ function generateClusterInterface(cluster) {
  * @param {object[]} clusters - Array of parsed cluster definitions
  * @returns {string} Complete TypeScript definitions file
  */
-function generateTypesFile(clusters) {
+function generateTypesFile(clusters, clusterDefinitions) {
   const lines = [];
 
   // Header
@@ -309,6 +311,42 @@ type ZCLNodeConstructorInput = {
   lines.push('}');
   lines.push('');
 
+  // Generate cluster type lookup maps for inference helpers
+  lines.push('/** Cluster type lookup by cluster NAME */');
+  lines.push('export interface ClusterTypeByName {');
+  for (const cluster of clusters) {
+    const interfaceName = toInterfaceName(cluster);
+    lines.push(`  ${cluster.clusterName}: ${interfaceName};`);
+  }
+  lines.push('}');
+  lines.push('');
+
+  // Generate cluster attribute lookup maps for inference helpers
+  lines.push('/** Cluster attributes lookup by cluster NAME */');
+  lines.push('export interface ClusterAttributesByName {');
+  for (const cluster of clusters) {
+    const interfaceName = toInterfaceName(cluster);
+    const attributesInterfaceName = `${interfaceName}Attributes`;
+    const attributesType = cluster.attributes.length > 0 ? attributesInterfaceName : 'Record<string, unknown>';
+    lines.push(`  ${cluster.clusterName}: ${attributesType};`);
+  }
+  lines.push('}');
+  lines.push('');
+
+  lines.push('/** Infer a typed cluster interface from a CLUSTER definition object. */');
+  lines.push('export type ClusterTypeFromDefinition<TDef extends { NAME: string; ID: number }> =');
+  lines.push("  TDef['NAME'] extends keyof ClusterTypeByName");
+  lines.push("    ? ClusterTypeByName[TDef['NAME']]");
+  lines.push('    : ZCLNodeCluster;');
+  lines.push('');
+
+  lines.push('/** Infer typed cluster attribute map from a CLUSTER definition object. */');
+  lines.push('export type ClusterAttributesFromDefinition<TDef extends { NAME: string; ID: number }> =');
+  lines.push("  TDef['NAME'] extends keyof ClusterAttributesByName");
+  lines.push("    ? ClusterAttributesByName[TDef['NAME']]");
+  lines.push('    : Record<string, unknown>;');
+  lines.push('');
+
   // Generate endpoint type
   lines.push(`export type ZCLNodeEndpoint = {
   clusters: ClusterRegistry & {
@@ -327,30 +365,46 @@ export interface ZCLNode {
 }
 `);
 
-  // Module declaration for CommonJS compatibility
-  lines.push(`declare module "zigbee-clusters" {
-  export const ZCLNode: {
-    new (node: ZCLNodeConstructorInput): ZCLNode;
-  };
-  export const CLUSTER: {
-    [key: string]: { ID: number; NAME: string; ATTRIBUTES: unknown; COMMANDS: unknown };
-  };
-  export { ZCLNodeCluster };`);
+  // Runtime value exports
+  lines.push(`export const ZCLNode: {
+  new (node: ZCLNodeConstructorInput): ZCLNode;
+};
+
+export const CLUSTER: {
+`);
+  for (const def of clusterDefinitions) {
+    lines.push(`  ${def.constantName}: {`);
+    lines.push('    ID: number;');
+    lines.push(`    NAME: '${def.clusterName}';`);
+    lines.push('    ATTRIBUTES: unknown;');
+    lines.push('    COMMANDS: unknown;');
+    lines.push('  };');
+  }
+  lines.push('};');
 
   // Export all cluster classes
   for (const cluster of clusters) {
     const interfaceName = toInterfaceName(cluster);
     const exportName = cluster.exportName || interfaceName;
-    lines.push(`  export const ${exportName}: {`);
-    lines.push(`    new (...args: any[]): ${interfaceName};`);
-    lines.push('    ID: number;');
-    lines.push('    NAME: string;');
-    lines.push('    ATTRIBUTES: unknown;');
-    lines.push('    COMMANDS: unknown;');
-    lines.push('  };');
+    lines.push(`export const ${exportName}: {`);
+    lines.push(`  new (...args: any[]): ${interfaceName};`);
+    lines.push(`  ID: ${cluster.clusterId};`);
+    lines.push(`  NAME: '${cluster.clusterName}';`);
+    lines.push('  ATTRIBUTES: unknown;');
+    lines.push('  COMMANDS: unknown;');
+    lines.push('};');
   }
 
-  lines.push('}');
+  lines.push('');
+  lines.push('declare const _default: {');
+  lines.push('  ZCLNode: typeof ZCLNode;');
+  lines.push('  CLUSTER: typeof CLUSTER;');
+  for (const cluster of clusters) {
+    const exportName = cluster.exportName || toInterfaceName(cluster);
+    lines.push(`  ${exportName}: typeof ${exportName};`);
+  }
+  lines.push('};');
+  lines.push('export default _default;');
 
   return lines.join('\n');
 }
@@ -381,8 +435,16 @@ function main() {
   // Sort clusters alphabetically
   clusters.sort((a, b) => a.clusterName.localeCompare(b.clusterName));
 
+  const clusterDefinitions = Object.entries(clustersModule.CLUSTER)
+    .map(([constantName, value]) => ({
+      constantName,
+      clusterId: value.ID,
+      clusterName: value.NAME,
+    }))
+    .sort((a, b) => a.constantName.localeCompare(b.constantName));
+
   console.log(`\nGenerating ${OUTPUT_FILE}...`);
-  const output = generateTypesFile(clusters);
+  const output = generateTypesFile(clusters, clusterDefinitions);
   fs.writeFileSync(OUTPUT_FILE, output);
 
   console.log(`Done! Generated types for ${clusters.length} clusters.`);
