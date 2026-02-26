@@ -214,7 +214,7 @@ function generateClusterInterface(cluster) {
  *   constantName: string;
  *   clusterId: number;
  *   clusterName: string;
- * }>} clusterDefinitions - Array of CLUSTER constant definitions used to generate typed CLUSTER exports
+ * }>} clusterDefinitions - Array of CLUSTER definitions used to generate typed CLUSTER exports
  * @returns {string} Complete TypeScript definitions file
  */
 function generateTypesFile(clusters, clusterDefinitions) {
