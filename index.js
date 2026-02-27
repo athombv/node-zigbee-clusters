@@ -8,6 +8,7 @@ const Clusters = require('./lib/clusters');
 const BoundCluster = require('./lib/BoundCluster');
 const zclTypes = require('./lib/zclTypes');
 const zclFrames = require('./lib/zclFrames');
+const { ZCLError } = require('./lib/util');
 
 /**
  * Enables or disables debug logging.
@@ -53,6 +54,7 @@ module.exports = {
   ZCLDataTypes,
   ZCLDataType,
   ZCLStruct,
+  ZCLError,
   ...Clusters,
   debug,
 };

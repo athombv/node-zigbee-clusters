@@ -9,6 +9,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { ZCLDataTypes } = require('../lib/zclTypes');
 
 const OUTPUT_FILE = path.join(__dirname, '../index.d.ts');
 
@@ -17,7 +18,7 @@ const OUTPUT_FILE = path.join(__dirname, '../index.d.ts');
  * @param {object} dataType - ZCLDataType object with shortName and args
  * @returns {string} TypeScript type string
  */
-function zclTypeToTS(dataType) {
+function zclTypeToTS(dataType, useEnum8StatusType = true) {
   if (!dataType || !dataType.shortName) return 'unknown';
 
   const { shortName, args } = dataType;
@@ -47,6 +48,10 @@ function zclTypeToTS(dataType) {
   // Buffer types
   if (shortName === 'octstr' || shortName === '_buffer' || shortName === '_buffer8' || shortName === '_buffer16') {
     return 'Buffer';
+  }
+
+  if (dataType === ZCLDataTypes.enum8Status && useEnum8StatusType) {
+    return 'ZCLEnum8Status';
   }
 
   // Enum types - extract keys from args[0]
@@ -111,6 +116,8 @@ function parseCluster(ClusterClass) {
   for (const [name, def] of Object.entries(cmds)) {
     const cmdArgs = [];
     const responseArgs = [];
+    const cmdArgsOptional = def && def.encodeMissingFieldsBehavior === 'skip';
+    const responseArgsOptional = def && def.response && def.response.encodeMissingFieldsBehavior === 'skip';
     if (def && def.args) {
       for (const [argName, argType] of Object.entries(def.args)) {
         cmdArgs.push({
@@ -128,7 +135,9 @@ function parseCluster(ClusterClass) {
         });
       }
     }
-    commands.push({ name, args: cmdArgs, responseArgs });
+    commands.push({
+      name, args: cmdArgs, responseArgs, cmdArgsOptional, responseArgsOptional,
+    });
   }
 
   return {
@@ -180,13 +189,14 @@ function generateClusterInterface(cluster) {
     // Determine return type based on response args
     let returnType = 'void';
     if (cmd.responseArgs && cmd.responseArgs.length > 0) {
-      returnType = `{ ${cmd.responseArgs.map(a => `${a.name}: ${a.tsType}`).join('; ')} }`;
+      const sep = cmd.responseArgsOptional ? '?: ' : ': ';
+      returnType = `{ ${cmd.responseArgs.map(a => `${a.name}${sep}${a.tsType}`).join('; ')} }`;
     }
 
     if (cmd.args.length > 0) {
-      // Buffer arguments are optional - ZCL allows empty octet strings
-      const allArgsOptional = cmd.args.every(a => a.tsType === 'Buffer');
-      const argsType = `{ ${cmd.args.map(a => `${a.name}${a.tsType === 'Buffer' ? '?' : ''}: ${a.tsType}`).join('; ')} }`;
+      // Args are optional when encodeMissingFieldsBehavior is 'skip', or when all args are Buffers
+      const allArgsOptional = cmd.cmdArgsOptional || cmd.args.every(a => a.tsType === 'Buffer');
+      const argsType = `{ ${cmd.args.map(a => `${a.name}${(cmd.cmdArgsOptional || a.tsType === 'Buffer') ? '?' : ''}: ${a.tsType}`).join('; ')} }`;
       // If all args are optional, make the entire args object optional
       lines.push(`  ${cmd.name}(args${allArgsOptional ? '?' : ''}: ${argsType}): Promise<${returnType}>;`);
     } else {
@@ -225,6 +235,8 @@ type ConstructorOptions = {
   endpointDescriptors: EndpointDescriptor[];
   sendFrame: (endpointId: number, clusterId: number, frame: Buffer) => Promise<void>;
 };
+
+type ZCLEnum8Status = ${zclTypeToTS(ZCLDataTypes.enum8Status, false)};
 `);
 
   // Base ZCLNodeCluster interface
@@ -290,6 +302,7 @@ type ConstructorOptions = {
   clusters: ClusterRegistry & {
     [clusterName: string]: ZCLNodeCluster | undefined;
   };
+  bind(clusterName: string, impl: BoundCluster): void;
 };
 
 export interface ZCLNode {
@@ -311,7 +324,17 @@ export interface ZCLNode {
   export const CLUSTER: {
     [key: string]: { ID: number; NAME: string; ATTRIBUTES: unknown; COMMANDS: unknown };
   };
-  export { ZCLNodeCluster };`);
+  export { ZCLNodeCluster };
+  
+  export class BoundCluster {
+  
+  }
+
+  export class ZCLError extends Error {
+    zclStatus: ZCLEnum8Status;
+    constructor(zclStatus?: ZCLEnum8Status);
+  }
+`);
 
   // Export all cluster classes
   for (const cluster of clusters) {

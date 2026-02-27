@@ -303,6 +303,7 @@ attr3: { ... },
 | `id` | Yes | Always 4-digit hex format (0x0000); add decimal comment if > 9 |
 | `args` | If has params | Object with typed fields |
 | `response` | If expects response | Has own `id` and `args` |
+| `encodeMissingFieldsBehavior` | Controls the behavior of missing fields when encoding the struct | Set to `skip` if some fields are optional, omit if all fields are mandatory |
 | `direction` | For server→client | `Cluster.DIRECTION_SERVER_TO_CLIENT` |
 
 #### Command Sections
@@ -333,10 +334,53 @@ lockDoor: {
 },
 ```
 
-**Server→client commands** (events/notifications) should be evaluated per case:
-- Implement if commonly needed (e.g., `operationEventNotification` for door locks)
-- Skip obscure or rarely-used notifications unless specifically requested
+**Server→client commands** should only be added as standalone commands when they can be sent **unsolicited** (not just as a response to a request). Examples:
+- Unsolicited notifications (e.g., `operationEventNotification` for door locks) — add as standalone
+- Responses that the server can also send unsolicited (e.g., `upgradeEndResponse` for synchronized upgrades) — add as standalone
+- Responses that are **only** sent in reply to a request (e.g., `queryNextImageResponse`) — do **NOT** add as standalone; they are already covered by the inline `response:` on the request command
 - These require `direction: Cluster.DIRECTION_SERVER_TO_CLIENT`
+
+#### Optional fields
+Some commands contain optional fields. If this is the case add `encodeMissingFieldsBehavior: 'skip'` to the command definition.
+
+```javascript
+lockDoor: {
+  id: 0x0000,
+  encodeMissingFieldsBehavior: 'skip',
+  args: { pinCode: ZCLDataTypes.octstr },
+  response: {
+    id: 0x0000,
+    args: { status: ZCLDataTypes.uint8 },
+  },
+}
+```
+
+#### Command variants
+Some commands might change their structure based on a status field. If this is the case, add `encodeMissingFieldsBehavior: 'skip'`. And add a comment above each field
+when the field should be present.
+
+**IMPORTANT**: This applies to `response:` structs too, not just the top-level command. If a response has variant fields (e.g., different fields depending on a status value), add `encodeMissingFieldsBehavior: 'skip'` to the response and include all variant fields with comments indicating when each group is present.
+
+```javascript
+imageBlockRequest: {
+  id: 0x0003,
+  args: { ... },
+  response: {
+    id: 0x0005,
+    encodeMissingFieldsBehavior: 'skip',
+    args: {
+      status: ZCLDataTypes.enum8Status,
+      // When status is SUCCESS
+      manufacturerCode: ZCLDataTypes.uint16,
+      fileOffset: ZCLDataTypes.uint32,
+      imageData: ZCLDataTypes.buffer,
+      // When status is WAIT_FOR_DATA
+      currentTime: ZCLDataTypes.uint32,
+      requestTime: ZCLDataTypes.uint32,
+    },
+  },
+}
+```
 
 ---
 

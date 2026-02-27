@@ -14,6 +14,8 @@ type ConstructorOptions = {
   sendFrame: (endpointId: number, clusterId: number, frame: Buffer) => Promise<void>;
 };
 
+type ZCLEnum8Status = 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER';
+
 export interface ZCLNodeCluster extends EventEmitter {
   discoverCommandsGenerated(opts?: {
     startValue?: number;
@@ -389,10 +391,10 @@ export interface GroupsClusterAttributes {
 export interface GroupsCluster extends ZCLNodeCluster {
   readAttributes<K extends 'nameSupport'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<GroupsClusterAttributes, K>>;
   writeAttributes(attributes: Partial<GroupsClusterAttributes>): Promise<void>;
-  addGroup(args: { groupId: number; groupName: string }): Promise<{ status: 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER'; groupId: number }>;
-  viewGroup(args: { groupId: number }): Promise<{ status: 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER'; groupId: number; groupNames: string }>;
+  addGroup(args: { groupId: number; groupName: string }): Promise<{ status: ZCLEnum8Status; groupId: number }>;
+  viewGroup(args: { groupId: number }): Promise<{ status: ZCLEnum8Status; groupId: number; groupNames: string }>;
   getGroupMembership(args: { groupIds: number[] }): Promise<{ capacity: number; groups: number[] }>;
-  removeGroup(args: { groupId: number }): Promise<{ status: 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER'; groupId: number }>;
+  removeGroup(args: { groupId: number }): Promise<{ status: ZCLEnum8Status; groupId: number }>;
   removeAllGroups(): Promise<void>;
   addGroupIfIdentify(args: { groupId: number; groupName: string }): Promise<void>;
 }
@@ -775,7 +777,33 @@ export interface OnOffCluster extends ZCLNodeCluster {
 export interface OnOffSwitchCluster extends ZCLNodeCluster {
 }
 
+export interface OtaClusterAttributes {
+  upgradeServerID?: string;
+  fileOffset?: number;
+  currentFileVersion?: number;
+  currentZigBeeStackVersion?: number;
+  downloadedFileVersion?: number;
+  downloadedZigBeeStackVersion?: number;
+  imageUpgradeStatus?: 'normal' | 'downloadInProgress' | 'downloadComplete' | 'waitingToUpgrade' | 'countDown' | 'waitForMore' | 'waitingToUpgradeViaExternalEvent';
+  manufacturerID?: number;
+  imageTypeID?: number;
+  minimumBlockPeriod?: number;
+  imageStamp?: number;
+  upgradeActivationPolicy?: 'otaServerActivationAllowed' | 'outOfBandActivationOnly';
+  upgradeTimeoutPolicy?: 'applyUpgradeAfterTimeout' | 'doNotApplyUpgradeAfterTimeout';
+}
+
 export interface OtaCluster extends ZCLNodeCluster {
+  readAttributes<K extends 'upgradeServerID' | 'fileOffset' | 'currentFileVersion' | 'currentZigBeeStackVersion' | 'downloadedFileVersion' | 'downloadedZigBeeStackVersion' | 'imageUpgradeStatus' | 'manufacturerID' | 'imageTypeID' | 'minimumBlockPeriod' | 'imageStamp' | 'upgradeActivationPolicy' | 'upgradeTimeoutPolicy'>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<OtaClusterAttributes, K>>;
+  writeAttributes(attributes: Partial<OtaClusterAttributes>): Promise<void>;
+  imageNotify(args?: { payloadType?: 'queryJitter' | 'queryJitterAndManufacturerCode' | 'queryJitterAndManufacturerCodeAndImageType' | 'queryJitterAndManufacturerCodeAndImageTypeAndNewFileVersion'; queryJitter?: number; manufacturerCode?: number; imageType?: number; newFileVersion?: number }): Promise<void>;
+  queryNextImageRequest(args?: { fieldControl?: Partial<{ hardwareVersionPresent: boolean }>; manufacturerCode?: number; imageType?: number; fileVersion?: number; hardwareVersion?: number }): Promise<{ status?: ZCLEnum8Status; manufacturerCode?: number; imageType?: number; fileVersion?: number; imageSize?: number }>;
+  imageBlockRequest(args?: { fieldControl?: Partial<{ requestNodeAddressPresent: boolean; minimumBlockPeriodPresent: boolean }>; manufacturerCode?: number; imageType?: number; fileVersion?: number; fileOffset?: number; maximumDataSize?: number; requestNodeAddress?: string; minimumBlockPeriod?: number }): Promise<{ status?: ZCLEnum8Status; manufacturerCode?: number; imageType?: number; fileVersion?: number; fileOffset?: number; dataSize?: number; imageData?: Buffer; currentTime?: number; requestTime?: number; minimumBlockPeriod?: number }>;
+  imagePageRequest(args?: { fieldControl?: Partial<{ requestNodeAddressPresent: boolean }>; manufacturerCode?: number; imageType?: number; fileVersion?: number; fileOffset?: number; maximumDataSize?: number; pageSize?: number; responseSpacing?: number; requestNodeAddress?: string }): Promise<{ status?: ZCLEnum8Status; manufacturerCode?: number; imageType?: number; fileVersion?: number; fileOffset?: number; dataSize?: number; imageData?: Buffer; currentTime?: number; requestTime?: number; minimumBlockPeriod?: number }>;
+  imageBlockResponse(args?: { status?: ZCLEnum8Status; manufacturerCode?: number; imageType?: number; fileVersion?: number; fileOffset?: number; dataSize?: number; imageData?: Buffer; currentTime?: number; requestTime?: number; minimumBlockPeriod?: number }): Promise<void>;
+  upgradeEndRequest(args: { status: ZCLEnum8Status; manufacturerCode: number; imageType: number; fileVersion: number }): Promise<{ manufacturerCode: number; imageType: number; fileVersion: number; currentTime: number; upgradeTime: number }>;
+  upgradeEndResponse(args: { manufacturerCode: number; imageType: number; fileVersion: number; currentTime: number; upgradeTime: number }): Promise<void>;
+  queryDeviceSpecificFileRequest(args: { requestNodeAddress: string; manufacturerCode: number; imageType: number; fileVersion: number; zigBeeStackVersion: number }): Promise<{ status: ZCLEnum8Status; manufacturerCode: number; imageType: number; fileVersion: number; imageSize: number }>;
 }
 
 export interface PollControlClusterAttributes {
@@ -991,6 +1019,7 @@ export type ZCLNodeEndpoint = {
   clusters: ClusterRegistry & {
     [clusterName: string]: ZCLNodeCluster | undefined;
   };
+  bind(clusterName: string, impl: BoundCluster): void;
 };
 
 export interface ZCLNode {
@@ -1011,6 +1040,16 @@ declare module "zigbee-clusters" {
     [key: string]: { ID: number; NAME: string; ATTRIBUTES: unknown; COMMANDS: unknown };
   };
   export { ZCLNodeCluster };
+  
+  export class BoundCluster {
+  
+  }
+
+  export class ZCLError extends Error {
+    zclStatus: ZCLEnum8Status;
+    constructor(zclStatus?: ZCLEnum8Status);
+  }
+
   export const AlarmsCluster: AlarmsCluster;
   export const AnalogInputCluster: AnalogInputCluster;
   export const AnalogOutputCluster: AnalogOutputCluster;
