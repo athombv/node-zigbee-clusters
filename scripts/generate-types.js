@@ -217,7 +217,22 @@ function generateClusterInterface(cluster) {
  * }>} clusterDefinitions - Array of CLUSTER definitions used to generate typed CLUSTER exports
  * @returns {string} Complete TypeScript definitions file
  */
-function generateTypesFile(clusters, clusterDefinitions) {
+function generateConstantObject(obj, indent = 2) {
+  const lines = [];
+  const pad = ' '.repeat(indent);
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'object' && value !== null) {
+      lines.push(`${pad}${key}: {`);
+      lines.push(generateConstantObject(value, indent + 2));
+      lines.push(`${pad}};`);
+    } else {
+      lines.push(`${pad}${key}: ${typeof value === 'number' ? value : JSON.stringify(value)};`);
+    }
+  }
+  return lines.join('\n');
+}
+
+function generateTypesFile(clusters, clusterDefinitions, constants) {
   const lines = [];
 
   // Header
@@ -400,6 +415,16 @@ export const CLUSTER: {
     lines.push('};');
   }
 
+  // Export constants
+  if (constants) {
+    for (const [name, value] of Object.entries(constants)) {
+      lines.push('');
+      lines.push(`export const ${name}: {`);
+      lines.push(generateConstantObject(value));
+      lines.push('};');
+    }
+  }
+
   lines.push('');
   lines.push('declare const _default: {');
   lines.push('  ZCLNode: typeof ZCLNode;');
@@ -407,6 +432,11 @@ export const CLUSTER: {
   for (const cluster of clusters) {
     const exportName = cluster.exportName || toInterfaceName(cluster);
     lines.push(`  ${exportName}: typeof ${exportName};`);
+  }
+  if (constants) {
+    for (const name of Object.keys(constants)) {
+      lines.push(`  ${name}: typeof ${name};`);
+    }
   }
   lines.push('};');
   lines.push('export default _default;');
@@ -448,8 +478,12 @@ function main() {
     }))
     .sort((a, b) => a.constantName.localeCompare(b.constantName));
 
+  // Load constants
+  const { ZIGBEE_PROFILE_ID, ZIGBEE_DEVICE_ID, IAS_ZONE_TYPE } = require('../lib/constants');
+  const constants = { ZIGBEE_PROFILE_ID, ZIGBEE_DEVICE_ID, IAS_ZONE_TYPE };
+
   console.log(`\nGenerating ${OUTPUT_FILE}...`);
-  const output = generateTypesFile(clusters, clusterDefinitions);
+  const output = generateTypesFile(clusters, clusterDefinitions, constants);
   fs.writeFileSync(OUTPUT_FILE, output);
 
   console.log(`Done! Generated types for ${clusters.length} clusters.`);
