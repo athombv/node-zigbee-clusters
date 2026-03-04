@@ -5,6 +5,8 @@ on:
     paths:
       - "lib/clusters/**/*.js"
       - "scripts/generate-types.js"
+      - "index.js"
+      - "lib/constants.js"
   workflow_dispatch:
 
 jobs:
