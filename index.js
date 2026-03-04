@@ -44,6 +44,8 @@ const {
   ZCLStruct,
 } = zclTypes;
 
+const { ZIGBEE_PROFILE_ID, ZIGBEE_DEVICE_ID, IAS_ZONE_TYPE } = require('./lib/constants');
+
 module.exports = {
   Cluster,
   BoundCluster,
@@ -55,4 +57,7 @@ module.exports = {
   ZCLStruct,
   ...Clusters,
   debug,
+  ZIGBEE_PROFILE_ID,
+  ZIGBEE_DEVICE_ID,
+  IAS_ZONE_TYPE,
 };
