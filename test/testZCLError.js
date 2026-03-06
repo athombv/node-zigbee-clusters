@@ -109,8 +109,8 @@ describe('ZCLError handling', function() {
 
     await assert.rejects(() => controllerNode.endpoints[1].clusters.onOff.setOn());
 
-    // The device sends two frames: the initial echo of the command (loopback artifact)
-    // and the default response. Find the default response frame.
+    // capturedFrames only contains frames sent from the device back to the controller.
+    // Find the Default Response frame among the captured device → controller frames.
     const defaultResponseFrame = capturedFrames
       .map(f => ZCLStandardHeader.fromBuffer(f.data))
       .find(frame => frame.cmdId === DEFAULT_RESPONSE_CMD_ID);
