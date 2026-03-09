@@ -879,7 +879,7 @@ export interface OTACluster extends ZCLNodeCluster {
   imageBlockResponse(args?: { status?: ZCLEnum8Status; manufacturerCode?: number; imageType?: number; fileVersion?: number; fileOffset?: number; dataSize?: number; imageData?: Buffer; currentTime?: number; requestTime?: number; minimumBlockPeriod?: number }, opts?: ClusterCommandOptions): Promise<void>;
   upgradeEndRequest(args: { status: ZCLEnum8Status; manufacturerCode: number; imageType: number; fileVersion: number }, opts?: ClusterCommandOptions): Promise<{ manufacturerCode: number; imageType: number; fileVersion: number; currentTime: number; upgradeTime: number }>;
   upgradeEndResponse(args: { manufacturerCode: number; imageType: number; fileVersion: number; currentTime: number; upgradeTime: number }, opts?: ClusterCommandOptions): Promise<void>;
-  queryDeviceSpecificFileRequest(args: { requestNodeAddress: string; manufacturerCode: number; imageType: number; fileVersion: number; zigBeeStackVersion: number }, opts?: ClusterCommandOptions): Promise<{ status: ZCLEnum8Status; manufacturerCode: number; imageType: number; fileVersion: number; imageSize: number }>;
+  queryDeviceSpecificFileRequest(args: { requestNodeAddress: string; manufacturerCode: number; imageType: number; fileVersion: number; zigBeeStackVersion: number }, opts?: ClusterCommandOptions): Promise<{ status?: ZCLEnum8Status; manufacturerCode?: number; imageType?: number; fileVersion?: number; imageSize?: number }>;
 }
 
 export interface PollControlClusterAttributes {
