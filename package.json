@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/athombv/node-zigbee-clusters#readme",
   "devDependencies": {
-    "@athombv/jsdoc-template": "^1.6.1",
+    "@athombv/jsdoc-template": "^1.6.3",
     "@types/node": "^25.0.10",
     "@types/sinon": "^17.0.3",
     "concurrently": "^5.2.0",
