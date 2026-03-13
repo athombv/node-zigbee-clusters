@@ -19,7 +19,7 @@ describe('IAS Zone', function() {
     });
 
     node.endpoints[1].clusters.iasZone.onZoneEnrollRequest = data => {
-      assert.strictEqual(data.zoneType, 'keyPad');
+      assert.strictEqual(data.zoneType, 'keypad');
       assert.strictEqual(data.manufacturerCode, 4117);
       done();
     };
