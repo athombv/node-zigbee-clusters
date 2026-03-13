@@ -17,7 +17,7 @@ Make sure to take a look at the API documentation: [https://athombv.github.io/no
 
 v3.0.0
 
-- **iasZone**: Unified `zoneType` enum keys between attribute and `zoneEnrollRequest` command to match ZCL spec (Table 8-5):
+- **iasZone**: Unified `zoneType` enum keys between attribute and `zoneEnrollRequest` command to match ZCL spec (Table 8-5). See [#176](https://github.com/athombv/node-zigbee-clusters/pull/176) for full impact analysis.
   - `cabonMonoxideSensor` -> `carbonMonoxideSensor` (typo fix)
   - `keyfob` -> `keyFob` (spec says "Key fob" - two words)
   - `standard` -> `standardCIE` (in `zoneEnrollRequest`)
