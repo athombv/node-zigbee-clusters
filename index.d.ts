@@ -467,7 +467,7 @@ export interface IASWDCluster extends ZCLNodeCluster {
 
 export interface IASZoneClusterAttributes {
   zoneState?: 'notEnrolled' | 'enrolled';
-  zoneType?: 'standardCIE' | 'motionSensor' | 'contactSwitch' | 'fireSensor' | 'waterSensor' | 'cabonMonoxideSensor' | 'personalEmergencyDevice' | 'vibrationMovementSensor' | 'remoteControl' | 'keyfob' | 'keypad' | 'standardWarningDevice' | 'glassBreakSensor' | 'securityRepeater' | 'invalidZoneType';
+  zoneType?: 'standardCIE' | 'motionSensor' | 'contactSwitch' | 'doorWindowHandle' | 'fireSensor' | 'waterSensor' | 'carbonMonoxideSensor' | 'personalEmergencyDevice' | 'vibrationMovementSensor' | 'remoteControl' | 'keyFob' | 'keypad' | 'standardWarningDevice' | 'glassBreakSensor' | 'securityRepeater' | 'invalidZoneType';
   zoneStatus?: Partial<{ alarm1: boolean; alarm2: boolean; tamper: boolean; battery: boolean; supervisionReports: boolean; restoreReports: boolean; trouble: boolean; acMains: boolean; test: boolean; batteryDefect: boolean }>;
   iasCIEAddress?: string;
   zoneId?: number;
@@ -481,7 +481,7 @@ export interface IASZoneCluster extends ZCLNodeCluster {
   once<K extends keyof IASZoneClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: IASZoneClusterAttributes[K]) => void): this;
   zoneStatusChangeNotification(args: { zoneStatus: Partial<{ alarm1: boolean; alarm2: boolean; tamper: boolean; battery: boolean; supervisionReports: boolean; restoreReports: boolean; trouble: boolean; acMains: boolean; test: boolean; batteryDefect: boolean }>; extendedStatus: number; zoneId: number; delay: number }, opts?: ClusterCommandOptions): Promise<void>;
   zoneEnrollResponse(args: { enrollResponseCode: 'success' | 'notSupported' | 'noEnrollPermit' | 'tooManyZones'; zoneId: number }, opts?: ClusterCommandOptions): Promise<void>;
-  zoneEnrollRequest(args: { zoneType: 'standard' | 'motionSensor' | 'contactSwitch' | 'fireSensor' | 'waterSensor' | 'carbonMonoxideSensor' | 'personalEmergencyDevice' | 'vibrationMovementSensor' | 'remoteControl' | 'keyFob' | 'keyPad' | 'standardWarningDevice' | 'glassBreakSensor' | 'securityRepeater' | 'invalid'; manufacturerCode: number }, opts?: ClusterCommandOptions): Promise<void>;
+  zoneEnrollRequest(args: { zoneType: 'standardCIE' | 'motionSensor' | 'contactSwitch' | 'doorWindowHandle' | 'fireSensor' | 'waterSensor' | 'carbonMonoxideSensor' | 'personalEmergencyDevice' | 'vibrationMovementSensor' | 'remoteControl' | 'keyFob' | 'keypad' | 'standardWarningDevice' | 'glassBreakSensor' | 'securityRepeater' | 'invalidZoneType'; manufacturerCode: number }, opts?: ClusterCommandOptions): Promise<void>;
   initiateNormalOperationMode(opts?: ClusterCommandOptions): Promise<void>;
 }
 
