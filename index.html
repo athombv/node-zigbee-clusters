@@ -135,6 +135,19 @@ Specification (<a href="https://etc.athom.com/zigbee_cluster_specification.pdf">
 <h2>Installation</h2>
 <p><code>$ npm install --save zigbee-clusters</code></p>
 <h2>Breaking changes</h2>
+<p>v3.0.0</p>
+<ul>
+<li><strong>iasZone</strong>: Unified <code>zoneType</code> enum keys between attribute and <code>zoneEnrollRequest</code> command to match ZCL spec (Table 8-5). See <a href="https://github.com/athombv/node-zigbee-clusters/pull/176">#176</a> for full impact analysis.
+<ul>
+<li><code>cabonMonoxideSensor</code> -&gt; <code>carbonMonoxideSensor</code> (typo fix)</li>
+<li><code>keyfob</code> -&gt; <code>keyFob</code> (spec says &quot;Key fob&quot; - two words)</li>
+<li><code>standard</code> -&gt; <code>standardCIE</code> (in <code>zoneEnrollRequest</code>)</li>
+<li><code>invalid</code> -&gt; <code>invalidZoneType</code> (in <code>zoneEnrollRequest</code>)</li>
+<li><code>keyPad</code> -&gt; <code>keypad</code> (in <code>zoneEnrollRequest</code>, spec says &quot;Keypad&quot; - one word)</li>
+<li>Added missing <code>doorWindowHandle</code> (0x0016) zone type from spec</li>
+</ul>
+</li>
+</ul>
 <p>v2.0.0</p>
 <ul>
 <li>Changed <code>Cluster.readAttributes</code> signature, attributes must now be specified as an array of strings.</li>
