@@ -15,6 +15,15 @@ Make sure to take a look at the API documentation: [https://athombv.github.io/no
 
 ## Breaking changes
 
+v3.0.0
+
+- **iasZone**: Unified `zoneType` enum keys between attribute and `zoneEnrollRequest` command to match ZCL spec (Table 8-5):
+  - `cabonMonoxideSensor` -> `carbonMonoxideSensor` (typo fix)
+  - `keyfob` -> `keyFob` (spec says "Key fob" - two words)
+  - `standard` -> `standardCIE` (in `zoneEnrollRequest`)
+  - `invalid` -> `invalidZoneType` (in `zoneEnrollRequest`)
+  - Added missing `doorWindowHandle` (0x0016) zone type from spec
+
 v2.0.0
 
 - Changed `Cluster.readAttributes` signature, attributes must now be specified as an array of strings.
