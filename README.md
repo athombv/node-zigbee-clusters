@@ -22,6 +22,7 @@ v3.0.0
   - `keyfob` -> `keyFob` (spec says "Key fob" - two words)
   - `standard` -> `standardCIE` (in `zoneEnrollRequest`)
   - `invalid` -> `invalidZoneType` (in `zoneEnrollRequest`)
+  - `keyPad` -> `keypad` (in `zoneEnrollRequest`, spec says "Keypad" - one word)
   - Added missing `doorWindowHandle` (0x0016) zone type from spec
 
 v2.0.0
