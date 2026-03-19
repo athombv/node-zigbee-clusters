@@ -35,7 +35,7 @@ type ZCLEnum8Status = 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD
 
 export interface ZCLNodeCluster extends EventEmitter {
   /** Dynamic command handler methods (e.g. `onZoneStatusChangeNotification`). */
-  [key: string]: unknown;
+  [key: `on${string}`]: unknown;
 
   discoverCommandsGenerated(params?: {
     startValue?: number;
