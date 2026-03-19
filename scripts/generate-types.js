@@ -286,6 +286,9 @@ type ZCLEnum8Status = ${zclTypeToTS(ZCLDataTypes.enum8Status, false)};
 
   // Base ZCLNodeCluster interface
   lines.push(`export interface ZCLNodeCluster extends EventEmitter {
+  /** Dynamic command handler methods (e.g. \`onZoneStatusChangeNotification\`). */
+  [key: string]: unknown;
+
   discoverCommandsGenerated(params?: {
     startValue?: number;
     maxResults?: number;
