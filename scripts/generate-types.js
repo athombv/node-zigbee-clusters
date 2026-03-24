@@ -184,8 +184,7 @@ function generateClusterInterface(cluster) {
 
   // Add typed readAttributes if we have attributes
   if (cluster.attributes.length > 0) {
-    const attrNames = cluster.attributes.map(a => `'${a.name}'`).join(' | ');
-    lines.push(`  readAttributes<K extends ${attrNames}>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<${interfaceName}Attributes, K>>;`);
+    lines.push(`  readAttributes<K extends keyof ${interfaceName}Attributes>(attributeNames: K[], opts?: { timeout?: number }): Promise<Pick<${interfaceName}Attributes, K>>;`);
     lines.push(`  readAttributes(attributeNames: Array<keyof ${interfaceName}Attributes | number>, opts?: { timeout?: number }): Promise<Partial<${interfaceName}Attributes> & Record<number, unknown>>;`);
     lines.push(`  writeAttributes(attributes: Partial<${interfaceName}Attributes>, opts?: { timeout?: number }): Promise<unknown>;`);
     lines.push(`  on<K extends keyof ${interfaceName}Attributes & string>(eventName: \`attr.\${K}\`, listener: (value: ${interfaceName}Attributes[K]) => void): this;`);
