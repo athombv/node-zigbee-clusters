@@ -280,7 +280,7 @@ type ZCLNodeConstructorInput = {
   ) => Promise<void>;
 };
 
-type ZCLEnum8Status = ${zclTypeToTS(ZCLDataTypes.enum8Status, false)};
+export type ZCLEnum8Status = ${zclTypeToTS(ZCLDataTypes.enum8Status, false)};
 `);
 
   // Base ZCLNodeCluster interface
