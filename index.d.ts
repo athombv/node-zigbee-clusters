@@ -33,6 +33,11 @@ type ZCLNodeConstructorInput = {
 
 export type ZCLEnum8Status = 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER';
 
+export type GlobalClusterAttributes = {
+  clusterRevision: number;
+  attributeReportingStatus: 0 | 1;
+};
+
 export interface ZCLNodeCluster extends EventEmitter {
   /** Dynamic command handler methods (e.g. `onZoneStatusChangeNotification`). */
   [key: `on${string}`]: unknown;
@@ -83,7 +88,7 @@ export interface AlarmsCluster extends ZCLNodeCluster {
   resetAlarmLog(opts?: ClusterCommandOptions): Promise<void>;
 }
 
-export interface AnalogInputClusterAttributes {
+export interface AnalogInputClusterAttributes extends GlobalClusterAttributes {
   description?: string;
   maxPresentValue?: number;
   minPresentValue?: number;
@@ -103,7 +108,7 @@ export interface AnalogInputCluster extends ZCLNodeCluster {
   once<K extends keyof AnalogInputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: AnalogInputClusterAttributes[K]) => void): this;
 }
 
-export interface AnalogOutputClusterAttributes {
+export interface AnalogOutputClusterAttributes extends GlobalClusterAttributes {
   description?: string;
   maxPresentValue?: number;
   minPresentValue?: number;
@@ -124,7 +129,7 @@ export interface AnalogOutputCluster extends ZCLNodeCluster {
   once<K extends keyof AnalogOutputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: AnalogOutputClusterAttributes[K]) => void): this;
 }
 
-export interface AnalogValueClusterAttributes {
+export interface AnalogValueClusterAttributes extends GlobalClusterAttributes {
   description?: string;
   outOfService?: boolean;
   presentValue?: number;
@@ -142,7 +147,7 @@ export interface AnalogValueCluster extends ZCLNodeCluster {
   once<K extends keyof AnalogValueClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: AnalogValueClusterAttributes[K]) => void): this;
 }
 
-export interface BallastConfigurationClusterAttributes {
+export interface BallastConfigurationClusterAttributes extends GlobalClusterAttributes {
   physicalMinLevel?: number;
   physicalMaxLevel?: number;
   ballastStatus?: Partial<{ nonOperational: boolean; lampNotInSocket: boolean }>;
@@ -169,7 +174,7 @@ export interface BallastConfigurationCluster extends ZCLNodeCluster {
   once<K extends keyof BallastConfigurationClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BallastConfigurationClusterAttributes[K]) => void): this;
 }
 
-export interface BasicClusterAttributes {
+export interface BasicClusterAttributes extends GlobalClusterAttributes {
   zclVersion?: number;
   appVersion?: number;
   stackVersion?: number;
@@ -196,7 +201,7 @@ export interface BasicCluster extends ZCLNodeCluster {
   factoryReset(opts?: ClusterCommandOptions): Promise<void>;
 }
 
-export interface BinaryInputClusterAttributes {
+export interface BinaryInputClusterAttributes extends GlobalClusterAttributes {
   activeText?: string;
   description?: string;
   inactiveText?: string;
@@ -216,7 +221,7 @@ export interface BinaryInputCluster extends ZCLNodeCluster {
   once<K extends keyof BinaryInputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BinaryInputClusterAttributes[K]) => void): this;
 }
 
-export interface BinaryOutputClusterAttributes {
+export interface BinaryOutputClusterAttributes extends GlobalClusterAttributes {
   activeText?: string;
   description?: string;
   inactiveText?: string;
@@ -239,7 +244,7 @@ export interface BinaryOutputCluster extends ZCLNodeCluster {
   once<K extends keyof BinaryOutputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BinaryOutputClusterAttributes[K]) => void): this;
 }
 
-export interface BinaryValueClusterAttributes {
+export interface BinaryValueClusterAttributes extends GlobalClusterAttributes {
   activeText?: string;
   description?: string;
   inactiveText?: string;
@@ -262,7 +267,7 @@ export interface BinaryValueCluster extends ZCLNodeCluster {
   once<K extends keyof BinaryValueClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: BinaryValueClusterAttributes[K]) => void): this;
 }
 
-export interface ColorControlClusterAttributes {
+export interface ColorControlClusterAttributes extends GlobalClusterAttributes {
   currentHue?: number;
   currentSaturation?: number;
   currentX?: number;
@@ -290,7 +295,7 @@ export interface ColorControlCluster extends ZCLNodeCluster {
 export interface DehumidificationControlCluster extends ZCLNodeCluster {
 }
 
-export interface DeviceTemperatureClusterAttributes {
+export interface DeviceTemperatureClusterAttributes extends GlobalClusterAttributes {
   currentTemperature?: number;
   minTempExperienced?: number;
   maxTempExperienced?: number;
@@ -313,7 +318,7 @@ export interface DeviceTemperatureCluster extends ZCLNodeCluster {
 export interface DiagnosticsCluster extends ZCLNodeCluster {
 }
 
-export interface DoorLockClusterAttributes {
+export interface DoorLockClusterAttributes extends GlobalClusterAttributes {
   lockState?: 'notFullyLocked' | 'locked' | 'unlocked' | 'undefined';
   lockType?: 'deadBolt' | 'magnetic' | 'other' | 'mortise' | 'rim' | 'latchBolt' | 'cylindricalLock' | 'tubularLock' | 'interconnectedLock' | 'deadLatch' | 'doorFurniture';
   actuatorEnabled?: boolean;
@@ -395,7 +400,7 @@ export interface DoorLockCluster extends ZCLNodeCluster {
   programmingEventNotification(args: { programEventSource: number; programEventCode: number; userId: number; pin?: Buffer; userType: 'unrestricted' | 'yearDayScheduleUser' | 'weekDayScheduleUser' | 'masterUser' | 'nonAccessUser' | 'notSupported'; userStatus: 'available' | 'occupiedEnabled' | 'occupiedDisabled' | 'notSupported'; zigBeeLocalTime: number; data?: Buffer }, opts?: ClusterCommandOptions): Promise<void>;
 }
 
-export interface ElectricalMeasurementClusterAttributes {
+export interface ElectricalMeasurementClusterAttributes extends GlobalClusterAttributes {
   measurementType?: Partial<{ activeMeasurementAC: boolean; reactiveMeasurementAC: boolean; apparentMeasurementAC: boolean; phaseAMeasurement: boolean; phaseBMeasurement: boolean; phaseCMeasurement: boolean; dcMeasurement: boolean; harmonicsMeasurement: boolean; powerQualityMeasurement: boolean }>;
   acFrequency?: number;
   measuredPhase1stHarmonicCurrent?: number;
@@ -429,7 +434,7 @@ export interface ElectricalMeasurementCluster extends ZCLNodeCluster {
 export interface FanControlCluster extends ZCLNodeCluster {
 }
 
-export interface FlowMeasurementClusterAttributes {
+export interface FlowMeasurementClusterAttributes extends GlobalClusterAttributes {
   measuredValue?: number;
   minMeasuredValue?: number;
   maxMeasuredValue?: number;
@@ -444,7 +449,7 @@ export interface FlowMeasurementCluster extends ZCLNodeCluster {
   once<K extends keyof FlowMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: FlowMeasurementClusterAttributes[K]) => void): this;
 }
 
-export interface GroupsClusterAttributes {
+export interface GroupsClusterAttributes extends GlobalClusterAttributes {
   nameSupport?: Partial<{ groupNames: boolean }>;
 }
 
@@ -468,7 +473,7 @@ export interface IASACECluster extends ZCLNodeCluster {
 export interface IASWDCluster extends ZCLNodeCluster {
 }
 
-export interface IASZoneClusterAttributes {
+export interface IASZoneClusterAttributes extends GlobalClusterAttributes {
   zoneState?: 'notEnrolled' | 'enrolled';
   zoneType?: 'standardCIE' | 'motionSensor' | 'contactSwitch' | 'doorWindowHandle' | 'fireSensor' | 'waterSensor' | 'carbonMonoxideSensor' | 'personalEmergencyDevice' | 'vibrationMovementSensor' | 'remoteControl' | 'keyFob' | 'keypad' | 'standardWarningDevice' | 'glassBreakSensor' | 'securityRepeater' | 'invalidZoneType';
   zoneStatus?: Partial<{ alarm1: boolean; alarm2: boolean; tamper: boolean; battery: boolean; supervisionReports: boolean; restoreReports: boolean; trouble: boolean; acMains: boolean; test: boolean; batteryDefect: boolean }>;
@@ -488,7 +493,7 @@ export interface IASZoneCluster extends ZCLNodeCluster {
   initiateNormalOperationMode(opts?: ClusterCommandOptions): Promise<void>;
 }
 
-export interface IdentifyClusterAttributes {
+export interface IdentifyClusterAttributes extends GlobalClusterAttributes {
   identifyTime?: number;
 }
 
@@ -503,7 +508,7 @@ export interface IdentifyCluster extends ZCLNodeCluster {
   triggerEffect(args: { effectIdentifier: 'blink' | 'breathe' | 'okay' | 'channelChange' | 'finish' | 'stop'; effectVariant: number }, opts?: ClusterCommandOptions): Promise<void>;
 }
 
-export interface IlluminanceLevelSensingClusterAttributes {
+export interface IlluminanceLevelSensingClusterAttributes extends GlobalClusterAttributes {
   levelStatus?: 'illuminanceOnTarget' | 'illuminanceBelowTarget' | 'illuminanceAboveTarget';
   lightSensorType?: 'photodiode' | 'cmos' | 'unknown';
   illuminanceTargetLevel?: number;
@@ -517,7 +522,7 @@ export interface IlluminanceLevelSensingCluster extends ZCLNodeCluster {
   once<K extends keyof IlluminanceLevelSensingClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: IlluminanceLevelSensingClusterAttributes[K]) => void): this;
 }
 
-export interface IlluminanceMeasurementClusterAttributes {
+export interface IlluminanceMeasurementClusterAttributes extends GlobalClusterAttributes {
   measuredValue?: number;
   minMeasuredValue?: number;
   maxMeasuredValue?: number;
@@ -533,7 +538,7 @@ export interface IlluminanceMeasurementCluster extends ZCLNodeCluster {
   once<K extends keyof IlluminanceMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: IlluminanceMeasurementClusterAttributes[K]) => void): this;
 }
 
-export interface LevelControlClusterAttributes {
+export interface LevelControlClusterAttributes extends GlobalClusterAttributes {
   currentLevel?: number;
   remainingTime?: number;
   onOffTransitionTime?: number;
@@ -559,7 +564,7 @@ export interface LevelControlCluster extends ZCLNodeCluster {
   stopWithOnOff(opts?: ClusterCommandOptions): Promise<void>;
 }
 
-export interface MeteringClusterAttributes {
+export interface MeteringClusterAttributes extends GlobalClusterAttributes {
   currentSummationDelivered?: number;
   currentSummationReceived?: number;
   currentMaxDemandDelivered?: number;
@@ -751,7 +756,7 @@ export interface MeteringCluster extends ZCLNodeCluster {
   once<K extends keyof MeteringClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: MeteringClusterAttributes[K]) => void): this;
 }
 
-export interface MultistateInputClusterAttributes {
+export interface MultistateInputClusterAttributes extends GlobalClusterAttributes {
   description?: string;
   numberOfStates?: number;
   outOfService?: boolean;
@@ -769,7 +774,7 @@ export interface MultistateInputCluster extends ZCLNodeCluster {
   once<K extends keyof MultistateInputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: MultistateInputClusterAttributes[K]) => void): this;
 }
 
-export interface MultistateOutputClusterAttributes {
+export interface MultistateOutputClusterAttributes extends GlobalClusterAttributes {
   description?: string;
   numberOfStates?: number;
   outOfService?: boolean;
@@ -788,7 +793,7 @@ export interface MultistateOutputCluster extends ZCLNodeCluster {
   once<K extends keyof MultistateOutputClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: MultistateOutputClusterAttributes[K]) => void): this;
 }
 
-export interface MultistateValueClusterAttributes {
+export interface MultistateValueClusterAttributes extends GlobalClusterAttributes {
   description?: string;
   numberOfStates?: number;
   outOfService?: boolean;
@@ -807,7 +812,7 @@ export interface MultistateValueCluster extends ZCLNodeCluster {
   once<K extends keyof MultistateValueClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: MultistateValueClusterAttributes[K]) => void): this;
 }
 
-export interface OccupancySensingClusterAttributes {
+export interface OccupancySensingClusterAttributes extends GlobalClusterAttributes {
   occupancy?: Partial<{ occupied: boolean }>;
   occupancySensorType?: 'pir' | 'ultrasonic' | 'pirAndUltrasonic' | 'physicalContact';
   occupancySensorTypeBitmap?: Partial<{ pir: boolean; ultrasonic: boolean; physicalContact: boolean }>;
@@ -830,7 +835,7 @@ export interface OccupancySensingCluster extends ZCLNodeCluster {
   once<K extends keyof OccupancySensingClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: OccupancySensingClusterAttributes[K]) => void): this;
 }
 
-export interface OnOffClusterAttributes {
+export interface OnOffClusterAttributes extends GlobalClusterAttributes {
   onOff?: boolean;
   onTime?: number;
   offWaitTime?: number;
@@ -853,7 +858,7 @@ export interface OnOffCluster extends ZCLNodeCluster {
 export interface OnOffSwitchCluster extends ZCLNodeCluster {
 }
 
-export interface OTAClusterAttributes {
+export interface OTAClusterAttributes extends GlobalClusterAttributes {
   upgradeServerID?: string;
   fileOffset?: number;
   currentFileVersion?: number;
@@ -885,7 +890,7 @@ export interface OTACluster extends ZCLNodeCluster {
   queryDeviceSpecificFileRequest(args: { requestNodeAddress: string; manufacturerCode: number; imageType: number; fileVersion: number; zigBeeStackVersion: number }, opts?: ClusterCommandOptions): Promise<{ status?: ZCLEnum8Status; manufacturerCode?: number; imageType?: number; fileVersion?: number; imageSize?: number }>;
 }
 
-export interface PollControlClusterAttributes {
+export interface PollControlClusterAttributes extends GlobalClusterAttributes {
   checkInInterval?: number;
   longPollInterval?: number;
   shortPollInterval?: number;
@@ -906,7 +911,7 @@ export interface PollControlCluster extends ZCLNodeCluster {
   setShortPollInterval(args: { newShortPollInterval: number }, opts?: ClusterCommandOptions): Promise<void>;
 }
 
-export interface PowerConfigurationClusterAttributes {
+export interface PowerConfigurationClusterAttributes extends GlobalClusterAttributes {
   batteryVoltage?: number;
   batteryPercentageRemaining?: number;
   batterySize?: 'noBattery' | 'builtIn' | 'other' | 'AA' | 'AAA' | 'C' | 'D' | 'CR2' | 'CR123A' | 'unknown';
@@ -927,7 +932,7 @@ export interface PowerConfigurationCluster extends ZCLNodeCluster {
 export interface PowerProfileCluster extends ZCLNodeCluster {
 }
 
-export interface PressureMeasurementClusterAttributes {
+export interface PressureMeasurementClusterAttributes extends GlobalClusterAttributes {
   measuredValue?: number;
   minMeasuredValue?: number;
   maxMeasuredValue?: number;
@@ -950,7 +955,7 @@ export interface PressureMeasurementCluster extends ZCLNodeCluster {
 export interface PumpConfigurationAndControlCluster extends ZCLNodeCluster {
 }
 
-export interface RelativeHumidityClusterAttributes {
+export interface RelativeHumidityClusterAttributes extends GlobalClusterAttributes {
   measuredValue?: number;
   minMeasuredValue?: number;
   maxMeasuredValue?: number;
@@ -971,7 +976,7 @@ export interface ScenesCluster extends ZCLNodeCluster {
 export interface ShadeConfigurationCluster extends ZCLNodeCluster {
 }
 
-export interface TemperatureMeasurementClusterAttributes {
+export interface TemperatureMeasurementClusterAttributes extends GlobalClusterAttributes {
   measuredValue?: number;
   minMeasuredValue?: number;
   maxMeasuredValue?: number;
@@ -985,7 +990,7 @@ export interface TemperatureMeasurementCluster extends ZCLNodeCluster {
   once<K extends keyof TemperatureMeasurementClusterAttributes & string>(eventName: `attr.${K}`, listener: (value: TemperatureMeasurementClusterAttributes[K]) => void): this;
 }
 
-export interface ThermostatClusterAttributes {
+export interface ThermostatClusterAttributes extends GlobalClusterAttributes {
   localTemperature?: number;
   outdoorTemperature?: number;
   occupancy?: Partial<{ occupied: boolean }>;
@@ -1027,7 +1032,7 @@ export interface TouchLinkCluster extends ZCLNodeCluster {
   getGroups(args: { startIdx: number }, opts?: ClusterCommandOptions): Promise<{ total: number; startIndex: number; groups: unknown[] }>;
 }
 
-export interface WindowCoveringClusterAttributes {
+export interface WindowCoveringClusterAttributes extends GlobalClusterAttributes {
   windowCoveringType?: 'rollershade' | 'rollershade2Motor' | 'rollershadeExterior' | 'rollershadeExterior2Motor' | 'drapery' | 'awning' | 'shutter' | 'tiltBlindTiltOnly' | 'tiltBlindLiftAndTilt' | 'projectorScreen';
   physicalClosedLimitLift?: number;
   physicalClosedLimitTilt?: number;

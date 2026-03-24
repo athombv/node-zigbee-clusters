@@ -171,7 +171,7 @@ function generateClusterInterface(cluster) {
 
   // Generate attributes interface
   if (cluster.attributes.length > 0) {
-    lines.push(`export interface ${interfaceName}Attributes {`);
+    lines.push(`export interface ${interfaceName}Attributes extends GlobalClusterAttributes {`);
     for (const attr of cluster.attributes) {
       lines.push(`  ${attr.name}?: ${attr.tsType};`);
     }
@@ -281,6 +281,11 @@ type ZCLNodeConstructorInput = {
 };
 
 export type ZCLEnum8Status = ${zclTypeToTS(ZCLDataTypes.enum8Status, false)};
+
+export type GlobalClusterAttributes = {
+  clusterRevision: number;
+  attributeReportingStatus: 0 | 1;
+};
 `);
 
   // Base ZCLNodeCluster interface
