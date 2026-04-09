@@ -49,13 +49,13 @@ declare module 'zigbee-clusters' {
   type ZCLFrameControlBitmap = ZCLDataType<BitMap<FrameControlFlag>>;
 
   namespace zclFrames {
-    const ZCLStandardHeader: import('@athombv/data-types').StructInstance<{
+    const ZCLStandardHeader: import('@athombv/data-types').StaticStruct<{
       frameControl: ZCLFrameControlBitmap,
       trxSequenceNumber: ZCLDataTypes["data8"],
       cmdId: ZCLDataTypes["data8"],
       data: ZCLDataTypes["buffer"],
     }>;
-    const ZCLMfgSpecificHeader: import('@athombv/data-types').StructInstance<{
+    const ZCLMfgSpecificHeader: import('@athombv/data-types').StaticStruct<{
       frameControl: ZCLFrameControlBitmap,
       manufacturerId: ZCLDataTypes["uint16"],
       trxSequenceNumber: ZCLDataTypes["data8"],
@@ -212,8 +212,6 @@ declare module 'zigbee-clusters' {
     get logId(): string;
   }
 }
-
-// TODO clean up so these are not global
 
 type CommandToServerDirection = 'DIRECTION_CLIENT_TO_SERVER';
 type CommandToClientDirection = 'DIRECTION_SERVER_TO_CLIENT';
