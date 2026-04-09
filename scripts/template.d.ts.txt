@@ -1,0 +1,281 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+declare module 'zigbee-clusters' {
+  import {EventEmitter} from "events";
+  import {ZigBeeNode} from "homey";
+  type ZCLEnum8Status = 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER';
+  type ZCLDataTypes = typeof import('@athombv/data-types').DataTypes & {
+    enum8Status: ZCLDataType<ZCLEnum8Status>
+  };
+
+  function debug(flag: boolean, namespaces: string): void;
+
+  class ZCLNode extends EventEmitter {
+    constructor(node: ZigBeeNode);
+    endpoints: Record<number, ZCLNodeEndpoint>;
+
+    getLogId(endpointId: number, clusterId: number): string;
+  }
+
+  class ZCLNodeEndpoint extends EventEmitter {
+    constructor(node: ZCLNode, descriptor: {
+      endpointId: number;
+      inputClusters: number[];
+      outputClusters: number[];
+    }[]);
+    clusters: Record<string, Cluster<any, any>>;
+    bindings: Record<string, BoundCluster>;
+
+    bind(clusterName: string, clusterImpl: BoundCluster): void;
+    unbind(clusterName: string): void;
+
+    makeDefaultResponseFrame(receivedFrame: unknown, success: boolean, status: ZCLEnum8Status): typeof zclFrames.ZCLStandardHeader | typeof zclFrames.ZCLMfgSpecificHeader;
+  }
+
+  type ZCLDataType<Value> = import('@athombv/data-types').DataType<Value>;
+  const ZCLDataTypes: ZCLDataTypes;
+  const ZCLStruct: typeof import('@athombv/data-types').Struct;
+
+  namespace zclTypes {
+    type ZCLDataType<Value> = import('@athombv/data-types').DataType<Value>;
+    const ZCLDataTypes: ZCLDataTypes;
+    const ZCLStruct: typeof import('@athombv/data-types').Struct;
+  }
+
+  type FrameControlFlag =
+    'clusterSpecific'
+    | 'manufacturerSpecific'
+    | 'directionToClient'
+    | 'disableDefaultResponse';
+  type ZCLFrameControlBitmap = ZCLDataType<BitMap<FrameControlFlag>>;
+
+  namespace zclFrames {
+    const ZCLStandardHeader: import('@athombv/data-types').StructInstance<{
+      frameControl: ZCLFrameControlBitmap,
+      trxSequenceNumber: ZCLDataTypes["data8"],
+      cmdId: ZCLDataTypes["data8"],
+      data: ZCLDataTypes["buffer"],
+    }>;
+    const ZCLMfgSpecificHeader: import('@athombv/data-types').StructInstance<{
+      frameControl: ZCLFrameControlBitmap,
+      manufacturerId: ZCLDataTypes["uint16"],
+      trxSequenceNumber: ZCLDataTypes["data8"],
+      cmdId: ZCLDataTypes["data8"],
+      data: ZCLDataTypes["buffer"],
+    }>;
+    function ZCLAttributeDataRecord(withStatus: boolean, attributes: AttributeDefinitions): ZCLDataType<{
+      id: number,
+      name: string,
+      status?: ZCLEnum8Status
+      value: ZCLDataType<any>
+    }>;
+    function ZCLConfigureReportingRecords({ withStatus }: {withStatus?: boolean}): ZCLDataType<{
+      attributeId: number,
+      status?: ZCLEnum8Status,
+      direction: 'reported' | 'received',
+      attributeDataType: number,
+      minInterval: number,
+      maxInterval: number,
+      minChange: number, // TODO Check whether this is actually a number, or a buffer like the JS docs imply
+    }>
+  }
+
+  class ZCLError extends Error {
+    zclStatus: ZCLEnum8Status;
+  }
+
+  const ZIGBEE_PROFILE_ID: {
+    INDUSTRIAL_PLANT_MONITORING: 0x0101,
+    HOME_AUTOMATION: 0x0104,
+    COMMERCIAL_BUILDING_AUTOMATION: 0x0105,
+    TELECOM_APPLICATIONS: 0x0107,
+    PERSONAL_HOME_AND_HOSPITAL_CARE: 0x0108,
+    ADVANCED_METERING_INITIATIVE: 0x0109,
+  };
+  const ZIGBEE_DEVICE_ID: {
+    GENERIC: {
+      ON_OFF_SWITCH: 0x0000,
+      LEVEL_CONTROL_SWITCH: 0x0001,
+      ON_OFF_OUTPUT: 0x0002,
+      LEVEL_CONTROLLABLE_OUTPUT: 0x0003,
+      SCENE_SELECTOR: 0x0004,
+      CONFIGURATION_TOOL: 0x0005,
+      REMOTE_CONTROL: 0x0006,
+      COMBINED_INTERFACE: 0x0007,
+      RANGE_EXTENDER: 0x0008,
+      MAINS_POWER_OUTLET: 0x0009,
+      DOOR_LOCK: 0x000a,
+      DOOR_LOCK_CONTROLLER: 0x000b,
+      SIMPLE_SENSOR: 0x000c,
+      CONSUMPTION_AWARENESS_DEVICE: 0x000d,
+      HOME_GATEWAY: 0x0050,
+      SMART_PLUG: 0x0051,
+      WHITE_GOODS: 0x0052,
+      METER_INTERFACE: 0x0053,
+    },
+    LIGHTING: {
+      ON_OFF_LIGHT: 0x0100,
+      DIMMABLE_LIGHT: 0x0101,
+      COLOR_DIMMABLE_LIGHT: 0x0102,
+      ON_OFF_LIGHT_SWITCH: 0x0103,
+      DIMMER_SWITCH: 0x0104,
+      COLOR_DIMMER_SWITCH: 0x0105,
+      LIGHT_SENSOR: 0x0106,
+      OCCUPANCY_SENSOR: 0x0107,
+    },
+    CLOSURES: {
+      SHADE: 0x0200,
+      SHADE_CONTROLLER: 0x0201,
+      WINDOW_COVERING_DEVICE: 0x0202,
+      WINDOW_COVERING_CONTROLLER: 0x0203,
+    },
+    HVAC: {
+      HEATING_COOLING_UNIT: 0x0300,
+      THERMOSTAT: 0x0301,
+      TEMPERATURE_SENSOR: 0x0302,
+      PUMP: 0x0303,
+      PUMP_CONTROLLER: 0x0304,
+      PRESSURE_SENSOR: 0x0305,
+      FLOW_SENSOR: 0x0306,
+    },
+    INTRUDER_ALARM_SYSTEMS: {
+      IAS_CONTROL_INDICATING_EQUIPMENT: 0x0400,
+      IAS_ANCILLARY_CONTROL_EQUIPMENT: 0x0401,
+      IAS_ZONE: 0x0402,
+      IAS_WARNING_DEVICE: 0x0403,
+    },
+  };
+  const IAS_ZONE_TYPE: {
+    STANDARD_CIE: 0x0000,
+    MOTION_SENSOR: 0x000d,
+    CONTACT_SWITCH: 0x0015,
+    FIRE_SENSOR: 0x0028,
+    WATER_SENSOR: 0x002a,
+    CARBON_MONOXIDE_SENSOR: 0x002b,
+    PERSONAL_EMERGENCY_DEVICE: 0x002c,
+    VIBRATION_MOVEMENT_SENSOR: 0x002d,
+    REMOTE_CONTROL: 0x010f,
+    KEY_FOB: 0x0115,
+    KEYPAD: 0x021d,
+    STANDARD_WARNING_DEVICE: 0x0225,
+    GLASS_BREAK_SENSOR: 0x0226,
+    SECURITY_REPEATER: 0x0229,
+    INVALID_ZONE_TYPE: 0xffff,
+  };
+
+  abstract class Cluster<Attributes extends AttributeDefinitions, Commands extends CommandDefinitions> extends EventEmitter {
+    static get ID(): number;
+    static get NAME(): string;
+    // @ts-expect-error Type should be defined on non-abstract inheritors
+    static get ATTRIBUTES(): Attributes;
+    // @ts-expect-error Type should be defined on non-abstract inheritors
+    static get COMMANDS(): Commands;
+
+    static DIRECTION_SERVER_TO_CLIENT: CommandToClientDirection;
+    static DIRECTION_CLIENT_TO_SERVER: CommandToServerDirection;
+
+    get logId(): string;
+
+    discoverCommandsGenerated({startValue, maxResults}?: {startValue?: number, maxResults?: number}, opts?: {timeout?: number}): Promise<Array<number>>;
+    discoverCommandsReceived({startValue, maxResults}?: {startValue?: number, maxResults?: number}, opts?: {timeout?: number}): Promise<Array<number>>;
+
+    readAttributes<K extends keyof Attributes | number>(attributes: ReadonlyArray<K>, opts?: {timeout?: number}): Promise<{[attribute in K]: AttributesFromDefinition<Attributes>[attribute]}>;
+    writeAttributes<K extends keyof Attributes>(attributes: {[attribute in K]: AttributesFromDefinition<Attributes>[attribute]}, opts?: {timeout?: number}): Promise<{[attribute in K]: {id: number, status: 'SUCCESS' | 'FAILURE'}}>
+
+    configureReporting(attributes: AttributeReportingConfiguration<Extract<keyof Attributes, string>>, opts?: {timeout?: number}): Promise<void>;
+    readReportingConfiguration(attributes: ReadonlyArray<string | number>, opts?: {timeout?: number}): Promise<Array<ReadReportingConfigurationResponse>>;
+
+    discoverAttributes(opts?: {timeout?: number}): Promise<Array<string | number>>;
+    discoverAttributesExtended(opts?: {timeout?: number}): Promise<Array<ExtendedAttributesResponse>>;
+
+    sendFrame(data: object): Promise<void>;
+    nextSeqNr(): number;
+
+    static addCluster(clusterClass: typeof Cluster<any, any>): void;
+    static removeCluster(clusterIdOrName: string | number): void;
+    static getCluster<Attributes extends AttributeDefinitions, Commands extends CommandDefinitions>(clusterIdOrName: string | number): Cluster<Attributes, Commands>;
+
+    on<Event extends Extract<keyof Attributes, string>>(eventName: `attr.${Event}`, listener: (value: AttributesFromDefinition<Attributes>[Event]) => void): this;
+    on<Values extends Array<any> = unknown[]>(eventName: string, listener: (...args: Values) => void): this;
+
+    attributes: Attributes;
+    attributesById: {[Attribute in keyof Attributes as Attributes[Attribute]['id']]: { name: Attribute } & Attributes[Attribute] };
+
+    commands: Commands;
+    commandsById: {[Command in keyof Commands as Commands[Command]['id']]: Array<{name: Command} & Commands[Command]>};
+  }
+
+  // TODO
+  abstract class BoundCluster {
+    endpoint: number;
+    cluster: Cluster<any, any>;
+
+    get logId(): string;
+  }
+}
+
+// TODO clean up so these are not global
+
+type CommandToServerDirection = 'DIRECTION_CLIENT_TO_SERVER';
+type CommandToClientDirection = 'DIRECTION_SERVER_TO_CLIENT';
+type CommandDirection = CommandToServerDirection | CommandToClientDirection;
+
+type FromZCLDataType<DataType> = DataType extends import('zigbee-clusters').ZCLDataType<infer InferredValue>? InferredValue : DataType;
+
+type AttributeDefinition = {
+  id: number,
+  type: import('zigbee-clusters').ZCLDataType<any>,
+  manufacturerId?: number,
+}
+
+type AttributeDefinitions = {
+  [attributeName: string]: AttributeDefinition,
+}
+
+type AttributesFromDefinition<Definition extends AttributeDefinitions> = {
+  [attribute in keyof Definition]: FromZCLDataType<Definition[attribute]['type']>
+}
+
+type CommandDefinition = {
+  id: number,
+  direction?: CommandDirection,
+  args?: {
+    [argName: string]: import('zigbee-clusters').ZCLDataType<any>,
+  }
+  response?: CommandDefinition,
+  frameControl?: import('zigbee-clusters').FrameControlFlag[];
+  encodeMissingFieldsBehavior?: 'default' | 'skip';
+  global?: boolean;
+}
+
+type CommandDefinitions = {
+  [commandName: string]: CommandDefinition,
+}
+
+type AttributeReportingConfiguration<AttributeKey extends string> = {
+  [attribute in AttributeKey]: {
+    minInterval?: number,
+    maxInterval?: number,
+    minChange?: number
+  }
+}
+
+type ReadReportingConfigurationResponse = {
+  status: import('zigbee-clusters').ZCLEnum8Status,
+  direction: 'reported'|'received';
+  attributeId: number;
+  attributeDataType?: number;
+  minInterval?: number;
+  maxInterval?: number;
+  minChange?: number;
+  timeoutPeriod?: number;
+}
+
+type ExtendedAttributesResponse = {
+  name?: string;
+  id: number;
+  acl: {
+    readable: boolean;
+    writable: boolean;
+    reportable: boolean;
+  }
+}
