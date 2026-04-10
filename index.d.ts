@@ -21,7 +21,7 @@ declare module "zigbee-clusters" {
   type BasicClusterCommands = {
     factoryReset: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT" },
   };
-  class BasicCluster<Attributes extends AttributeDefinitions = BasicClusterAttributes, Commands extends CommandDefinitions = BasicClusterCommands> extends Cluster<Attributes, Commands> {
+  class BasicCluster<Attributes extends types.AttributeDefinitions = BasicClusterAttributes, Commands extends types.CommandDefinitions = BasicClusterCommands> extends Cluster<Attributes, Commands> {
     factoryReset(
       args: {
         manufacturerId?: number,
@@ -43,7 +43,7 @@ declare module "zigbee-clusters" {
     batteryAlarmState: { id: 0x3e, type: ZCLDataType<BitMap<"batteryThresholdBatterySource1" | "batteryThreshold1BatterySource1" | "batteryThreshold2BatterySource1" | "batteryThreshold3BatterySource1" | "reserved4" | "reserved5" | "reserved6" | "reserved7" | "reserved8" | "reserved9" | "batteryThresholdBatterySource2" | "batteryThreshold1BatterySource2" | "batteryThreshold2BatterySource2" | "batteryThreshold3BatterySource2" | "reserved14" | "reserved15" | "reserved16" | "reserved17" | "reserved18" | "reserved19" | "batteryThresholdBatterySource3" | "batteryThreshold1BatterySource3" | "batteryThreshold2BatterySource3" | "batteryThreshold3BatterySource3" | "reserved24" | "reserved25" | "reserved26" | "reserved27" | "reserved28" | "reserved29" | "mainsPowerSupplyLostUnavailable">> },
   };
   type PowerConfigurationClusterCommands = Record<never, never>;
-  class PowerConfigurationCluster<Attributes extends AttributeDefinitions = PowerConfigurationClusterAttributes, Commands extends CommandDefinitions = PowerConfigurationClusterCommands> extends Cluster<Attributes, Commands> {
+  class PowerConfigurationCluster<Attributes extends types.AttributeDefinitions = PowerConfigurationClusterAttributes, Commands extends types.CommandDefinitions = PowerConfigurationClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type DeviceTemperatureClusterAttributes = {
     currentTemperature: { id: 0x00, type: ZCLDataType<number> },
@@ -57,7 +57,7 @@ declare module "zigbee-clusters" {
     highTempDwellTripPoint: { id: 0x14, type: ZCLDataType<number> },
   };
   type DeviceTemperatureClusterCommands = Record<never, never>;
-  class DeviceTemperatureCluster<Attributes extends AttributeDefinitions = DeviceTemperatureClusterAttributes, Commands extends CommandDefinitions = DeviceTemperatureClusterCommands> extends Cluster<Attributes, Commands> {
+  class DeviceTemperatureCluster<Attributes extends types.AttributeDefinitions = DeviceTemperatureClusterAttributes, Commands extends types.CommandDefinitions = DeviceTemperatureClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type IdentifyClusterAttributes = {
     identifyTime: { id: 0x00, type: ZCLDataType<number> },
@@ -74,7 +74,7 @@ declare module "zigbee-clusters" {
       },
     },
   };
-  class IdentifyCluster<Attributes extends AttributeDefinitions = IdentifyClusterAttributes, Commands extends CommandDefinitions = IdentifyClusterCommands> extends Cluster<Attributes, Commands> {
+  class IdentifyCluster<Attributes extends types.AttributeDefinitions = IdentifyClusterAttributes, Commands extends types.CommandDefinitions = IdentifyClusterCommands> extends Cluster<Attributes, Commands> {
     identify(
       args: {
         manufacturerId?: number,
@@ -137,7 +137,7 @@ declare module "zigbee-clusters" {
       },
     },
   };
-  class GroupsCluster<Attributes extends AttributeDefinitions = GroupsClusterAttributes, Commands extends CommandDefinitions = GroupsClusterCommands> extends Cluster<Attributes, Commands> {
+  class GroupsCluster<Attributes extends types.AttributeDefinitions = GroupsClusterAttributes, Commands extends types.CommandDefinitions = GroupsClusterCommands> extends Cluster<Attributes, Commands> {
     addGroup(
       args: {
         manufacturerId?: number,
@@ -208,7 +208,7 @@ declare module "zigbee-clusters" {
   }
   type ScenesClusterAttributes = Record<never, never>;
   type ScenesClusterCommands = Record<never, never>;
-  class ScenesCluster<Attributes extends AttributeDefinitions = ScenesClusterAttributes, Commands extends CommandDefinitions = ScenesClusterCommands> extends Cluster<Attributes, Commands> {
+  class ScenesCluster<Attributes extends types.AttributeDefinitions = ScenesClusterAttributes, Commands extends types.CommandDefinitions = ScenesClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type OnOffClusterAttributes = {
     onOff: { id: 0x00, type: ZCLDataType<boolean> },
@@ -232,7 +232,7 @@ declare module "zigbee-clusters" {
       },
     },
   };
-  class OnOffCluster<Attributes extends AttributeDefinitions = OnOffClusterAttributes, Commands extends CommandDefinitions = OnOffClusterCommands> extends Cluster<Attributes, Commands> {
+  class OnOffCluster<Attributes extends types.AttributeDefinitions = OnOffClusterAttributes, Commands extends types.CommandDefinitions = OnOffClusterCommands> extends Cluster<Attributes, Commands> {
     setOff(
       args: {
         manufacturerId?: number,
@@ -301,7 +301,7 @@ declare module "zigbee-clusters" {
   }
   type OnOffSwitchClusterAttributes = Record<never, never>;
   type OnOffSwitchClusterCommands = Record<never, never>;
-  class OnOffSwitchCluster<Attributes extends AttributeDefinitions = OnOffSwitchClusterAttributes, Commands extends CommandDefinitions = OnOffSwitchClusterCommands> extends Cluster<Attributes, Commands> {
+  class OnOffSwitchCluster<Attributes extends types.AttributeDefinitions = OnOffSwitchClusterAttributes, Commands extends types.CommandDefinitions = OnOffSwitchClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type LevelControlClusterAttributes = {
     currentLevel: { id: 0x00, type: ZCLDataType<number> },
@@ -348,7 +348,7 @@ declare module "zigbee-clusters" {
     },
     stopWithOnOff: { id: 0x07, direction: "DIRECTION_SERVER_TO_CLIENT" },
   };
-  class LevelControlCluster<Attributes extends AttributeDefinitions = LevelControlClusterAttributes, Commands extends CommandDefinitions = LevelControlClusterCommands> extends Cluster<Attributes, Commands> {
+  class LevelControlCluster<Attributes extends types.AttributeDefinitions = LevelControlClusterAttributes, Commands extends types.CommandDefinitions = LevelControlClusterCommands> extends Cluster<Attributes, Commands> {
     moveToLevel(
       args: {
         manufacturerId?: number,
@@ -450,7 +450,7 @@ declare module "zigbee-clusters" {
     getAlarm: { id: 0x02, direction: "DIRECTION_SERVER_TO_CLIENT", args: Record<never, never> /* TODO fix */ },
     resetAlarmLog: { id: 0x03, direction: "DIRECTION_SERVER_TO_CLIENT", args: Record<never, never> /* TODO fix */ },
   };
-  class AlarmsCluster<Attributes extends AttributeDefinitions = AlarmsClusterAttributes, Commands extends CommandDefinitions = AlarmsClusterCommands> extends Cluster<Attributes, Commands> {
+  class AlarmsCluster<Attributes extends types.AttributeDefinitions = AlarmsClusterAttributes, Commands extends types.CommandDefinitions = AlarmsClusterCommands> extends Cluster<Attributes, Commands> {
     resetAllAlarms(
       args: {
         manufacturerId?: number,
@@ -484,7 +484,7 @@ declare module "zigbee-clusters" {
   }
   type TimeClusterAttributes = Record<never, never>;
   type TimeClusterCommands = Record<never, never>;
-  class TimeCluster<Attributes extends AttributeDefinitions = TimeClusterAttributes, Commands extends CommandDefinitions = TimeClusterCommands> extends Cluster<Attributes, Commands> {
+  class TimeCluster<Attributes extends types.AttributeDefinitions = TimeClusterAttributes, Commands extends types.CommandDefinitions = TimeClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type AnalogInputClusterAttributes = {
     description: { id: 0x1c, type: ZCLDataType<string> },
@@ -498,7 +498,7 @@ declare module "zigbee-clusters" {
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type AnalogInputClusterCommands = Record<never, never>;
-  class AnalogInputCluster<Attributes extends AttributeDefinitions = AnalogInputClusterAttributes, Commands extends CommandDefinitions = AnalogInputClusterCommands> extends Cluster<Attributes, Commands> {
+  class AnalogInputCluster<Attributes extends types.AttributeDefinitions = AnalogInputClusterAttributes, Commands extends types.CommandDefinitions = AnalogInputClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type AnalogOutputClusterAttributes = {
     description: { id: 0x1c, type: ZCLDataType<string> },
@@ -513,7 +513,7 @@ declare module "zigbee-clusters" {
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type AnalogOutputClusterCommands = Record<never, never>;
-  class AnalogOutputCluster<Attributes extends AttributeDefinitions = AnalogOutputClusterAttributes, Commands extends CommandDefinitions = AnalogOutputClusterCommands> extends Cluster<Attributes, Commands> {
+  class AnalogOutputCluster<Attributes extends types.AttributeDefinitions = AnalogOutputClusterAttributes, Commands extends types.CommandDefinitions = AnalogOutputClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type AnalogValueClusterAttributes = {
     description: { id: 0x1c, type: ZCLDataType<string> },
@@ -525,7 +525,7 @@ declare module "zigbee-clusters" {
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type AnalogValueClusterCommands = Record<never, never>;
-  class AnalogValueCluster<Attributes extends AttributeDefinitions = AnalogValueClusterAttributes, Commands extends CommandDefinitions = AnalogValueClusterCommands> extends Cluster<Attributes, Commands> {
+  class AnalogValueCluster<Attributes extends types.AttributeDefinitions = AnalogValueClusterAttributes, Commands extends types.CommandDefinitions = AnalogValueClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type BinaryInputClusterAttributes = {
     activeText: { id: 0x04, type: ZCLDataType<string> },
@@ -539,7 +539,7 @@ declare module "zigbee-clusters" {
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type BinaryInputClusterCommands = Record<never, never>;
-  class BinaryInputCluster<Attributes extends AttributeDefinitions = BinaryInputClusterAttributes, Commands extends CommandDefinitions = BinaryInputClusterCommands> extends Cluster<Attributes, Commands> {
+  class BinaryInputCluster<Attributes extends types.AttributeDefinitions = BinaryInputClusterAttributes, Commands extends types.CommandDefinitions = BinaryInputClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type BinaryOutputClusterAttributes = {
     activeText: { id: 0x04, type: ZCLDataType<string> },
@@ -556,7 +556,7 @@ declare module "zigbee-clusters" {
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type BinaryOutputClusterCommands = Record<never, never>;
-  class BinaryOutputCluster<Attributes extends AttributeDefinitions = BinaryOutputClusterAttributes, Commands extends CommandDefinitions = BinaryOutputClusterCommands> extends Cluster<Attributes, Commands> {
+  class BinaryOutputCluster<Attributes extends types.AttributeDefinitions = BinaryOutputClusterAttributes, Commands extends types.CommandDefinitions = BinaryOutputClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type BinaryValueClusterAttributes = {
     activeText: { id: 0x04, type: ZCLDataType<string> },
@@ -573,7 +573,7 @@ declare module "zigbee-clusters" {
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type BinaryValueClusterCommands = Record<never, never>;
-  class BinaryValueCluster<Attributes extends AttributeDefinitions = BinaryValueClusterAttributes, Commands extends CommandDefinitions = BinaryValueClusterCommands> extends Cluster<Attributes, Commands> {
+  class BinaryValueCluster<Attributes extends types.AttributeDefinitions = BinaryValueClusterAttributes, Commands extends types.CommandDefinitions = BinaryValueClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type MultistateInputClusterAttributes = {
     description: { id: 0x1c, type: ZCLDataType<string> },
@@ -585,7 +585,7 @@ declare module "zigbee-clusters" {
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type MultistateInputClusterCommands = Record<never, never>;
-  class MultistateInputCluster<Attributes extends AttributeDefinitions = MultistateInputClusterAttributes, Commands extends CommandDefinitions = MultistateInputClusterCommands> extends Cluster<Attributes, Commands> {
+  class MultistateInputCluster<Attributes extends types.AttributeDefinitions = MultistateInputClusterAttributes, Commands extends types.CommandDefinitions = MultistateInputClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type MultistateOutputClusterAttributes = {
     description: { id: 0x1c, type: ZCLDataType<string> },
@@ -598,7 +598,7 @@ declare module "zigbee-clusters" {
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type MultistateOutputClusterCommands = Record<never, never>;
-  class MultistateOutputCluster<Attributes extends AttributeDefinitions = MultistateOutputClusterAttributes, Commands extends CommandDefinitions = MultistateOutputClusterCommands> extends Cluster<Attributes, Commands> {
+  class MultistateOutputCluster<Attributes extends types.AttributeDefinitions = MultistateOutputClusterAttributes, Commands extends types.CommandDefinitions = MultistateOutputClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type MultistateValueClusterAttributes = {
     description: { id: 0x1c, type: ZCLDataType<string> },
@@ -611,7 +611,7 @@ declare module "zigbee-clusters" {
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type MultistateValueClusterCommands = Record<never, never>;
-  class MultistateValueCluster<Attributes extends AttributeDefinitions = MultistateValueClusterAttributes, Commands extends CommandDefinitions = MultistateValueClusterCommands> extends Cluster<Attributes, Commands> {
+  class MultistateValueCluster<Attributes extends types.AttributeDefinitions = MultistateValueClusterAttributes, Commands extends types.CommandDefinitions = MultistateValueClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type OTAClusterAttributes = {
     upgradeServerID: { id: 0x00, type: ZCLDataType<string> },
@@ -705,7 +705,7 @@ declare module "zigbee-clusters" {
       },
     },
   };
-  class OTACluster<Attributes extends AttributeDefinitions = OTAClusterAttributes, Commands extends CommandDefinitions = OTAClusterCommands> extends Cluster<Attributes, Commands> {
+  class OTACluster<Attributes extends types.AttributeDefinitions = OTAClusterAttributes, Commands extends types.CommandDefinitions = OTAClusterCommands> extends Cluster<Attributes, Commands> {
     onImageNotify(
       args: {
         manufacturerId?: number,
@@ -840,7 +840,7 @@ declare module "zigbee-clusters" {
   }
   type PowerProfileClusterAttributes = Record<never, never>;
   type PowerProfileClusterCommands = Record<never, never>;
-  class PowerProfileCluster<Attributes extends AttributeDefinitions = PowerProfileClusterAttributes, Commands extends CommandDefinitions = PowerProfileClusterCommands> extends Cluster<Attributes, Commands> {
+  class PowerProfileCluster<Attributes extends types.AttributeDefinitions = PowerProfileClusterAttributes, Commands extends types.CommandDefinitions = PowerProfileClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type PollControlClusterAttributes = {
     checkInInterval: { id: 0x00, type: ZCLDataType<number> },
@@ -862,7 +862,7 @@ declare module "zigbee-clusters" {
       },
     },
   };
-  class PollControlCluster<Attributes extends AttributeDefinitions = PollControlClusterAttributes, Commands extends CommandDefinitions = PollControlClusterCommands> extends Cluster<Attributes, Commands> {
+  class PollControlCluster<Attributes extends types.AttributeDefinitions = PollControlClusterAttributes, Commands extends types.CommandDefinitions = PollControlClusterCommands> extends Cluster<Attributes, Commands> {
     fastPollStop(
       args: {
         manufacturerId?: number,
@@ -898,7 +898,7 @@ declare module "zigbee-clusters" {
   }
   type ShadeConfigurationClusterAttributes = Record<never, never>;
   type ShadeConfigurationClusterCommands = Record<never, never>;
-  class ShadeConfigurationCluster<Attributes extends AttributeDefinitions = ShadeConfigurationClusterAttributes, Commands extends CommandDefinitions = ShadeConfigurationClusterCommands> extends Cluster<Attributes, Commands> {
+  class ShadeConfigurationCluster<Attributes extends types.AttributeDefinitions = ShadeConfigurationClusterAttributes, Commands extends types.CommandDefinitions = ShadeConfigurationClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type DoorLockClusterAttributes = {
     lockState: { id: 0x00, type: ZCLDataType<"notFullyLocked" | "locked" | "unlocked" | "undefined"> },
@@ -1090,7 +1090,7 @@ declare module "zigbee-clusters" {
       },
     },
   };
-  class DoorLockCluster<Attributes extends AttributeDefinitions = DoorLockClusterAttributes, Commands extends CommandDefinitions = DoorLockClusterCommands> extends Cluster<Attributes, Commands> {
+  class DoorLockCluster<Attributes extends types.AttributeDefinitions = DoorLockClusterAttributes, Commands extends types.CommandDefinitions = DoorLockClusterCommands> extends Cluster<Attributes, Commands> {
     lockDoor(
       args: {
         manufacturerId?: number,
@@ -1478,7 +1478,7 @@ declare module "zigbee-clusters" {
       },
     },
   };
-  class WindowCoveringCluster<Attributes extends AttributeDefinitions = WindowCoveringClusterAttributes, Commands extends CommandDefinitions = WindowCoveringClusterCommands> extends Cluster<Attributes, Commands> {
+  class WindowCoveringCluster<Attributes extends types.AttributeDefinitions = WindowCoveringClusterAttributes, Commands extends types.CommandDefinitions = WindowCoveringClusterCommands> extends Cluster<Attributes, Commands> {
     upOpen(
       args: {
         manufacturerId?: number,
@@ -1586,7 +1586,7 @@ declare module "zigbee-clusters" {
       },
     },
   };
-  class ThermostatCluster<Attributes extends AttributeDefinitions = ThermostatClusterAttributes, Commands extends CommandDefinitions = ThermostatClusterCommands> extends Cluster<Attributes, Commands> {
+  class ThermostatCluster<Attributes extends types.AttributeDefinitions = ThermostatClusterAttributes, Commands extends types.CommandDefinitions = ThermostatClusterCommands> extends Cluster<Attributes, Commands> {
     setSetpoint(
       args: {
         manufacturerId?: number,
@@ -1602,15 +1602,15 @@ declare module "zigbee-clusters" {
   }
   type PumpConfigurationAndControlClusterAttributes = Record<never, never>;
   type PumpConfigurationAndControlClusterCommands = Record<never, never>;
-  class PumpConfigurationAndControlCluster<Attributes extends AttributeDefinitions = PumpConfigurationAndControlClusterAttributes, Commands extends CommandDefinitions = PumpConfigurationAndControlClusterCommands> extends Cluster<Attributes, Commands> {
+  class PumpConfigurationAndControlCluster<Attributes extends types.AttributeDefinitions = PumpConfigurationAndControlClusterAttributes, Commands extends types.CommandDefinitions = PumpConfigurationAndControlClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type FanControlClusterAttributes = Record<never, never>;
   type FanControlClusterCommands = Record<never, never>;
-  class FanControlCluster<Attributes extends AttributeDefinitions = FanControlClusterAttributes, Commands extends CommandDefinitions = FanControlClusterCommands> extends Cluster<Attributes, Commands> {
+  class FanControlCluster<Attributes extends types.AttributeDefinitions = FanControlClusterAttributes, Commands extends types.CommandDefinitions = FanControlClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type DehumidificationControlClusterAttributes = Record<never, never>;
   type DehumidificationControlClusterCommands = Record<never, never>;
-  class DehumidificationControlCluster<Attributes extends AttributeDefinitions = DehumidificationControlClusterAttributes, Commands extends CommandDefinitions = DehumidificationControlClusterCommands> extends Cluster<Attributes, Commands> {
+  class DehumidificationControlCluster<Attributes extends types.AttributeDefinitions = DehumidificationControlClusterAttributes, Commands extends types.CommandDefinitions = DehumidificationControlClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type ColorControlClusterAttributes = {
     currentHue: { id: 0x00, type: ZCLDataType<number> },
@@ -1653,7 +1653,7 @@ declare module "zigbee-clusters" {
       },
     },
   };
-  class ColorControlCluster<Attributes extends AttributeDefinitions = ColorControlClusterAttributes, Commands extends CommandDefinitions = ColorControlClusterCommands> extends Cluster<Attributes, Commands> {
+  class ColorControlCluster<Attributes extends types.AttributeDefinitions = ColorControlClusterAttributes, Commands extends types.CommandDefinitions = ColorControlClusterCommands> extends Cluster<Attributes, Commands> {
     moveToHue(
       args: {
         manufacturerId?: number,
@@ -1737,7 +1737,7 @@ declare module "zigbee-clusters" {
     lampBurnHoursTripPoint: { id: 0x35, type: ZCLDataType<number> },
   };
   type BallastConfigurationClusterCommands = Record<never, never>;
-  class BallastConfigurationCluster<Attributes extends AttributeDefinitions = BallastConfigurationClusterAttributes, Commands extends CommandDefinitions = BallastConfigurationClusterCommands> extends Cluster<Attributes, Commands> {
+  class BallastConfigurationCluster<Attributes extends types.AttributeDefinitions = BallastConfigurationClusterAttributes, Commands extends types.CommandDefinitions = BallastConfigurationClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type IlluminanceMeasurementClusterAttributes = {
     measuredValue: { id: 0x00, type: ZCLDataType<number> },
@@ -1747,7 +1747,7 @@ declare module "zigbee-clusters" {
     lightSensorType: { id: 0x04, type: ZCLDataType<"photodiode" | "cmos" | "unknown"> },
   };
   type IlluminanceMeasurementClusterCommands = Record<never, never>;
-  class IlluminanceMeasurementCluster<Attributes extends AttributeDefinitions = IlluminanceMeasurementClusterAttributes, Commands extends CommandDefinitions = IlluminanceMeasurementClusterCommands> extends Cluster<Attributes, Commands> {
+  class IlluminanceMeasurementCluster<Attributes extends types.AttributeDefinitions = IlluminanceMeasurementClusterAttributes, Commands extends types.CommandDefinitions = IlluminanceMeasurementClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type IlluminanceLevelSensingClusterAttributes = {
     levelStatus: { id: 0x00, type: ZCLDataType<"illuminanceOnTarget" | "illuminanceBelowTarget" | "illuminanceAboveTarget"> },
@@ -1755,7 +1755,7 @@ declare module "zigbee-clusters" {
     illuminanceTargetLevel: { id: 0x10, type: ZCLDataType<number> },
   };
   type IlluminanceLevelSensingClusterCommands = Record<never, never>;
-  class IlluminanceLevelSensingCluster<Attributes extends AttributeDefinitions = IlluminanceLevelSensingClusterAttributes, Commands extends CommandDefinitions = IlluminanceLevelSensingClusterCommands> extends Cluster<Attributes, Commands> {
+  class IlluminanceLevelSensingCluster<Attributes extends types.AttributeDefinitions = IlluminanceLevelSensingClusterAttributes, Commands extends types.CommandDefinitions = IlluminanceLevelSensingClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type TemperatureMeasurementClusterAttributes = {
     measuredValue: { id: 0x00, type: ZCLDataType<number> },
@@ -1763,7 +1763,7 @@ declare module "zigbee-clusters" {
     maxMeasuredValue: { id: 0x02, type: ZCLDataType<number> },
   };
   type TemperatureMeasurementClusterCommands = Record<never, never>;
-  class TemperatureMeasurementCluster<Attributes extends AttributeDefinitions = TemperatureMeasurementClusterAttributes, Commands extends CommandDefinitions = TemperatureMeasurementClusterCommands> extends Cluster<Attributes, Commands> {
+  class TemperatureMeasurementCluster<Attributes extends types.AttributeDefinitions = TemperatureMeasurementClusterAttributes, Commands extends types.CommandDefinitions = TemperatureMeasurementClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type PressureMeasurementClusterAttributes = {
     measuredValue: { id: 0x00, type: ZCLDataType<number> },
@@ -1777,7 +1777,7 @@ declare module "zigbee-clusters" {
     scale: { id: 0x14, type: ZCLDataType<number> },
   };
   type PressureMeasurementClusterCommands = Record<never, never>;
-  class PressureMeasurementCluster<Attributes extends AttributeDefinitions = PressureMeasurementClusterAttributes, Commands extends CommandDefinitions = PressureMeasurementClusterCommands> extends Cluster<Attributes, Commands> {
+  class PressureMeasurementCluster<Attributes extends types.AttributeDefinitions = PressureMeasurementClusterAttributes, Commands extends types.CommandDefinitions = PressureMeasurementClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type FlowMeasurementClusterAttributes = {
     measuredValue: { id: 0x00, type: ZCLDataType<number> },
@@ -1786,7 +1786,7 @@ declare module "zigbee-clusters" {
     tolerance: { id: 0x03, type: ZCLDataType<number> },
   };
   type FlowMeasurementClusterCommands = Record<never, never>;
-  class FlowMeasurementCluster<Attributes extends AttributeDefinitions = FlowMeasurementClusterAttributes, Commands extends CommandDefinitions = FlowMeasurementClusterCommands> extends Cluster<Attributes, Commands> {
+  class FlowMeasurementCluster<Attributes extends types.AttributeDefinitions = FlowMeasurementClusterAttributes, Commands extends types.CommandDefinitions = FlowMeasurementClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type RelativeHumidityClusterAttributes = {
     measuredValue: { id: 0x00, type: ZCLDataType<number> },
@@ -1795,7 +1795,7 @@ declare module "zigbee-clusters" {
     tolerance: { id: 0x03, type: ZCLDataType<number> },
   };
   type RelativeHumidityClusterCommands = Record<never, never>;
-  class RelativeHumidityCluster<Attributes extends AttributeDefinitions = RelativeHumidityClusterAttributes, Commands extends CommandDefinitions = RelativeHumidityClusterCommands> extends Cluster<Attributes, Commands> {
+  class RelativeHumidityCluster<Attributes extends types.AttributeDefinitions = RelativeHumidityClusterAttributes, Commands extends types.CommandDefinitions = RelativeHumidityClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type OccupancySensingClusterAttributes = {
     occupancy: { id: 0x00, type: ZCLDataType<BitMap<"occupied">> },
@@ -1812,7 +1812,7 @@ declare module "zigbee-clusters" {
     physicalContactUnoccupiedToOccupiedThreshold: { id: 0x32, type: ZCLDataType<number> },
   };
   type OccupancySensingClusterCommands = Record<never, never>;
-  class OccupancySensingCluster<Attributes extends AttributeDefinitions = OccupancySensingClusterAttributes, Commands extends CommandDefinitions = OccupancySensingClusterCommands> extends Cluster<Attributes, Commands> {
+  class OccupancySensingCluster<Attributes extends types.AttributeDefinitions = OccupancySensingClusterAttributes, Commands extends types.CommandDefinitions = OccupancySensingClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type IASZoneClusterAttributes = {
     zoneState: { id: 0x00, type: ZCLDataType<"notEnrolled" | "enrolled"> },
@@ -1841,7 +1841,7 @@ declare module "zigbee-clusters" {
     },
     initiateNormalOperationMode: { id: 0x01, direction: "DIRECTION_CLIENT_TO_SERVER" },
   };
-  class IASZoneCluster<Attributes extends AttributeDefinitions = IASZoneClusterAttributes, Commands extends CommandDefinitions = IASZoneClusterCommands> extends Cluster<Attributes, Commands> {
+  class IASZoneCluster<Attributes extends types.AttributeDefinitions = IASZoneClusterAttributes, Commands extends types.CommandDefinitions = IASZoneClusterCommands> extends Cluster<Attributes, Commands> {
     onZoneStatusChangeNotification(
       args: {
         manufacturerId?: number,
@@ -1893,11 +1893,11 @@ declare module "zigbee-clusters" {
   }
   type IASACEClusterAttributes = Record<never, never>;
   type IASACEClusterCommands = Record<never, never>;
-  class IASACECluster<Attributes extends AttributeDefinitions = IASACEClusterAttributes, Commands extends CommandDefinitions = IASACEClusterCommands> extends Cluster<Attributes, Commands> {
+  class IASACECluster<Attributes extends types.AttributeDefinitions = IASACEClusterAttributes, Commands extends types.CommandDefinitions = IASACEClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type IASWDClusterAttributes = Record<never, never>;
   type IASWDClusterCommands = Record<never, never>;
-  class IASWDCluster<Attributes extends AttributeDefinitions = IASWDClusterAttributes, Commands extends CommandDefinitions = IASWDClusterCommands> extends Cluster<Attributes, Commands> {
+  class IASWDCluster<Attributes extends types.AttributeDefinitions = IASWDClusterAttributes, Commands extends types.CommandDefinitions = IASWDClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type MeteringClusterAttributes = {
     currentSummationDelivered: { id: 0x00, type: ZCLDataType<number> },
@@ -2083,7 +2083,7 @@ declare module "zigbee-clusters" {
     flowMeasurementPeriod: { id: 0xb15, type: ZCLDataType<number> },
   };
   type MeteringClusterCommands = Record<never, never>;
-  class MeteringCluster<Attributes extends AttributeDefinitions = MeteringClusterAttributes, Commands extends CommandDefinitions = MeteringClusterCommands> extends Cluster<Attributes, Commands> {
+  class MeteringCluster<Attributes extends types.AttributeDefinitions = MeteringClusterAttributes, Commands extends types.CommandDefinitions = MeteringClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type ElectricalMeasurementClusterAttributes = {
     measurementType: { id: 0x00, type: ZCLDataType<BitMap<"activeMeasurementAC" | "reactiveMeasurementAC" | "apparentMeasurementAC" | "phaseAMeasurement" | "phaseBMeasurement" | "phaseCMeasurement" | "dcMeasurement" | "harmonicsMeasurement" | "powerQualityMeasurement">> },
@@ -2108,11 +2108,11 @@ declare module "zigbee-clusters" {
     acActivePowerOverload: { id: 0x803, type: ZCLDataType<number> },
   };
   type ElectricalMeasurementClusterCommands = Record<never, never>;
-  class ElectricalMeasurementCluster<Attributes extends AttributeDefinitions = ElectricalMeasurementClusterAttributes, Commands extends CommandDefinitions = ElectricalMeasurementClusterCommands> extends Cluster<Attributes, Commands> {
+  class ElectricalMeasurementCluster<Attributes extends types.AttributeDefinitions = ElectricalMeasurementClusterAttributes, Commands extends types.CommandDefinitions = ElectricalMeasurementClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type DiagnosticsClusterAttributes = Record<never, never>;
   type DiagnosticsClusterCommands = Record<never, never>;
-  class DiagnosticsCluster<Attributes extends AttributeDefinitions = DiagnosticsClusterAttributes, Commands extends CommandDefinitions = DiagnosticsClusterCommands> extends Cluster<Attributes, Commands> {
+  class DiagnosticsCluster<Attributes extends types.AttributeDefinitions = DiagnosticsClusterAttributes, Commands extends types.CommandDefinitions = DiagnosticsClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type TouchLinkClusterAttributes = Record<never, never>;
   type TouchLinkClusterCommands = {
@@ -2121,7 +2121,7 @@ declare module "zigbee-clusters" {
       },
     },
   };
-  class TouchLinkCluster<Attributes extends AttributeDefinitions = TouchLinkClusterAttributes, Commands extends CommandDefinitions = TouchLinkClusterCommands> extends Cluster<Attributes, Commands> {
+  class TouchLinkCluster<Attributes extends types.AttributeDefinitions = TouchLinkClusterAttributes, Commands extends types.CommandDefinitions = TouchLinkClusterCommands> extends Cluster<Attributes, Commands> {
     getGroups(
       args: {
         manufacturerId?: number,
@@ -2409,9 +2409,8 @@ declare module "zigbee-clusters" {
 
   import {EventEmitter} from "events";
   import {ZigBeeNode} from "homey";
-  type ZCLEnum8Status = 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER';
   type ZCLDataTypes = typeof import('@athombv/data-types').DataTypes & {
-    enum8Status: ZCLDataType<ZCLEnum8Status>
+    enum8Status: ZCLDataType<types.ZCLEnum8Status>
   };
 
   function debug(flag: boolean, namespaces: string): void;
@@ -2435,7 +2434,7 @@ declare module "zigbee-clusters" {
     bind(clusterName: string, clusterImpl: BoundCluster): void;
     unbind(clusterName: string): void;
 
-    makeDefaultResponseFrame(receivedFrame: unknown, success: boolean, status: ZCLEnum8Status): typeof zclFrames.ZCLStandardHeader | typeof zclFrames.ZCLMfgSpecificHeader;
+    makeDefaultResponseFrame(receivedFrame: unknown, success: boolean, status: types.ZCLEnum8Status): typeof zclFrames.ZCLStandardHeader | typeof zclFrames.ZCLMfgSpecificHeader;
   }
 
   type ZCLDataType<Value> = import('@athombv/data-types').DataType<Value>;
@@ -2448,36 +2447,29 @@ declare module "zigbee-clusters" {
     const ZCLStruct: typeof import('@athombv/data-types').Struct;
   }
 
-  type FrameControlFlag =
-    'clusterSpecific'
-    | 'manufacturerSpecific'
-    | 'directionToClient'
-    | 'disableDefaultResponse';
-  type ZCLFrameControlBitmap = ZCLDataType<BitMap<FrameControlFlag>>;
-
   namespace zclFrames {
     const ZCLStandardHeader: import('@athombv/data-types').StaticStruct<{
-      frameControl: ZCLFrameControlBitmap,
+      frameControl: types.ZCLFrameControlBitmap,
       trxSequenceNumber: ZCLDataTypes["data8"],
       cmdId: ZCLDataTypes["data8"],
       data: ZCLDataTypes["buffer"],
     }>;
     const ZCLMfgSpecificHeader: import('@athombv/data-types').StaticStruct<{
-      frameControl: ZCLFrameControlBitmap,
+      frameControl: types.ZCLFrameControlBitmap,
       manufacturerId: ZCLDataTypes["uint16"],
       trxSequenceNumber: ZCLDataTypes["data8"],
       cmdId: ZCLDataTypes["data8"],
       data: ZCLDataTypes["buffer"],
     }>;
-    function ZCLAttributeDataRecord(withStatus: boolean, attributes: AttributeDefinitions): ZCLDataType<{
+    function ZCLAttributeDataRecord(withStatus: boolean, attributes: types.AttributeDefinitions): ZCLDataType<{
       id: number,
       name?: string,
-      status?: ZCLEnum8Status
+      status?: types.ZCLEnum8Status
       value?: ZCLDataType<any>
     }>;
     function ZCLConfigureReportingRecords({ withStatus }: {withStatus?: boolean}): ZCLDataType<Array<{
       attributeId: number,
-      status?: ZCLEnum8Status,
+      status?: types.ZCLEnum8Status,
       direction: 'reported' | 'received',
       attributeDataType?: number,
       minInterval?: number,
@@ -2488,7 +2480,7 @@ declare module "zigbee-clusters" {
   }
 
   class ZCLError extends Error {
-    zclStatus: ZCLEnum8Status;
+    zclStatus: types.ZCLEnum8Status;
   }
 
   const ZIGBEE_PROFILE_ID: {
@@ -2570,7 +2562,7 @@ declare module "zigbee-clusters" {
     INVALID_ZONE_TYPE: 0xffff,
   };
 
-  abstract class Cluster<Attributes extends AttributeDefinitions, Commands extends CommandDefinitions> extends EventEmitter {
+  abstract class Cluster<Attributes extends types.AttributeDefinitions, Commands extends types.CommandDefinitions> extends EventEmitter {
     static get ID(): number;
     static get NAME(): string;
     // @ts-expect-error Type should be defined on non-abstract inheritors
@@ -2578,37 +2570,37 @@ declare module "zigbee-clusters" {
     // @ts-expect-error Type should be defined on non-abstract inheritors
     static get COMMANDS(): Commands;
 
-    static DIRECTION_SERVER_TO_CLIENT: CommandToClientDirection;
-    static DIRECTION_CLIENT_TO_SERVER: CommandToServerDirection;
+    static DIRECTION_SERVER_TO_CLIENT: types.CommandToClientDirection;
+    static DIRECTION_CLIENT_TO_SERVER: types.CommandToServerDirection;
 
     get logId(): string;
 
     discoverCommandsGenerated({startValue, maxResults}?: {startValue?: number, maxResults?: number}, opts?: {timeout?: number}): Promise<Array<number>>;
     discoverCommandsReceived({startValue, maxResults}?: {startValue?: number, maxResults?: number}, opts?: {timeout?: number}): Promise<Array<number>>;
 
-    readAttributes<K extends keyof (Attributes & GLOBAL_ATTRIBUTES) | number>(attributes: ReadonlyArray<K>, opts?: {timeout?: number}): Promise<{[attribute in K]: AttributesFromDefinition<Attributes & GLOBAL_ATTRIBUTES>[attribute]}>;
-    writeAttributes<K extends keyof (Attributes & GLOBAL_ATTRIBUTES)>(attributes: {[attribute in K]: AttributesFromDefinition<Attributes & GLOBAL_ATTRIBUTES>[attribute]}, opts?: {timeout?: number}): Promise<{[attribute in K]: {id: number, status: 'SUCCESS' | 'FAILURE'}}>
+    readAttributes<K extends keyof (Attributes & types.GLOBAL_ATTRIBUTES) | number>(attributes: ReadonlyArray<K>, opts?: {timeout?: number}): Promise<{[attribute in K]: types.AttributesFromDefinition<Attributes & types.GLOBAL_ATTRIBUTES>[attribute]}>;
+    writeAttributes<K extends keyof (Attributes & types.GLOBAL_ATTRIBUTES)>(attributes: {[attribute in K]: types.AttributesFromDefinition<Attributes & types.GLOBAL_ATTRIBUTES>[attribute]}, opts?: {timeout?: number}): Promise<{[attribute in K]: {id: number, status: 'SUCCESS' | 'FAILURE'}}>
 
-    configureReporting(attributes: AttributeReportingConfiguration<Extract<keyof (Attributes & GLOBAL_ATTRIBUTES), string>>, opts?: {timeout?: number}): Promise<void>;
-    readReportingConfiguration(attributes: ReadonlyArray<Extract<keyof (Attributes & GLOBAL_ATTRIBUTES), string> | number>, opts?: {timeout?: number}): Promise<Array<ReadReportingConfigurationResponse>>;
+    configureReporting(attributes: types.AttributeReportingConfiguration<Extract<keyof (Attributes & types.GLOBAL_ATTRIBUTES), string>>, opts?: {timeout?: number}): Promise<void>;
+    readReportingConfiguration(attributes: ReadonlyArray<Extract<keyof (Attributes & types.GLOBAL_ATTRIBUTES), string> | number>, opts?: {timeout?: number}): Promise<Array<types.ReadReportingConfigurationResponse>>;
 
     discoverAttributes(opts?: {timeout?: number}): Promise<Array<string | number>>;
-    discoverAttributesExtended(opts?: {timeout?: number}): Promise<Array<ExtendedAttributesResponse>>;
+    discoverAttributesExtended(opts?: {timeout?: number}): Promise<Array<types.ExtendedAttributesResponse>>;
 
     sendFrame(data: object): Promise<void>;
     nextSeqNr(): number;
 
     static addCluster(clusterClass: typeof Cluster<any, any>): void;
     static removeCluster(clusterIdOrName: string | number): void;
-    static getCluster<Attributes extends AttributeDefinitions, Commands extends CommandDefinitions>(clusterIdOrName: string | number): Cluster<Attributes, Commands>;
+    static getCluster<Attributes extends types.AttributeDefinitions, Commands extends types.CommandDefinitions>(clusterIdOrName: string | number): Cluster<Attributes, Commands>;
 
-    on<Event extends Extract<keyof Attributes, string>>(eventName: `attr.${Event}`, listener: (value: AttributesFromDefinition<Attributes>[Event]) => void): this;
+    on<Event extends Extract<keyof Attributes, string>>(eventName: `attr.${Event}`, listener: (value: types.AttributesFromDefinition<Attributes>[Event]) => void): this;
     on<Values extends Array<any> = unknown[]>(eventName: string, listener: (...args: Values) => void): this;
 
-    attributes: Attributes & GLOBAL_ATTRIBUTES;
-    attributesById: {[Attribute in keyof (Attributes & GLOBAL_ATTRIBUTES) as (Attributes & GLOBAL_ATTRIBUTES)[Attribute]['id']]: { name: Attribute } & (Attributes & GLOBAL_ATTRIBUTES)[Attribute] };
+    attributes: Attributes & types.GLOBAL_ATTRIBUTES;
+    attributesById: {[Attribute in keyof (Attributes & types.GLOBAL_ATTRIBUTES) as (Attributes & types.GLOBAL_ATTRIBUTES)[Attribute]['id']]: { name: Attribute } & (Attributes & types.GLOBAL_ATTRIBUTES)[Attribute] };
 
-    commands: Commands & GLOBAL_COMMANDS;
+    commands: Commands & types.GLOBAL_COMMANDS;
     commandsById: {[Command in keyof Commands as Commands[Command]['id']]: Array<{name: Command} & Commands[Command]>}; // Adding the global commands here results in types too big for TypeScript
   }
 
@@ -2619,298 +2611,307 @@ declare module "zigbee-clusters" {
 
     get logId(): string;
   }
-}
 
-type ZCLDataTypes = import('zigbee-clusters').ZCLDataTypes;
-type ZCLDataType<Value> = import('zigbee-clusters').ZCLDataType<Value>;
-type ZCLStruct<Defs extends Record<string, ZCLDataType<any>>> = import('@athombv/data-types').StructInstance<Defs>
+  namespace types {
+    type FrameControlFlag =
+      'clusterSpecific'
+      | 'manufacturerSpecific'
+      | 'directionToClient'
+      | 'disableDefaultResponse';
+    type ZCLFrameControlBitmap = ZCLDataType<BitMap<FrameControlFlag>>;
 
-type GLOBAL_ATTRIBUTES = {
-  clusterRevision: { id: 0xfffd, type: ZCLDataTypes["uint16"] },
-  attributeReportingStatus: {
-    id: 0xfffe,
-    type: ZCLDataType<"PENDING" | "COMPLETE">
-  }
-};
+    type ZCLEnum8Status = 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER';
 
-type GLOBAL_COMMANDS = {
-  readAttributes: {
-    id: 0x00,
-    args: {
-      attributes: ZCLDataType<Array<number>>,
-    },
-    response: {
-      id: 0x01,
-      args: {
-        attributes: ZCLDataTypes["buffer"],
+    type GLOBAL_ATTRIBUTES = {
+      clusterRevision: { id: 0xfffd, type: ZCLDataTypes["uint16"] },
+      attributeReportingStatus: {
+        id: 0xfffe,
+        type: ZCLDataType<"PENDING" | "COMPLETE">
+      }
+    };
+
+    type GLOBAL_COMMANDS = {
+      readAttributes: {
+        id: 0x00,
+        args: {
+          attributes: ZCLDataType<Array<number>>,
+        },
+        response: {
+          id: 0x01,
+          args: {
+            attributes: ZCLDataTypes["buffer"],
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  writeAttributes: {
-    id: 0x02,
-    args: {
-      attributes: ZCLDataTypes["buffer"],
-    },
-    response: {
-      id: 0x04,
-      args: {
-        attributes: ZCLDataType<Array<ZCLStruct<{
+      writeAttributes: {
+        id: 0x02,
+        args: {
+          attributes: ZCLDataTypes["buffer"],
+        },
+        response: {
+          id: 0x04,
+          args: {
+            attributes: ZCLDataType<Array<ZCLStructInstance<{
+              status: ZCLDataTypes["enum8Status"],
+              id: ZCLDataTypes["uint16"]
+            }>>>
+          },
+        },
+        global: true,
+      },
+
+      writeAttributesAtomic: {
+        id: 0x03,
+        args: {
+          attributes: ZCLDataTypes["buffer"],
+        },
+        response: {
+          id: 0x04,
+          args: {
+            attributes: ZCLDataType<Array<ZCLStructInstance<{
+              status: ZCLDataTypes["enum8Status"],
+              id: ZCLDataTypes["uint16"]
+            }>>>
+          },
+        },
+        global: true,
+      },
+
+      writeAttributesNoResponse: {
+        id: 0x05,
+        args: {
+          attributes: ZCLDataTypes["buffer"],
+        },
+        global: true,
+      },
+
+      configureReporting: {
+        id: 0x06,
+        args: {
+          reports: ReturnType<typeof zclFrames.ZCLConfigureReportingRecords>,
+        },
+        response: {
+          id: 0x07,
+          args: {
+            reports: ZCLDataType<Array<ZCLStructInstance<{
+              status: ZCLDataTypes["enum8Status"],
+              direction: ZCLDataType<"reported" | "received">
+              attributeId: ZCLDataTypes["uint16"]
+            }>>>
+          },
+        },
+        global: true,
+      },
+
+      readReportingConfiguration: {
+        id: 0x08,
+        args: {
+          attributes: ZCLDataType<Array<ZCLStructInstance<{
+            direction: ZCLDataType<"reported" | "received">
+            attributeId: ZCLDataTypes["uint16"]
+          }>>>,
+        },
+        response: {
+          id: 0x09,
+          args: {
+            reports: ReturnType<typeof zclFrames.ZCLConfigureReportingRecords>,
+          },
+        },
+        global: true,
+      },
+
+      reportAttributes: {
+        id: 0x0A,
+        args: {
+          attributes: ZCLDataTypes["buffer"],
+        },
+        global: true,
+      },
+
+      defaultResponse: {
+        id: 0x0B,
+        args: {
+          cmdId: ZCLDataTypes["uint8"],
           status: ZCLDataTypes["enum8Status"],
-          id: ZCLDataTypes["uint16"]
-        }>>>
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  writeAttributesAtomic: {
-    id: 0x03,
-    args: {
-      attributes: ZCLDataTypes["buffer"],
-    },
-    response: {
-      id: 0x04,
-      args: {
-        attributes: ZCLDataType<Array<ZCLStruct<{
-          status: ZCLDataTypes["enum8Status"],
-          id: ZCLDataTypes["uint16"]
-        }>>>
+      discoverAttributes: {
+        id: 0x0C,
+        args: {
+          startValue: ZCLDataTypes["uint16"],
+          maxResults: ZCLDataTypes["uint8"],
+        },
+        response: {
+          id: 0x0D,
+          args: {
+            lastResponse: ZCLDataTypes["bool"],
+            attributes: ZCLDataType<Array<ZCLStructInstance<{
+              id: ZCLDataTypes["uint16"],
+              dataTypeId: ZCLDataTypes["uint8"],
+            }>>>,
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  writeAttributesNoResponse: {
-    id: 0x05,
-    args: {
-      attributes: ZCLDataTypes["buffer"],
-    },
-    global: true,
-  },
-
-  configureReporting: {
-    id: 0x06,
-    args: {
-      reports: ReturnType<typeof import('zigbee-clusters').zclFrames.ZCLConfigureReportingRecords>,
-    },
-    response: {
-      id: 0x07,
-      args: {
-        reports: ZCLDataType<Array<ZCLStruct<{
-          status: ZCLDataTypes["enum8Status"],
-          direction: ZCLDataType<"reported" | "received">
-          attributeId: ZCLDataTypes["uint16"]
-        }>>>
+      readAttributesStructured: {
+        id: 0x0E,
+        args: {
+          attributes: ZCLDataType<Array<ZCLStructInstance<{
+            attributeId: ZCLDataTypes["uint16"],
+            indexPath: ZCLDataType<Array<ZCLDataTypes["uint16"]>>,
+          }>>>,
+        },
+        response: {
+          id: 0x01,
+          args: {
+            attributes: ZCLDataTypes["buffer"],
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  readReportingConfiguration: {
-    id: 0x08,
-    args: {
-      attributes: ZCLDataType<Array<ZCLStruct<{
-        direction: ZCLDataType<"reported" | "received">
-        attributeId: ZCLDataTypes["uint16"]
-      }>>>,
-    },
-    response: {
-      id: 0x09,
-      args: {
-        reports: ReturnType<typeof import('zigbee-clusters').zclFrames.ZCLConfigureReportingRecords>,
+      writeAttributesStructured: {
+        id: 0x0F,
+        args: {
+          attributes: ZCLDataType<Array<ZCLStructInstance<{
+            attributeId: ZCLDataTypes["uint16"],
+            indexPath: ZCLDataType<Array<ZCLDataTypes["uint16"]>>,
+            dataTypeId: ZCLDataTypes["uint8"],
+            value: ZCLDataTypes["buffer"],
+          }>>>,
+        },
+        response: {
+          id: 0x10,
+          args: {
+            attributes: ZCLDataTypes["buffer"],
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  reportAttributes: {
-    id: 0x0A,
-    args: {
-      attributes: ZCLDataTypes["buffer"],
-    },
-    global: true,
-  },
-
-  defaultResponse: {
-    id: 0x0B,
-    args: {
-      cmdId: ZCLDataTypes["uint8"],
-      status: ZCLDataTypes["enum8Status"],
-    },
-    global: true,
-  },
-
-  discoverAttributes: {
-    id: 0x0C,
-    args: {
-      startValue: ZCLDataTypes["uint16"],
-      maxResults: ZCLDataTypes["uint8"],
-    },
-    response: {
-      id: 0x0D,
-      args: {
-        lastResponse: ZCLDataTypes["bool"],
-        attributes: ZCLDataType<Array<ZCLStruct<{
-          id: ZCLDataTypes["uint16"],
-          dataTypeId: ZCLDataTypes["uint8"],
-        }>>>,
+      discoverCommandsReceived: {
+        id: 0x11,
+        args: {
+          startValue: ZCLDataTypes["uint8"],
+          maxResults: ZCLDataTypes["uint8"],
+        },
+        response: {
+          id: 0x12,
+          args: {
+            lastResponse: ZCLDataTypes["bool"],
+            commandIds: ZCLDataType<Array<ZCLDataTypes["uint8"]>>,
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  readAttributesStructured: {
-    id: 0x0E,
-    args: {
-      attributes: ZCLDataType<Array<ZCLStruct<{
-        attributeId: ZCLDataTypes["uint16"],
-        indexPath: ZCLDataType<Array<ZCLDataTypes["uint16"]>>,
-      }>>>,
-    },
-    response: {
-      id: 0x01,
-      args: {
-        attributes: ZCLDataTypes["buffer"],
+      discoverCommandsGenerated: {
+        id: 0x13,
+        args: {
+          startValue: ZCLDataTypes["uint8"],
+          maxResults: ZCLDataTypes["uint8"],
+        },
+        response: {
+          id: 0x14,
+          args: {
+            lastResponse: ZCLDataTypes["bool"],
+            commandIds: ZCLDataType<Array<ZCLDataTypes["uint8"]>>,
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  writeAttributesStructured: {
-    id: 0x0F,
-    args: {
-      attributes: ZCLDataType<Array<ZCLStruct<{
-        attributeId: ZCLDataTypes["uint16"],
-        indexPath: ZCLDataType<Array<ZCLDataTypes["uint16"]>>,
-        dataTypeId: ZCLDataTypes["uint8"],
-        value: ZCLDataTypes["buffer"],
-      }>>>,
-    },
-    response: {
-      id: 0x10,
-      args: {
-        attributes: ZCLDataTypes["buffer"],
+      discoverAttributesExtended: {
+        id: 0x15,
+        args: {
+          startValue: ZCLDataTypes["uint16"],
+          maxResults: ZCLDataTypes["uint8"],
+        },
+        response: {
+          id: 0x16,
+          args: {
+            lastResponse: ZCLDataTypes["bool"],
+            attributes: ZCLDataType<Array<ZCLStructInstance<{
+              id: ZCLDataTypes["uint16"],
+              dataTypeId: ZCLDataTypes["uint8"],
+              acl: ZCLDataType<import('@athombv/data-types').BitMap<'readable' | 'writable' | 'reportable'>>,
+            }>>>,
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
+    };
 
-  discoverCommandsReceived: {
-    id: 0x11,
-    args: {
-      startValue: ZCLDataTypes["uint8"],
-      maxResults: ZCLDataTypes["uint8"],
-    },
-    response: {
-      id: 0x12,
-      args: {
-        lastResponse: ZCLDataTypes["bool"],
-        commandIds: ZCLDataType<Array<ZCLDataTypes["uint8"]>>,
-      },
-    },
-    global: true,
-  },
+    type ZCLStructInstance<Defs extends Record<string, ZCLDataType<any>>> = import('@athombv/data-types').StructInstance<Defs>
 
-  discoverCommandsGenerated: {
-    id: 0x13,
-    args: {
-      startValue: ZCLDataTypes["uint8"],
-      maxResults: ZCLDataTypes["uint8"],
-    },
-    response: {
-      id: 0x14,
-      args: {
-        lastResponse: ZCLDataTypes["bool"],
-        commandIds: ZCLDataType<Array<ZCLDataTypes["uint8"]>>,
-      },
-    },
-    global: true,
-  },
+    type CommandToServerDirection = 'DIRECTION_CLIENT_TO_SERVER';
+    type CommandToClientDirection = 'DIRECTION_SERVER_TO_CLIENT';
+    type CommandDirection = CommandToServerDirection | CommandToClientDirection;
 
-  discoverAttributesExtended: {
-    id: 0x15,
-    args: {
-      startValue: ZCLDataTypes["uint16"],
-      maxResults: ZCLDataTypes["uint8"],
-    },
-    response: {
-      id: 0x16,
-      args: {
-        lastResponse: ZCLDataTypes["bool"],
-        attributes: ZCLDataType<Array<ZCLStruct<{
-          id: ZCLDataTypes["uint16"],
-          dataTypeId: ZCLDataTypes["uint8"],
-          acl: ZCLDataType<import('@athombv/data-types').BitMap<'readable' | 'writable' | 'reportable'>>,
-        }>>>,
-      },
-    },
-    global: true,
-  },
-};
+    type FromZCLDataType<DataType> = DataType extends ZCLDataType<infer InferredValue>? InferredValue : DataType;
 
-type CommandToServerDirection = 'DIRECTION_CLIENT_TO_SERVER';
-type CommandToClientDirection = 'DIRECTION_SERVER_TO_CLIENT';
-type CommandDirection = CommandToServerDirection | CommandToClientDirection;
+    type AttributeDefinition = {
+      id: number,
+      type: ZCLDataType<any>,
+      manufacturerId?: number,
+    }
 
-type FromZCLDataType<DataType> = DataType extends import('zigbee-clusters').ZCLDataType<infer InferredValue>? InferredValue : DataType;
+    type AttributeDefinitions = {
+      [attributeName: string]: AttributeDefinition,
+    }
 
-type AttributeDefinition = {
-  id: number,
-  type: import('zigbee-clusters').ZCLDataType<any>,
-  manufacturerId?: number,
-}
+    type AttributesFromDefinition<Definition extends AttributeDefinitions> = {
+      [attribute in keyof Definition]: FromZCLDataType<Definition[attribute]['type']>
+    }
 
-type AttributeDefinitions = {
-  [attributeName: string]: AttributeDefinition,
-}
+    type CommandDefinition = {
+      id: number,
+      direction?: CommandDirection,
+      args?: {
+        [argName: string]: ZCLDataType<any>,
+      }
+      response?: CommandDefinition,
+      frameControl?: FrameControlFlag[];
+      encodeMissingFieldsBehavior?: 'default' | 'skip';
+      global?: boolean;
+    }
 
-type AttributesFromDefinition<Definition extends AttributeDefinitions> = {
-  [attribute in keyof Definition]: FromZCLDataType<Definition[attribute]['type']>
-}
+    type CommandDefinitions = {
+      [commandName: string]: CommandDefinition,
+    }
 
-type CommandDefinition = {
-  id: number,
-  direction?: CommandDirection,
-  args?: {
-    [argName: string]: import('zigbee-clusters').ZCLDataType<any>,
-  }
-  response?: CommandDefinition,
-  frameControl?: import('zigbee-clusters').FrameControlFlag[];
-  encodeMissingFieldsBehavior?: 'default' | 'skip';
-  global?: boolean;
-}
+    type AttributeReportingConfiguration<AttributeKey extends string> = {
+      [attribute in AttributeKey]: {
+        minInterval?: number,
+        maxInterval?: number,
+        minChange?: number
+      }
+    }
 
-type CommandDefinitions = {
-  [commandName: string]: CommandDefinition,
-}
+    type ReadReportingConfigurationResponse = {
+      status: ZCLEnum8Status,
+      direction: 'reported'|'received';
+      attributeId: number;
+      attributeDataType?: number;
+      minInterval?: number;
+      maxInterval?: number;
+      minChange?: number;
+      timeoutPeriod?: number;
+    }
 
-type AttributeReportingConfiguration<AttributeKey extends string> = {
-  [attribute in AttributeKey]: {
-    minInterval?: number,
-    maxInterval?: number,
-    minChange?: number
-  }
-}
-
-type ReadReportingConfigurationResponse = {
-  status: import('zigbee-clusters').ZCLEnum8Status,
-  direction: 'reported'|'received';
-  attributeId: number;
-  attributeDataType?: number;
-  minInterval?: number;
-  maxInterval?: number;
-  minChange?: number;
-  timeoutPeriod?: number;
-}
-
-type ExtendedAttributesResponse = {
-  name?: string;
-  id: number;
-  acl: {
-    readable: boolean;
-    writable: boolean;
-    reportable: boolean;
+    type ExtendedAttributesResponse = {
+      name?: string;
+      id: number;
+      acl: {
+        readable: boolean;
+        writable: boolean;
+        reportable: boolean;
+      }
+    }
   }
 }

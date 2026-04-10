@@ -2,9 +2,8 @@
 declare module 'zigbee-clusters' {
   import {EventEmitter} from "events";
   import {ZigBeeNode} from "homey";
-  type ZCLEnum8Status = 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER';
   type ZCLDataTypes = typeof import('@athombv/data-types').DataTypes & {
-    enum8Status: ZCLDataType<ZCLEnum8Status>
+    enum8Status: ZCLDataType<types.ZCLEnum8Status>
   };
 
   function debug(flag: boolean, namespaces: string): void;
@@ -28,7 +27,7 @@ declare module 'zigbee-clusters' {
     bind(clusterName: string, clusterImpl: BoundCluster): void;
     unbind(clusterName: string): void;
 
-    makeDefaultResponseFrame(receivedFrame: unknown, success: boolean, status: ZCLEnum8Status): typeof zclFrames.ZCLStandardHeader | typeof zclFrames.ZCLMfgSpecificHeader;
+    makeDefaultResponseFrame(receivedFrame: unknown, success: boolean, status: types.ZCLEnum8Status): typeof zclFrames.ZCLStandardHeader | typeof zclFrames.ZCLMfgSpecificHeader;
   }
 
   type ZCLDataType<Value> = import('@athombv/data-types').DataType<Value>;
@@ -41,36 +40,29 @@ declare module 'zigbee-clusters' {
     const ZCLStruct: typeof import('@athombv/data-types').Struct;
   }
 
-  type FrameControlFlag =
-    'clusterSpecific'
-    | 'manufacturerSpecific'
-    | 'directionToClient'
-    | 'disableDefaultResponse';
-  type ZCLFrameControlBitmap = ZCLDataType<BitMap<FrameControlFlag>>;
-
   namespace zclFrames {
     const ZCLStandardHeader: import('@athombv/data-types').StaticStruct<{
-      frameControl: ZCLFrameControlBitmap,
+      frameControl: types.ZCLFrameControlBitmap,
       trxSequenceNumber: ZCLDataTypes["data8"],
       cmdId: ZCLDataTypes["data8"],
       data: ZCLDataTypes["buffer"],
     }>;
     const ZCLMfgSpecificHeader: import('@athombv/data-types').StaticStruct<{
-      frameControl: ZCLFrameControlBitmap,
+      frameControl: types.ZCLFrameControlBitmap,
       manufacturerId: ZCLDataTypes["uint16"],
       trxSequenceNumber: ZCLDataTypes["data8"],
       cmdId: ZCLDataTypes["data8"],
       data: ZCLDataTypes["buffer"],
     }>;
-    function ZCLAttributeDataRecord(withStatus: boolean, attributes: AttributeDefinitions): ZCLDataType<{
+    function ZCLAttributeDataRecord(withStatus: boolean, attributes: types.AttributeDefinitions): ZCLDataType<{
       id: number,
       name?: string,
-      status?: ZCLEnum8Status
+      status?: types.ZCLEnum8Status
       value?: ZCLDataType<any>
     }>;
     function ZCLConfigureReportingRecords({ withStatus }: {withStatus?: boolean}): ZCLDataType<Array<{
       attributeId: number,
-      status?: ZCLEnum8Status,
+      status?: types.ZCLEnum8Status,
       direction: 'reported' | 'received',
       attributeDataType?: number,
       minInterval?: number,
@@ -81,7 +73,7 @@ declare module 'zigbee-clusters' {
   }
 
   class ZCLError extends Error {
-    zclStatus: ZCLEnum8Status;
+    zclStatus: types.ZCLEnum8Status;
   }
 
   const ZIGBEE_PROFILE_ID: {
@@ -163,7 +155,7 @@ declare module 'zigbee-clusters' {
     INVALID_ZONE_TYPE: 0xffff,
   };
 
-  abstract class Cluster<Attributes extends AttributeDefinitions, Commands extends CommandDefinitions> extends EventEmitter {
+  abstract class Cluster<Attributes extends types.AttributeDefinitions, Commands extends types.CommandDefinitions> extends EventEmitter {
     static get ID(): number;
     static get NAME(): string;
     // @ts-expect-error Type should be defined on non-abstract inheritors
@@ -171,37 +163,37 @@ declare module 'zigbee-clusters' {
     // @ts-expect-error Type should be defined on non-abstract inheritors
     static get COMMANDS(): Commands;
 
-    static DIRECTION_SERVER_TO_CLIENT: CommandToClientDirection;
-    static DIRECTION_CLIENT_TO_SERVER: CommandToServerDirection;
+    static DIRECTION_SERVER_TO_CLIENT: types.CommandToClientDirection;
+    static DIRECTION_CLIENT_TO_SERVER: types.CommandToServerDirection;
 
     get logId(): string;
 
     discoverCommandsGenerated({startValue, maxResults}?: {startValue?: number, maxResults?: number}, opts?: {timeout?: number}): Promise<Array<number>>;
     discoverCommandsReceived({startValue, maxResults}?: {startValue?: number, maxResults?: number}, opts?: {timeout?: number}): Promise<Array<number>>;
 
-    readAttributes<K extends keyof (Attributes & GLOBAL_ATTRIBUTES) | number>(attributes: ReadonlyArray<K>, opts?: {timeout?: number}): Promise<{[attribute in K]: AttributesFromDefinition<Attributes & GLOBAL_ATTRIBUTES>[attribute]}>;
-    writeAttributes<K extends keyof (Attributes & GLOBAL_ATTRIBUTES)>(attributes: {[attribute in K]: AttributesFromDefinition<Attributes & GLOBAL_ATTRIBUTES>[attribute]}, opts?: {timeout?: number}): Promise<{[attribute in K]: {id: number, status: 'SUCCESS' | 'FAILURE'}}>
+    readAttributes<K extends keyof (Attributes & types.GLOBAL_ATTRIBUTES) | number>(attributes: ReadonlyArray<K>, opts?: {timeout?: number}): Promise<{[attribute in K]: types.AttributesFromDefinition<Attributes & types.GLOBAL_ATTRIBUTES>[attribute]}>;
+    writeAttributes<K extends keyof (Attributes & types.GLOBAL_ATTRIBUTES)>(attributes: {[attribute in K]: types.AttributesFromDefinition<Attributes & types.GLOBAL_ATTRIBUTES>[attribute]}, opts?: {timeout?: number}): Promise<{[attribute in K]: {id: number, status: 'SUCCESS' | 'FAILURE'}}>
 
-    configureReporting(attributes: AttributeReportingConfiguration<Extract<keyof (Attributes & GLOBAL_ATTRIBUTES), string>>, opts?: {timeout?: number}): Promise<void>;
-    readReportingConfiguration(attributes: ReadonlyArray<Extract<keyof (Attributes & GLOBAL_ATTRIBUTES), string> | number>, opts?: {timeout?: number}): Promise<Array<ReadReportingConfigurationResponse>>;
+    configureReporting(attributes: types.AttributeReportingConfiguration<Extract<keyof (Attributes & types.GLOBAL_ATTRIBUTES), string>>, opts?: {timeout?: number}): Promise<void>;
+    readReportingConfiguration(attributes: ReadonlyArray<Extract<keyof (Attributes & types.GLOBAL_ATTRIBUTES), string> | number>, opts?: {timeout?: number}): Promise<Array<types.ReadReportingConfigurationResponse>>;
 
     discoverAttributes(opts?: {timeout?: number}): Promise<Array<string | number>>;
-    discoverAttributesExtended(opts?: {timeout?: number}): Promise<Array<ExtendedAttributesResponse>>;
+    discoverAttributesExtended(opts?: {timeout?: number}): Promise<Array<types.ExtendedAttributesResponse>>;
 
     sendFrame(data: object): Promise<void>;
     nextSeqNr(): number;
 
     static addCluster(clusterClass: typeof Cluster<any, any>): void;
     static removeCluster(clusterIdOrName: string | number): void;
-    static getCluster<Attributes extends AttributeDefinitions, Commands extends CommandDefinitions>(clusterIdOrName: string | number): Cluster<Attributes, Commands>;
+    static getCluster<Attributes extends types.AttributeDefinitions, Commands extends types.CommandDefinitions>(clusterIdOrName: string | number): Cluster<Attributes, Commands>;
 
-    on<Event extends Extract<keyof Attributes, string>>(eventName: `attr.${Event}`, listener: (value: AttributesFromDefinition<Attributes>[Event]) => void): this;
+    on<Event extends Extract<keyof Attributes, string>>(eventName: `attr.${Event}`, listener: (value: types.AttributesFromDefinition<Attributes>[Event]) => void): this;
     on<Values extends Array<any> = unknown[]>(eventName: string, listener: (...args: Values) => void): this;
 
-    attributes: Attributes & GLOBAL_ATTRIBUTES;
-    attributesById: {[Attribute in keyof (Attributes & GLOBAL_ATTRIBUTES) as (Attributes & GLOBAL_ATTRIBUTES)[Attribute]['id']]: { name: Attribute } & (Attributes & GLOBAL_ATTRIBUTES)[Attribute] };
+    attributes: Attributes & types.GLOBAL_ATTRIBUTES;
+    attributesById: {[Attribute in keyof (Attributes & types.GLOBAL_ATTRIBUTES) as (Attributes & types.GLOBAL_ATTRIBUTES)[Attribute]['id']]: { name: Attribute } & (Attributes & types.GLOBAL_ATTRIBUTES)[Attribute] };
 
-    commands: Commands & GLOBAL_COMMANDS;
+    commands: Commands & types.GLOBAL_COMMANDS;
     commandsById: {[Command in keyof Commands as Commands[Command]['id']]: Array<{name: Command} & Commands[Command]>}; // Adding the global commands here results in types too big for TypeScript
   }
 
@@ -212,298 +204,307 @@ declare module 'zigbee-clusters' {
 
     get logId(): string;
   }
-}
 
-type ZCLDataTypes = import('zigbee-clusters').ZCLDataTypes;
-type ZCLDataType<Value> = import('zigbee-clusters').ZCLDataType<Value>;
-type ZCLStruct<Defs extends Record<string, ZCLDataType<any>>> = import('@athombv/data-types').StructInstance<Defs>
+  namespace types {
+    type FrameControlFlag =
+      'clusterSpecific'
+      | 'manufacturerSpecific'
+      | 'directionToClient'
+      | 'disableDefaultResponse';
+    type ZCLFrameControlBitmap = ZCLDataType<BitMap<FrameControlFlag>>;
 
-type GLOBAL_ATTRIBUTES = {
-  clusterRevision: { id: 0xfffd, type: ZCLDataTypes["uint16"] },
-  attributeReportingStatus: {
-    id: 0xfffe,
-    type: ZCLDataType<"PENDING" | "COMPLETE">
-  }
-};
+    type ZCLEnum8Status = 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER';
 
-type GLOBAL_COMMANDS = {
-  readAttributes: {
-    id: 0x00,
-    args: {
-      attributes: ZCLDataType<Array<number>>,
-    },
-    response: {
-      id: 0x01,
-      args: {
-        attributes: ZCLDataTypes["buffer"],
+    type GLOBAL_ATTRIBUTES = {
+      clusterRevision: { id: 0xfffd, type: ZCLDataTypes["uint16"] },
+      attributeReportingStatus: {
+        id: 0xfffe,
+        type: ZCLDataType<"PENDING" | "COMPLETE">
+      }
+    };
+
+    type GLOBAL_COMMANDS = {
+      readAttributes: {
+        id: 0x00,
+        args: {
+          attributes: ZCLDataType<Array<number>>,
+        },
+        response: {
+          id: 0x01,
+          args: {
+            attributes: ZCLDataTypes["buffer"],
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  writeAttributes: {
-    id: 0x02,
-    args: {
-      attributes: ZCLDataTypes["buffer"],
-    },
-    response: {
-      id: 0x04,
-      args: {
-        attributes: ZCLDataType<Array<ZCLStruct<{
+      writeAttributes: {
+        id: 0x02,
+        args: {
+          attributes: ZCLDataTypes["buffer"],
+        },
+        response: {
+          id: 0x04,
+          args: {
+            attributes: ZCLDataType<Array<ZCLStructInstance<{
+              status: ZCLDataTypes["enum8Status"],
+              id: ZCLDataTypes["uint16"]
+            }>>>
+          },
+        },
+        global: true,
+      },
+
+      writeAttributesAtomic: {
+        id: 0x03,
+        args: {
+          attributes: ZCLDataTypes["buffer"],
+        },
+        response: {
+          id: 0x04,
+          args: {
+            attributes: ZCLDataType<Array<ZCLStructInstance<{
+              status: ZCLDataTypes["enum8Status"],
+              id: ZCLDataTypes["uint16"]
+            }>>>
+          },
+        },
+        global: true,
+      },
+
+      writeAttributesNoResponse: {
+        id: 0x05,
+        args: {
+          attributes: ZCLDataTypes["buffer"],
+        },
+        global: true,
+      },
+
+      configureReporting: {
+        id: 0x06,
+        args: {
+          reports: ReturnType<typeof zclFrames.ZCLConfigureReportingRecords>,
+        },
+        response: {
+          id: 0x07,
+          args: {
+            reports: ZCLDataType<Array<ZCLStructInstance<{
+              status: ZCLDataTypes["enum8Status"],
+              direction: ZCLDataType<"reported" | "received">
+              attributeId: ZCLDataTypes["uint16"]
+            }>>>
+          },
+        },
+        global: true,
+      },
+
+      readReportingConfiguration: {
+        id: 0x08,
+        args: {
+          attributes: ZCLDataType<Array<ZCLStructInstance<{
+            direction: ZCLDataType<"reported" | "received">
+            attributeId: ZCLDataTypes["uint16"]
+          }>>>,
+        },
+        response: {
+          id: 0x09,
+          args: {
+            reports: ReturnType<typeof zclFrames.ZCLConfigureReportingRecords>,
+          },
+        },
+        global: true,
+      },
+
+      reportAttributes: {
+        id: 0x0A,
+        args: {
+          attributes: ZCLDataTypes["buffer"],
+        },
+        global: true,
+      },
+
+      defaultResponse: {
+        id: 0x0B,
+        args: {
+          cmdId: ZCLDataTypes["uint8"],
           status: ZCLDataTypes["enum8Status"],
-          id: ZCLDataTypes["uint16"]
-        }>>>
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  writeAttributesAtomic: {
-    id: 0x03,
-    args: {
-      attributes: ZCLDataTypes["buffer"],
-    },
-    response: {
-      id: 0x04,
-      args: {
-        attributes: ZCLDataType<Array<ZCLStruct<{
-          status: ZCLDataTypes["enum8Status"],
-          id: ZCLDataTypes["uint16"]
-        }>>>
+      discoverAttributes: {
+        id: 0x0C,
+        args: {
+          startValue: ZCLDataTypes["uint16"],
+          maxResults: ZCLDataTypes["uint8"],
+        },
+        response: {
+          id: 0x0D,
+          args: {
+            lastResponse: ZCLDataTypes["bool"],
+            attributes: ZCLDataType<Array<ZCLStructInstance<{
+              id: ZCLDataTypes["uint16"],
+              dataTypeId: ZCLDataTypes["uint8"],
+            }>>>,
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  writeAttributesNoResponse: {
-    id: 0x05,
-    args: {
-      attributes: ZCLDataTypes["buffer"],
-    },
-    global: true,
-  },
-
-  configureReporting: {
-    id: 0x06,
-    args: {
-      reports: ReturnType<typeof import('zigbee-clusters').zclFrames.ZCLConfigureReportingRecords>,
-    },
-    response: {
-      id: 0x07,
-      args: {
-        reports: ZCLDataType<Array<ZCLStruct<{
-          status: ZCLDataTypes["enum8Status"],
-          direction: ZCLDataType<"reported" | "received">
-          attributeId: ZCLDataTypes["uint16"]
-        }>>>
+      readAttributesStructured: {
+        id: 0x0E,
+        args: {
+          attributes: ZCLDataType<Array<ZCLStructInstance<{
+            attributeId: ZCLDataTypes["uint16"],
+            indexPath: ZCLDataType<Array<ZCLDataTypes["uint16"]>>,
+          }>>>,
+        },
+        response: {
+          id: 0x01,
+          args: {
+            attributes: ZCLDataTypes["buffer"],
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  readReportingConfiguration: {
-    id: 0x08,
-    args: {
-      attributes: ZCLDataType<Array<ZCLStruct<{
-        direction: ZCLDataType<"reported" | "received">
-        attributeId: ZCLDataTypes["uint16"]
-      }>>>,
-    },
-    response: {
-      id: 0x09,
-      args: {
-        reports: ReturnType<typeof import('zigbee-clusters').zclFrames.ZCLConfigureReportingRecords>,
+      writeAttributesStructured: {
+        id: 0x0F,
+        args: {
+          attributes: ZCLDataType<Array<ZCLStructInstance<{
+            attributeId: ZCLDataTypes["uint16"],
+            indexPath: ZCLDataType<Array<ZCLDataTypes["uint16"]>>,
+            dataTypeId: ZCLDataTypes["uint8"],
+            value: ZCLDataTypes["buffer"],
+          }>>>,
+        },
+        response: {
+          id: 0x10,
+          args: {
+            attributes: ZCLDataTypes["buffer"],
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  reportAttributes: {
-    id: 0x0A,
-    args: {
-      attributes: ZCLDataTypes["buffer"],
-    },
-    global: true,
-  },
-
-  defaultResponse: {
-    id: 0x0B,
-    args: {
-      cmdId: ZCLDataTypes["uint8"],
-      status: ZCLDataTypes["enum8Status"],
-    },
-    global: true,
-  },
-
-  discoverAttributes: {
-    id: 0x0C,
-    args: {
-      startValue: ZCLDataTypes["uint16"],
-      maxResults: ZCLDataTypes["uint8"],
-    },
-    response: {
-      id: 0x0D,
-      args: {
-        lastResponse: ZCLDataTypes["bool"],
-        attributes: ZCLDataType<Array<ZCLStruct<{
-          id: ZCLDataTypes["uint16"],
-          dataTypeId: ZCLDataTypes["uint8"],
-        }>>>,
+      discoverCommandsReceived: {
+        id: 0x11,
+        args: {
+          startValue: ZCLDataTypes["uint8"],
+          maxResults: ZCLDataTypes["uint8"],
+        },
+        response: {
+          id: 0x12,
+          args: {
+            lastResponse: ZCLDataTypes["bool"],
+            commandIds: ZCLDataType<Array<ZCLDataTypes["uint8"]>>,
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  readAttributesStructured: {
-    id: 0x0E,
-    args: {
-      attributes: ZCLDataType<Array<ZCLStruct<{
-        attributeId: ZCLDataTypes["uint16"],
-        indexPath: ZCLDataType<Array<ZCLDataTypes["uint16"]>>,
-      }>>>,
-    },
-    response: {
-      id: 0x01,
-      args: {
-        attributes: ZCLDataTypes["buffer"],
+      discoverCommandsGenerated: {
+        id: 0x13,
+        args: {
+          startValue: ZCLDataTypes["uint8"],
+          maxResults: ZCLDataTypes["uint8"],
+        },
+        response: {
+          id: 0x14,
+          args: {
+            lastResponse: ZCLDataTypes["bool"],
+            commandIds: ZCLDataType<Array<ZCLDataTypes["uint8"]>>,
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
 
-  writeAttributesStructured: {
-    id: 0x0F,
-    args: {
-      attributes: ZCLDataType<Array<ZCLStruct<{
-        attributeId: ZCLDataTypes["uint16"],
-        indexPath: ZCLDataType<Array<ZCLDataTypes["uint16"]>>,
-        dataTypeId: ZCLDataTypes["uint8"],
-        value: ZCLDataTypes["buffer"],
-      }>>>,
-    },
-    response: {
-      id: 0x10,
-      args: {
-        attributes: ZCLDataTypes["buffer"],
+      discoverAttributesExtended: {
+        id: 0x15,
+        args: {
+          startValue: ZCLDataTypes["uint16"],
+          maxResults: ZCLDataTypes["uint8"],
+        },
+        response: {
+          id: 0x16,
+          args: {
+            lastResponse: ZCLDataTypes["bool"],
+            attributes: ZCLDataType<Array<ZCLStructInstance<{
+              id: ZCLDataTypes["uint16"],
+              dataTypeId: ZCLDataTypes["uint8"],
+              acl: ZCLDataType<import('@athombv/data-types').BitMap<'readable' | 'writable' | 'reportable'>>,
+            }>>>,
+          },
+        },
+        global: true,
       },
-    },
-    global: true,
-  },
+    };
 
-  discoverCommandsReceived: {
-    id: 0x11,
-    args: {
-      startValue: ZCLDataTypes["uint8"],
-      maxResults: ZCLDataTypes["uint8"],
-    },
-    response: {
-      id: 0x12,
-      args: {
-        lastResponse: ZCLDataTypes["bool"],
-        commandIds: ZCLDataType<Array<ZCLDataTypes["uint8"]>>,
-      },
-    },
-    global: true,
-  },
+    type ZCLStructInstance<Defs extends Record<string, ZCLDataType<any>>> = import('@athombv/data-types').StructInstance<Defs>
 
-  discoverCommandsGenerated: {
-    id: 0x13,
-    args: {
-      startValue: ZCLDataTypes["uint8"],
-      maxResults: ZCLDataTypes["uint8"],
-    },
-    response: {
-      id: 0x14,
-      args: {
-        lastResponse: ZCLDataTypes["bool"],
-        commandIds: ZCLDataType<Array<ZCLDataTypes["uint8"]>>,
-      },
-    },
-    global: true,
-  },
+    type CommandToServerDirection = 'DIRECTION_CLIENT_TO_SERVER';
+    type CommandToClientDirection = 'DIRECTION_SERVER_TO_CLIENT';
+    type CommandDirection = CommandToServerDirection | CommandToClientDirection;
 
-  discoverAttributesExtended: {
-    id: 0x15,
-    args: {
-      startValue: ZCLDataTypes["uint16"],
-      maxResults: ZCLDataTypes["uint8"],
-    },
-    response: {
-      id: 0x16,
-      args: {
-        lastResponse: ZCLDataTypes["bool"],
-        attributes: ZCLDataType<Array<ZCLStruct<{
-          id: ZCLDataTypes["uint16"],
-          dataTypeId: ZCLDataTypes["uint8"],
-          acl: ZCLDataType<import('@athombv/data-types').BitMap<'readable' | 'writable' | 'reportable'>>,
-        }>>>,
-      },
-    },
-    global: true,
-  },
-};
+    type FromZCLDataType<DataType> = DataType extends ZCLDataType<infer InferredValue>? InferredValue : DataType;
 
-type CommandToServerDirection = 'DIRECTION_CLIENT_TO_SERVER';
-type CommandToClientDirection = 'DIRECTION_SERVER_TO_CLIENT';
-type CommandDirection = CommandToServerDirection | CommandToClientDirection;
+    type AttributeDefinition = {
+      id: number,
+      type: ZCLDataType<any>,
+      manufacturerId?: number,
+    }
 
-type FromZCLDataType<DataType> = DataType extends import('zigbee-clusters').ZCLDataType<infer InferredValue>? InferredValue : DataType;
+    type AttributeDefinitions = {
+      [attributeName: string]: AttributeDefinition,
+    }
 
-type AttributeDefinition = {
-  id: number,
-  type: import('zigbee-clusters').ZCLDataType<any>,
-  manufacturerId?: number,
-}
+    type AttributesFromDefinition<Definition extends AttributeDefinitions> = {
+      [attribute in keyof Definition]: FromZCLDataType<Definition[attribute]['type']>
+    }
 
-type AttributeDefinitions = {
-  [attributeName: string]: AttributeDefinition,
-}
+    type CommandDefinition = {
+      id: number,
+      direction?: CommandDirection,
+      args?: {
+        [argName: string]: ZCLDataType<any>,
+      }
+      response?: CommandDefinition,
+      frameControl?: FrameControlFlag[];
+      encodeMissingFieldsBehavior?: 'default' | 'skip';
+      global?: boolean;
+    }
 
-type AttributesFromDefinition<Definition extends AttributeDefinitions> = {
-  [attribute in keyof Definition]: FromZCLDataType<Definition[attribute]['type']>
-}
+    type CommandDefinitions = {
+      [commandName: string]: CommandDefinition,
+    }
 
-type CommandDefinition = {
-  id: number,
-  direction?: CommandDirection,
-  args?: {
-    [argName: string]: import('zigbee-clusters').ZCLDataType<any>,
-  }
-  response?: CommandDefinition,
-  frameControl?: import('zigbee-clusters').FrameControlFlag[];
-  encodeMissingFieldsBehavior?: 'default' | 'skip';
-  global?: boolean;
-}
+    type AttributeReportingConfiguration<AttributeKey extends string> = {
+      [attribute in AttributeKey]: {
+        minInterval?: number,
+        maxInterval?: number,
+        minChange?: number
+      }
+    }
 
-type CommandDefinitions = {
-  [commandName: string]: CommandDefinition,
-}
+    type ReadReportingConfigurationResponse = {
+      status: ZCLEnum8Status,
+      direction: 'reported'|'received';
+      attributeId: number;
+      attributeDataType?: number;
+      minInterval?: number;
+      maxInterval?: number;
+      minChange?: number;
+      timeoutPeriod?: number;
+    }
 
-type AttributeReportingConfiguration<AttributeKey extends string> = {
-  [attribute in AttributeKey]: {
-    minInterval?: number,
-    maxInterval?: number,
-    minChange?: number
-  }
-}
-
-type ReadReportingConfigurationResponse = {
-  status: import('zigbee-clusters').ZCLEnum8Status,
-  direction: 'reported'|'received';
-  attributeId: number;
-  attributeDataType?: number;
-  minInterval?: number;
-  maxInterval?: number;
-  minChange?: number;
-  timeoutPeriod?: number;
-}
-
-type ExtendedAttributesResponse = {
-  name?: string;
-  id: number;
-  acl: {
-    readable: boolean;
-    writable: boolean;
-    reportable: boolean;
+    type ExtendedAttributesResponse = {
+      name?: string;
+      id: number;
+      acl: {
+        readable: boolean;
+        writable: boolean;
+        reportable: boolean;
+      }
+    }
   }
 }

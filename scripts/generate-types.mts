@@ -1,7 +1,7 @@
-import {Cluster} from "zigbee-clusters";
+import type {Cluster, types} from "zigbee-clusters";
 import path from "node:path";
 import * as fs from "node:fs/promises";
-import {DataType, DataTypes} from "@athombv/data-types";
+import type {DataType, DataTypes} from "@athombv/data-types";
 
 const INDENTATION_SPACES = 2;
 
@@ -156,7 +156,7 @@ async function formatCluster(className: string, classDefinition: typeof Cluster)
   }
 
   // Open class
-  stringBuilder.printLine(`class ${className}<Attributes extends AttributeDefinitions = ${className}Attributes, Commands extends CommandDefinitions = ${className}Commands> extends Cluster<Attributes, Commands> {`);
+  stringBuilder.printLine(`class ${className}<Attributes extends types.AttributeDefinitions = ${className}Attributes, Commands extends types.CommandDefinitions = ${className}Commands> extends Cluster<Attributes, Commands> {`);
 
   stringBuilder.increaseIndent();
   for (const command in classDefinition.COMMANDS) {
@@ -172,7 +172,7 @@ async function formatCluster(className: string, classDefinition: typeof Cluster)
 }
 
 
-function formatAttribute(stringBuilder: StringBuilder, className: string, name: string, definition: AttributeDefinition): void {
+function formatAttribute(stringBuilder: StringBuilder, className: string, name: string, definition: types.AttributeDefinition): void {
   stringBuilder.startLine();
   stringBuilder.print(`${name}: { id: 0x${definition.id.toString(16).padStart(2, "0")}`);
   stringBuilder.print(', type: ZCLDataType<');
@@ -182,7 +182,7 @@ function formatAttribute(stringBuilder: StringBuilder, className: string, name: 
 }
 
 
-function formatCommand(stringBuilder: StringBuilder, className: string, name: string, definition: CommandDefinition): void {
+function formatCommand(stringBuilder: StringBuilder, className: string, name: string, definition: types.CommandDefinition): void {
   stringBuilder.startLine();
   stringBuilder.print(`${name}: { id: 0x${definition.id.toString(16).padStart(2, "0")}`);
   stringBuilder.print(`, direction: ${JSON.stringify(definition.direction ?? "DIRECTION_SERVER_TO_CLIENT")}`);
@@ -232,7 +232,7 @@ function formatCommand(stringBuilder: StringBuilder, className: string, name: st
 }
 
 
-function formatCommandMethod(stringBuilder: StringBuilder, className: string, name: string, definition: CommandDefinition): void {
+function formatCommandMethod(stringBuilder: StringBuilder, className: string, name: string, definition: types.CommandDefinition): void {
   // Method name
   stringBuilder.startLine();
   if (definition.direction === 'DIRECTION_SERVER_TO_CLIENT') {
