@@ -4,7 +4,6 @@ const _debug = require('debug');
 
 const ZCLNode = require('./lib/Node');
 const Cluster = require('./lib/Cluster');
-const Clusters = require('./lib/clusters');
 const BoundCluster = require('./lib/BoundCluster');
 const zclTypes = require('./lib/zclTypes');
 const zclFrames = require('./lib/zclFrames');
@@ -47,9 +46,63 @@ const {
 
 const { ZIGBEE_PROFILE_ID, ZIGBEE_DEVICE_ID, IAS_ZONE_TYPE } = require('./lib/constants');
 
+// Required for compatibility with named exports when used with ESM
+const {
+  BasicCluster,
+  PowerConfigurationCluster,
+  DeviceTemperatureCluster,
+  IdentifyCluster,
+  GroupsCluster,
+  ScenesCluster,
+  OnOffCluster,
+  OnOffSwitchCluster,
+  LevelControlCluster,
+  AlarmsCluster,
+  TimeCluster,
+  AnalogInputCluster,
+  AnalogOutputCluster,
+  AnalogValueCluster,
+  BinaryInputCluster,
+  BinaryOutputCluster,
+  BinaryValueCluster,
+  MultistateInputCluster,
+  MultistateOutputCluster,
+  MultistateValueCluster,
+  OTACluster,
+  PowerProfileCluster,
+  PollControlCluster,
+  ShadeConfigurationCluster,
+  DoorLockCluster,
+  WindowCoveringCluster,
+  ThermostatCluster,
+  PumpConfigurationAndControlCluster,
+  FanControlCluster,
+  DehumidificationControlCluster,
+  ColorControlCluster,
+  BallastConfigurationCluster,
+  IlluminanceMeasurementCluster,
+  IlluminanceLevelSensingCluster,
+  TemperatureMeasurementCluster,
+  PressureMeasurementCluster,
+  FlowMeasurementCluster,
+  RelativeHumidityCluster,
+  OccupancySensingCluster,
+  IASZoneCluster,
+  IASACECluster,
+  IASWDCluster,
+  MeteringCluster,
+  ElectricalMeasurementCluster,
+  DiagnosticsCluster,
+  TouchLinkCluster,
+  CLUSTER,
+} = require('./lib/clusters');
+
 module.exports = {
+  // Cluster base classes
   Cluster,
   BoundCluster,
+
+  // ZCL
   ZCLNode,
   zclTypes,
   zclFrames,
@@ -57,7 +110,59 @@ module.exports = {
   ZCLDataType,
   ZCLStruct,
   ZCLError,
-  ...Clusters,
+
+  // Cluster definitions
+  BasicCluster,
+  PowerConfigurationCluster,
+  DeviceTemperatureCluster,
+  IdentifyCluster,
+  GroupsCluster,
+  ScenesCluster,
+  OnOffCluster,
+  OnOffSwitchCluster,
+  LevelControlCluster,
+  AlarmsCluster,
+  TimeCluster,
+  AnalogInputCluster,
+  AnalogOutputCluster,
+  AnalogValueCluster,
+  BinaryInputCluster,
+  BinaryOutputCluster,
+  BinaryValueCluster,
+  MultistateInputCluster,
+  MultistateOutputCluster,
+  MultistateValueCluster,
+  OTACluster,
+  PowerProfileCluster,
+  PollControlCluster,
+  ShadeConfigurationCluster,
+  DoorLockCluster,
+  WindowCoveringCluster,
+  ThermostatCluster,
+  PumpConfigurationAndControlCluster,
+  FanControlCluster,
+  DehumidificationControlCluster,
+  ColorControlCluster,
+  BallastConfigurationCluster,
+  IlluminanceMeasurementCluster,
+  IlluminanceLevelSensingCluster,
+  TemperatureMeasurementCluster,
+  PressureMeasurementCluster,
+  FlowMeasurementCluster,
+  RelativeHumidityCluster,
+  OccupancySensingCluster,
+  IASZoneCluster,
+  IASACECluster,
+  IASWDCluster,
+  MeteringCluster,
+  ElectricalMeasurementCluster,
+  DiagnosticsCluster,
+  TouchLinkCluster,
+
+  // Constant cluster definitions
+  CLUSTER,
+
+  // Utilities
   debug,
   ZIGBEE_PROFILE_ID,
   ZIGBEE_DEVICE_ID,
