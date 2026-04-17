@@ -224,8 +224,6 @@ function formatCommand(stringBuilder: StringBuilder, className: string, name: st
     stringBuilder.print(" ");
   }
 
-  // TODO response - use reference based on id if possible
-
   stringBuilder.print('},');
   stringBuilder.endLine();
 }
@@ -259,11 +257,7 @@ function formatCommandMethod(stringBuilder: StringBuilder, className: string, na
 
   for (const arg in definition.args) {
     stringBuilder.startLine();
-    stringBuilder.print(`${arg}`);
-    if (definition.encodeMissingFieldsBehavior !== undefined) {
-      stringBuilder.print("?")
-    }
-    stringBuilder.print(': ')
+    stringBuilder.print(`${arg}?: `);
     formatZCLDataTypeGeneric(stringBuilder, className, name, definition.args[arg]);
     stringBuilder.print(",");
     stringBuilder.endLine();
@@ -285,7 +279,35 @@ function formatCommandMethod(stringBuilder: StringBuilder, className: string, na
 
   // Close method
   stringBuilder.decreaseIndent();
-  stringBuilder.printLine("): Promise<void>;");
+  stringBuilder.startLine();
+  stringBuilder.print("): Promise<");
+
+  if (definition.response === undefined) {
+    stringBuilder.print("void");
+  } else {
+    // Open return object
+    stringBuilder.print("{")
+    stringBuilder.endLine()
+    stringBuilder.increaseIndent()
+    for (let argName in definition.response.args) {
+      const argType = definition.response.args[argName];
+      stringBuilder.startLine();
+      stringBuilder.print(argName);
+      if (definition.response.encodeMissingFieldsBehavior === 'skip') {
+        stringBuilder.print("?")
+      }
+      stringBuilder.print(": ")
+      formatZCLDataTypeGeneric(stringBuilder, className, name, argType);
+      stringBuilder.print(",")
+      stringBuilder.endLine();
+    }
+    // Close return object
+    stringBuilder.decreaseIndent();
+    stringBuilder.startLine();
+    stringBuilder.print("}")
+  }
+  stringBuilder.print(">;")
+  stringBuilder.endLine();
 }
 
 
@@ -293,7 +315,10 @@ function formatZCLDataTypeGeneric(stringBuilder: StringBuilder, className: strin
   const typeName = definition.shortName as keyof typeof DataTypes;
   const typeArgs: Array<any> = definition.args;
 
-  if (typeName.startsWith('enum')) {
+  if (typeName === undefined) {
+    // Struct
+    stringBuilder.print('unknown');
+  } else if (typeName.startsWith('enum')) {
     formatEnumDataType(stringBuilder, className, command, typeName, typeArgs);
   } else if (typeName.startsWith('map')) {
     formatMapDataType(stringBuilder, className, command, typeName, typeArgs);

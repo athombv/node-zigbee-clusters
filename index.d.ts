@@ -77,7 +77,7 @@ declare module "zigbee-clusters" {
     identify(
       args: {
         manufacturerId?: number,
-        identifyTime: number,
+        identifyTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -94,12 +94,14 @@ declare module "zigbee-clusters" {
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      timeout: number,
+    }>;
     triggerEffect(
       args: {
         manufacturerId?: number,
-        effectIdentifier: "blink" | "breathe" | "okay" | "channelChange" | "finish" | "stop",
-        effectVariant: number,
+        effectIdentifier?: "blink" | "breathe" | "okay" | "channelChange" | "finish" | "stop",
+        effectVariant?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -140,48 +142,61 @@ declare module "zigbee-clusters" {
     addGroup(
       args: {
         manufacturerId?: number,
-        groupId: number,
-        groupName: string,
+        groupId?: number,
+        groupName?: string,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: "SUCCESS" | "FAILURE" | "NOT_AUTHORIZED" | "RESERVED_FIELD_NOT_ZERO" | "MALFORMED_COMMAND" | "UNSUP_CLUSTER_COMMAND" | "UNSUP_GENERAL_COMMAND" | "UNSUP_MANUF_CLUSTER_COMMAND" | "UNSUP_MANUF_GENERAL_COMMAND" | "INVALID_FIELD" | "UNSUPPORTED_ATTRIBUTE" | "INVALID_VALUE" | "READ_ONLY" | "INSUFFICIENT_SPACE" | "DUPLICATE_EXISTS" | "NOT_FOUND" | "UNREPORTABLE_ATTRIBUTE" | "INVALID_DATA_TYPE" | "INVALID_SELECTOR" | "WRITE_ONLY" | "INCONSISTENT_STARTUP_STATE" | "DEFINED_OUT_OF_BAND" | "INCONSISTENT" | "ACTION_DENIED" | "TIMEOUT" | "ABORT" | "INVALID_IMAGE" | "WAIT_FOR_DATA" | "NO_IMAGE_AVAILABLE" | "REQUIRE_MORE_IMAGE" | "NOTIFICATION_PENDING" | "HARDWARE_FAILURE" | "SOFTWARE_FAILURE" | "CALIBRATION_ERROR" | "UNSUPPORTED_CLUSTER",
+      groupId: number,
+    }>;
     viewGroup(
       args: {
         manufacturerId?: number,
-        groupId: number,
+        groupId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: "SUCCESS" | "FAILURE" | "NOT_AUTHORIZED" | "RESERVED_FIELD_NOT_ZERO" | "MALFORMED_COMMAND" | "UNSUP_CLUSTER_COMMAND" | "UNSUP_GENERAL_COMMAND" | "UNSUP_MANUF_CLUSTER_COMMAND" | "UNSUP_MANUF_GENERAL_COMMAND" | "INVALID_FIELD" | "UNSUPPORTED_ATTRIBUTE" | "INVALID_VALUE" | "READ_ONLY" | "INSUFFICIENT_SPACE" | "DUPLICATE_EXISTS" | "NOT_FOUND" | "UNREPORTABLE_ATTRIBUTE" | "INVALID_DATA_TYPE" | "INVALID_SELECTOR" | "WRITE_ONLY" | "INCONSISTENT_STARTUP_STATE" | "DEFINED_OUT_OF_BAND" | "INCONSISTENT" | "ACTION_DENIED" | "TIMEOUT" | "ABORT" | "INVALID_IMAGE" | "WAIT_FOR_DATA" | "NO_IMAGE_AVAILABLE" | "REQUIRE_MORE_IMAGE" | "NOTIFICATION_PENDING" | "HARDWARE_FAILURE" | "SOFTWARE_FAILURE" | "CALIBRATION_ERROR" | "UNSUPPORTED_CLUSTER",
+      groupId: number,
+      groupNames: string,
+    }>;
     getGroupMembership(
       args: {
         manufacturerId?: number,
-        groupIds: Array<number>,
+        groupIds?: Array<number>,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      capacity: number,
+      groups: Array<number>,
+    }>;
     removeGroup(
       args: {
         manufacturerId?: number,
-        groupId: number,
+        groupId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: "SUCCESS" | "FAILURE" | "NOT_AUTHORIZED" | "RESERVED_FIELD_NOT_ZERO" | "MALFORMED_COMMAND" | "UNSUP_CLUSTER_COMMAND" | "UNSUP_GENERAL_COMMAND" | "UNSUP_MANUF_CLUSTER_COMMAND" | "UNSUP_MANUF_GENERAL_COMMAND" | "INVALID_FIELD" | "UNSUPPORTED_ATTRIBUTE" | "INVALID_VALUE" | "READ_ONLY" | "INSUFFICIENT_SPACE" | "DUPLICATE_EXISTS" | "NOT_FOUND" | "UNREPORTABLE_ATTRIBUTE" | "INVALID_DATA_TYPE" | "INVALID_SELECTOR" | "WRITE_ONLY" | "INCONSISTENT_STARTUP_STATE" | "DEFINED_OUT_OF_BAND" | "INCONSISTENT" | "ACTION_DENIED" | "TIMEOUT" | "ABORT" | "INVALID_IMAGE" | "WAIT_FOR_DATA" | "NO_IMAGE_AVAILABLE" | "REQUIRE_MORE_IMAGE" | "NOTIFICATION_PENDING" | "HARDWARE_FAILURE" | "SOFTWARE_FAILURE" | "CALIBRATION_ERROR" | "UNSUPPORTED_CLUSTER",
+      groupId: number,
+    }>;
     removeAllGroups(
       args?: {
         manufacturerId?: number,
@@ -195,8 +210,8 @@ declare module "zigbee-clusters" {
     addGroupIfIdentify(
       args: {
         manufacturerId?: number,
-        groupId: number,
-        groupName: string,
+        groupId?: number,
+        groupName?: string,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -265,8 +280,8 @@ declare module "zigbee-clusters" {
     offWithEffect(
       args: {
         manufacturerId?: number,
-        effectIdentifier: number,
-        effectVariant: number,
+        effectIdentifier?: number,
+        effectVariant?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -287,9 +302,9 @@ declare module "zigbee-clusters" {
     onWithTimedOff(
       args: {
         manufacturerId?: number,
-        onOffControl: number,
-        onTime: number,
-        offWaitTime: number,
+        onOffControl?: number,
+        onTime?: number,
+        offWaitTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -351,8 +366,8 @@ declare module "zigbee-clusters" {
     moveToLevel(
       args: {
         manufacturerId?: number,
-        level: number,
-        transitionTime: number,
+        level?: number,
+        transitionTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -363,8 +378,8 @@ declare module "zigbee-clusters" {
     move(
       args: {
         manufacturerId?: number,
-        moveMode: "up" | "down",
-        rate: number,
+        moveMode?: "up" | "down",
+        rate?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -375,9 +390,9 @@ declare module "zigbee-clusters" {
     step(
       args: {
         manufacturerId?: number,
-        mode: "up" | "down",
-        stepSize: number,
-        transitionTime: number,
+        mode?: "up" | "down",
+        stepSize?: number,
+        transitionTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -398,8 +413,8 @@ declare module "zigbee-clusters" {
     moveToLevelWithOnOff(
       args: {
         manufacturerId?: number,
-        level: number,
-        transitionTime: number,
+        level?: number,
+        transitionTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -410,8 +425,8 @@ declare module "zigbee-clusters" {
     moveWithOnOff(
       args: {
         manufacturerId?: number,
-        moveMode: "up" | "down",
-        rate: number,
+        moveMode?: "up" | "down",
+        rate?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -422,9 +437,9 @@ declare module "zigbee-clusters" {
     stepWithOnOff(
       args: {
         manufacturerId?: number,
-        mode: "up" | "down",
-        stepSize: number,
-        transitionTime: number,
+        mode?: "up" | "down",
+        stepSize?: number,
+        transitionTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -734,7 +749,13 @@ declare module "zigbee-clusters" {
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status?: "SUCCESS" | "FAILURE" | "NOT_AUTHORIZED" | "RESERVED_FIELD_NOT_ZERO" | "MALFORMED_COMMAND" | "UNSUP_CLUSTER_COMMAND" | "UNSUP_GENERAL_COMMAND" | "UNSUP_MANUF_CLUSTER_COMMAND" | "UNSUP_MANUF_GENERAL_COMMAND" | "INVALID_FIELD" | "UNSUPPORTED_ATTRIBUTE" | "INVALID_VALUE" | "READ_ONLY" | "INSUFFICIENT_SPACE" | "DUPLICATE_EXISTS" | "NOT_FOUND" | "UNREPORTABLE_ATTRIBUTE" | "INVALID_DATA_TYPE" | "INVALID_SELECTOR" | "WRITE_ONLY" | "INCONSISTENT_STARTUP_STATE" | "DEFINED_OUT_OF_BAND" | "INCONSISTENT" | "ACTION_DENIED" | "TIMEOUT" | "ABORT" | "INVALID_IMAGE" | "WAIT_FOR_DATA" | "NO_IMAGE_AVAILABLE" | "REQUIRE_MORE_IMAGE" | "NOTIFICATION_PENDING" | "HARDWARE_FAILURE" | "SOFTWARE_FAILURE" | "CALIBRATION_ERROR" | "UNSUPPORTED_CLUSTER",
+      manufacturerCode?: number,
+      imageType?: number,
+      fileVersion?: number,
+      imageSize?: number,
+    }>;
     imageBlockRequest(
       args?: {
         manufacturerId?: number,
@@ -752,7 +773,18 @@ declare module "zigbee-clusters" {
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status?: "SUCCESS" | "FAILURE" | "NOT_AUTHORIZED" | "RESERVED_FIELD_NOT_ZERO" | "MALFORMED_COMMAND" | "UNSUP_CLUSTER_COMMAND" | "UNSUP_GENERAL_COMMAND" | "UNSUP_MANUF_CLUSTER_COMMAND" | "UNSUP_MANUF_GENERAL_COMMAND" | "INVALID_FIELD" | "UNSUPPORTED_ATTRIBUTE" | "INVALID_VALUE" | "READ_ONLY" | "INSUFFICIENT_SPACE" | "DUPLICATE_EXISTS" | "NOT_FOUND" | "UNREPORTABLE_ATTRIBUTE" | "INVALID_DATA_TYPE" | "INVALID_SELECTOR" | "WRITE_ONLY" | "INCONSISTENT_STARTUP_STATE" | "DEFINED_OUT_OF_BAND" | "INCONSISTENT" | "ACTION_DENIED" | "TIMEOUT" | "ABORT" | "INVALID_IMAGE" | "WAIT_FOR_DATA" | "NO_IMAGE_AVAILABLE" | "REQUIRE_MORE_IMAGE" | "NOTIFICATION_PENDING" | "HARDWARE_FAILURE" | "SOFTWARE_FAILURE" | "CALIBRATION_ERROR" | "UNSUPPORTED_CLUSTER",
+      manufacturerCode?: number,
+      imageType?: number,
+      fileVersion?: number,
+      fileOffset?: number,
+      dataSize?: number,
+      imageData?: Buffer,
+      currentTime?: number,
+      requestTime?: number,
+      minimumBlockPeriod?: number,
+    }>;
     imagePageRequest(
       args?: {
         manufacturerId?: number,
@@ -771,7 +803,18 @@ declare module "zigbee-clusters" {
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status?: "SUCCESS" | "FAILURE" | "NOT_AUTHORIZED" | "RESERVED_FIELD_NOT_ZERO" | "MALFORMED_COMMAND" | "UNSUP_CLUSTER_COMMAND" | "UNSUP_GENERAL_COMMAND" | "UNSUP_MANUF_CLUSTER_COMMAND" | "UNSUP_MANUF_GENERAL_COMMAND" | "INVALID_FIELD" | "UNSUPPORTED_ATTRIBUTE" | "INVALID_VALUE" | "READ_ONLY" | "INSUFFICIENT_SPACE" | "DUPLICATE_EXISTS" | "NOT_FOUND" | "UNREPORTABLE_ATTRIBUTE" | "INVALID_DATA_TYPE" | "INVALID_SELECTOR" | "WRITE_ONLY" | "INCONSISTENT_STARTUP_STATE" | "DEFINED_OUT_OF_BAND" | "INCONSISTENT" | "ACTION_DENIED" | "TIMEOUT" | "ABORT" | "INVALID_IMAGE" | "WAIT_FOR_DATA" | "NO_IMAGE_AVAILABLE" | "REQUIRE_MORE_IMAGE" | "NOTIFICATION_PENDING" | "HARDWARE_FAILURE" | "SOFTWARE_FAILURE" | "CALIBRATION_ERROR" | "UNSUPPORTED_CLUSTER",
+      manufacturerCode?: number,
+      imageType?: number,
+      fileVersion?: number,
+      fileOffset?: number,
+      dataSize?: number,
+      imageData?: Buffer,
+      currentTime?: number,
+      requestTime?: number,
+      minimumBlockPeriod?: number,
+    }>;
     onImageBlockResponse(
       args?: {
         manufacturerId?: number,
@@ -795,25 +838,31 @@ declare module "zigbee-clusters" {
     upgradeEndRequest(
       args: {
         manufacturerId?: number,
-        status: "SUCCESS" | "FAILURE" | "NOT_AUTHORIZED" | "RESERVED_FIELD_NOT_ZERO" | "MALFORMED_COMMAND" | "UNSUP_CLUSTER_COMMAND" | "UNSUP_GENERAL_COMMAND" | "UNSUP_MANUF_CLUSTER_COMMAND" | "UNSUP_MANUF_GENERAL_COMMAND" | "INVALID_FIELD" | "UNSUPPORTED_ATTRIBUTE" | "INVALID_VALUE" | "READ_ONLY" | "INSUFFICIENT_SPACE" | "DUPLICATE_EXISTS" | "NOT_FOUND" | "UNREPORTABLE_ATTRIBUTE" | "INVALID_DATA_TYPE" | "INVALID_SELECTOR" | "WRITE_ONLY" | "INCONSISTENT_STARTUP_STATE" | "DEFINED_OUT_OF_BAND" | "INCONSISTENT" | "ACTION_DENIED" | "TIMEOUT" | "ABORT" | "INVALID_IMAGE" | "WAIT_FOR_DATA" | "NO_IMAGE_AVAILABLE" | "REQUIRE_MORE_IMAGE" | "NOTIFICATION_PENDING" | "HARDWARE_FAILURE" | "SOFTWARE_FAILURE" | "CALIBRATION_ERROR" | "UNSUPPORTED_CLUSTER",
-        manufacturerCode: number,
-        imageType: number,
-        fileVersion: number,
+        status?: "SUCCESS" | "FAILURE" | "NOT_AUTHORIZED" | "RESERVED_FIELD_NOT_ZERO" | "MALFORMED_COMMAND" | "UNSUP_CLUSTER_COMMAND" | "UNSUP_GENERAL_COMMAND" | "UNSUP_MANUF_CLUSTER_COMMAND" | "UNSUP_MANUF_GENERAL_COMMAND" | "INVALID_FIELD" | "UNSUPPORTED_ATTRIBUTE" | "INVALID_VALUE" | "READ_ONLY" | "INSUFFICIENT_SPACE" | "DUPLICATE_EXISTS" | "NOT_FOUND" | "UNREPORTABLE_ATTRIBUTE" | "INVALID_DATA_TYPE" | "INVALID_SELECTOR" | "WRITE_ONLY" | "INCONSISTENT_STARTUP_STATE" | "DEFINED_OUT_OF_BAND" | "INCONSISTENT" | "ACTION_DENIED" | "TIMEOUT" | "ABORT" | "INVALID_IMAGE" | "WAIT_FOR_DATA" | "NO_IMAGE_AVAILABLE" | "REQUIRE_MORE_IMAGE" | "NOTIFICATION_PENDING" | "HARDWARE_FAILURE" | "SOFTWARE_FAILURE" | "CALIBRATION_ERROR" | "UNSUPPORTED_CLUSTER",
+        manufacturerCode?: number,
+        imageType?: number,
+        fileVersion?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      manufacturerCode: number,
+      imageType: number,
+      fileVersion: number,
+      currentTime: number,
+      upgradeTime: number,
+    }>;
     onUpgradeEndResponse(
       args: {
         manufacturerId?: number,
-        manufacturerCode: number,
-        imageType: number,
-        fileVersion: number,
-        currentTime: number,
-        upgradeTime: number,
+        manufacturerCode?: number,
+        imageType?: number,
+        fileVersion?: number,
+        currentTime?: number,
+        upgradeTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -824,18 +873,24 @@ declare module "zigbee-clusters" {
     queryDeviceSpecificFileRequest(
       args: {
         manufacturerId?: number,
-        requestNodeAddress: string,
-        manufacturerCode: number,
-        imageType: number,
-        fileVersion: number,
-        zigBeeStackVersion: number,
+        requestNodeAddress?: string,
+        manufacturerCode?: number,
+        imageType?: number,
+        fileVersion?: number,
+        zigBeeStackVersion?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status?: "SUCCESS" | "FAILURE" | "NOT_AUTHORIZED" | "RESERVED_FIELD_NOT_ZERO" | "MALFORMED_COMMAND" | "UNSUP_CLUSTER_COMMAND" | "UNSUP_GENERAL_COMMAND" | "UNSUP_MANUF_CLUSTER_COMMAND" | "UNSUP_MANUF_GENERAL_COMMAND" | "INVALID_FIELD" | "UNSUPPORTED_ATTRIBUTE" | "INVALID_VALUE" | "READ_ONLY" | "INSUFFICIENT_SPACE" | "DUPLICATE_EXISTS" | "NOT_FOUND" | "UNREPORTABLE_ATTRIBUTE" | "INVALID_DATA_TYPE" | "INVALID_SELECTOR" | "WRITE_ONLY" | "INCONSISTENT_STARTUP_STATE" | "DEFINED_OUT_OF_BAND" | "INCONSISTENT" | "ACTION_DENIED" | "TIMEOUT" | "ABORT" | "INVALID_IMAGE" | "WAIT_FOR_DATA" | "NO_IMAGE_AVAILABLE" | "REQUIRE_MORE_IMAGE" | "NOTIFICATION_PENDING" | "HARDWARE_FAILURE" | "SOFTWARE_FAILURE" | "CALIBRATION_ERROR" | "UNSUPPORTED_CLUSTER",
+      manufacturerCode?: number,
+      imageType?: number,
+      fileVersion?: number,
+      imageSize?: number,
+    }>;
   }
   type PowerProfileClusterAttributes = Record<never, never>;
   type PowerProfileClusterCommands = Record<never, never>;
@@ -875,7 +930,7 @@ declare module "zigbee-clusters" {
     setLongPollInterval(
       args: {
         manufacturerId?: number,
-        newLongPollInterval: number,
+        newLongPollInterval?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -886,7 +941,7 @@ declare module "zigbee-clusters" {
     setShortPollInterval(
       args: {
         manufacturerId?: number,
-        newShortPollInterval: number,
+        newShortPollInterval?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1093,95 +1148,120 @@ declare module "zigbee-clusters" {
     lockDoor(
       args: {
         manufacturerId?: number,
-        pinCode: Buffer,
+        pinCode?: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     unlockDoor(
       args: {
         manufacturerId?: number,
-        pinCode: Buffer,
+        pinCode?: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     toggle(
       args: {
         manufacturerId?: number,
-        pinCode: Buffer,
+        pinCode?: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     unlockWithTimeout(
       args: {
         manufacturerId?: number,
-        timeout: number,
-        pinCode: Buffer,
+        timeout?: number,
+        pinCode?: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     getLogRecord(
       args: {
         manufacturerId?: number,
-        logIndex: number,
+        logIndex?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      logEntryId: number,
+      timestamp: number,
+      eventType: number,
+      source: number,
+      eventIdOrAlarmCode: number,
+      userId: number,
+      pin: Buffer,
+    }>;
     setPINCode(
       args: {
         manufacturerId?: number,
-        userId: number,
-        userStatus: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
-        userType: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
-        pinCode: Buffer,
+        userId?: number,
+        userStatus?: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
+        userType?: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
+        pinCode?: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     getPINCode(
       args: {
         manufacturerId?: number,
-        userId: number,
+        userId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      userId: number,
+      userStatus: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
+      userType: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
+      pinCode: Buffer,
+    }>;
     clearPINCode(
       args: {
         manufacturerId?: number,
-        userId: number,
+        userId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     clearAllPINCodes(
       args?: {
         manufacturerId?: number,
@@ -1191,204 +1271,258 @@ declare module "zigbee-clusters" {
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     setUserStatus(
       args: {
         manufacturerId?: number,
-        userId: number,
-        userStatus: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
+        userId?: number,
+        userStatus?: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     getUserStatus(
       args: {
         manufacturerId?: number,
-        userId: number,
+        userId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      userId: number,
+      userStatus: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
+    }>;
     setWeekDaySchedule(
       args: {
         manufacturerId?: number,
-        scheduleId: number,
-        userId: number,
-        daysMask: Bitmap<"sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday">,
-        startHour: number,
-        startMinute: number,
-        endHour: number,
-        endMinute: number,
+        scheduleId?: number,
+        userId?: number,
+        daysMask?: Bitmap<"sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday">,
+        startHour?: number,
+        startMinute?: number,
+        endHour?: number,
+        endMinute?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     getWeekDaySchedule(
       args: {
         manufacturerId?: number,
-        scheduleId: number,
-        userId: number,
+        scheduleId?: number,
+        userId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      scheduleId: number,
+      userId: number,
+      status: number,
+      daysMask: Bitmap<"sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday">,
+      startHour: number,
+      startMinute: number,
+      endHour: number,
+      endMinute: number,
+    }>;
     clearWeekDaySchedule(
       args: {
         manufacturerId?: number,
-        scheduleId: number,
-        userId: number,
+        scheduleId?: number,
+        userId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     setYearDaySchedule(
       args: {
         manufacturerId?: number,
-        scheduleId: number,
-        userId: number,
-        localStartTime: number,
-        localEndTime: number,
+        scheduleId?: number,
+        userId?: number,
+        localStartTime?: number,
+        localEndTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     getYearDaySchedule(
       args: {
         manufacturerId?: number,
-        scheduleId: number,
-        userId: number,
+        scheduleId?: number,
+        userId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      scheduleId: number,
+      userId: number,
+      status: number,
+      localStartTime: number,
+      localEndTime: number,
+    }>;
     clearYearDaySchedule(
       args: {
         manufacturerId?: number,
-        scheduleId: number,
-        userId: number,
+        scheduleId?: number,
+        userId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     setHolidaySchedule(
       args: {
         manufacturerId?: number,
-        holidayScheduleId: number,
-        localStartTime: number,
-        localEndTime: number,
-        operatingModeDuringHoliday: "normal" | "vacation" | "privacy" | "noRFLockOrUnlock" | "passage",
+        holidayScheduleId?: number,
+        localStartTime?: number,
+        localEndTime?: number,
+        operatingModeDuringHoliday?: "normal" | "vacation" | "privacy" | "noRFLockOrUnlock" | "passage",
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     getHolidaySchedule(
       args: {
         manufacturerId?: number,
-        holidayScheduleId: number,
+        holidayScheduleId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      holidayScheduleId: number,
+      status: number,
+      localStartTime: number,
+      localEndTime: number,
+      operatingMode: "normal" | "vacation" | "privacy" | "noRFLockOrUnlock" | "passage",
+    }>;
     clearHolidaySchedule(
       args: {
         manufacturerId?: number,
-        holidayScheduleId: number,
+        holidayScheduleId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     setUserType(
       args: {
         manufacturerId?: number,
-        userId: number,
-        userType: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
+        userId?: number,
+        userType?: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     getUserType(
       args: {
         manufacturerId?: number,
-        userId: number,
+        userId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      userId: number,
+      userType: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
+    }>;
     setRFIDCode(
       args: {
         manufacturerId?: number,
-        userId: number,
-        userStatus: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
-        userType: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
-        rfidCode: Buffer,
+        userId?: number,
+        userStatus?: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
+        userType?: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
+        rfidCode?: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     getRFIDCode(
       args: {
         manufacturerId?: number,
-        userId: number,
+        userId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      userId: number,
+      userStatus: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
+      userType: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
+      rfidCode: Buffer,
+    }>;
     clearRFIDCode(
       args: {
         manufacturerId?: number,
-        userId: number,
+        userId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     clearAllRFIDCodes(
       args?: {
         manufacturerId?: number,
@@ -1398,16 +1532,18 @@ declare module "zigbee-clusters" {
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status: number,
+    }>;
     onOperationEventNotification(
       args: {
         manufacturerId?: number,
-        operationEventSource: number,
-        operationEventCode: number,
-        userId: number,
-        pin: Buffer,
-        zigBeeLocalTime: number,
-        data: Buffer,
+        operationEventSource?: number,
+        operationEventCode?: number,
+        userId?: number,
+        pin?: Buffer,
+        zigBeeLocalTime?: number,
+        data?: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1418,14 +1554,14 @@ declare module "zigbee-clusters" {
     onProgrammingEventNotification(
       args: {
         manufacturerId?: number,
-        programEventSource: number,
-        programEventCode: number,
-        userId: number,
-        pin: Buffer,
-        userType: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
-        userStatus: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
-        zigBeeLocalTime: number,
-        data: Buffer,
+        programEventSource?: number,
+        programEventCode?: number,
+        userId?: number,
+        pin?: Buffer,
+        userType?: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
+        userStatus?: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
+        zigBeeLocalTime?: number,
+        data?: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1511,7 +1647,7 @@ declare module "zigbee-clusters" {
     goToLiftValue(
       args: {
         manufacturerId?: number,
-        liftValue: number,
+        liftValue?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1522,7 +1658,7 @@ declare module "zigbee-clusters" {
     goToLiftPercentage(
       args: {
         manufacturerId?: number,
-        percentageLiftValue: number,
+        percentageLiftValue?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1533,7 +1669,7 @@ declare module "zigbee-clusters" {
     goToTiltValue(
       args: {
         manufacturerId?: number,
-        tiltValue: number,
+        tiltValue?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1544,7 +1680,7 @@ declare module "zigbee-clusters" {
     goToTiltPercentage(
       args: {
         manufacturerId?: number,
-        percentageTiltValue: number,
+        percentageTiltValue?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1589,8 +1725,8 @@ declare module "zigbee-clusters" {
     setSetpoint(
       args: {
         manufacturerId?: number,
-        mode: "heat" | "cool" | "both",
-        amount: number,
+        mode?: "heat" | "cool" | "both",
+        amount?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1656,9 +1792,9 @@ declare module "zigbee-clusters" {
     moveToHue(
       args: {
         manufacturerId?: number,
-        hue: number,
-        direction: "shortestDistance" | "longestDistance" | "up" | "down",
-        transitionTime: number,
+        hue?: number,
+        direction?: "shortestDistance" | "longestDistance" | "up" | "down",
+        transitionTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1669,8 +1805,8 @@ declare module "zigbee-clusters" {
     moveToSaturation(
       args: {
         manufacturerId?: number,
-        saturation: number,
-        transitionTime: number,
+        saturation?: number,
+        transitionTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1681,9 +1817,9 @@ declare module "zigbee-clusters" {
     moveToHueAndSaturation(
       args: {
         manufacturerId?: number,
-        hue: number,
-        saturation: number,
-        transitionTime: number,
+        hue?: number,
+        saturation?: number,
+        transitionTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1694,9 +1830,9 @@ declare module "zigbee-clusters" {
     moveToColor(
       args: {
         manufacturerId?: number,
-        colorX: number,
-        colorY: number,
-        transitionTime: number,
+        colorX?: number,
+        colorY?: number,
+        transitionTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1707,8 +1843,8 @@ declare module "zigbee-clusters" {
     moveToColorTemperature(
       args: {
         manufacturerId?: number,
-        colorTemperature: number,
-        transitionTime: number,
+        colorTemperature?: number,
+        transitionTime?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1844,10 +1980,10 @@ declare module "zigbee-clusters" {
     onZoneStatusChangeNotification(
       args: {
         manufacturerId?: number,
-        zoneStatus: Bitmap<"alarm1" | "alarm2" | "tamper" | "battery" | "supervisionReports" | "restoreReports" | "trouble" | "acMains" | "test" | "batteryDefect">,
-        extendedStatus: number,
-        zoneId: number,
-        delay: number,
+        zoneStatus?: Bitmap<"alarm1" | "alarm2" | "tamper" | "battery" | "supervisionReports" | "restoreReports" | "trouble" | "acMains" | "test" | "batteryDefect">,
+        extendedStatus?: number,
+        zoneId?: number,
+        delay?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1858,8 +1994,8 @@ declare module "zigbee-clusters" {
     zoneEnrollResponse(
       args: {
         manufacturerId?: number,
-        enrollResponseCode: "success" | "notSupported" | "noEnrollPermit" | "tooManyZones",
-        zoneId: number,
+        enrollResponseCode?: "success" | "notSupported" | "noEnrollPermit" | "tooManyZones",
+        zoneId?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1870,8 +2006,8 @@ declare module "zigbee-clusters" {
     onZoneEnrollRequest(
       args: {
         manufacturerId?: number,
-        zoneType: "standardCIE" | "motionSensor" | "contactSwitch" | "doorWindowHandle" | "fireSensor" | "waterSensor" | "carbonMonoxideSensor" | "personalEmergencyDevice" | "vibrationMovementSensor" | "remoteControl" | "keyFob" | "keypad" | "standardWarningDevice" | "glassBreakSensor" | "securityRepeater" | "invalidZoneType",
-        manufacturerCode: number,
+        zoneType?: "standardCIE" | "motionSensor" | "contactSwitch" | "doorWindowHandle" | "fireSensor" | "waterSensor" | "carbonMonoxideSensor" | "personalEmergencyDevice" | "vibrationMovementSensor" | "remoteControl" | "keyFob" | "keypad" | "standardWarningDevice" | "glassBreakSensor" | "securityRepeater" | "invalidZoneType",
+        manufacturerCode?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -2124,14 +2260,18 @@ declare module "zigbee-clusters" {
     getGroups(
       args: {
         manufacturerId?: number,
-        startIdx: number,
+        startIdx?: number,
       },
       opts?: {
         waitForResponse?: boolean,
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      total: number,
+      startIndex: number,
+      groups: Array<unknown>,
+    }>;
   }
   const CLUSTER: {
     BASIC: {
