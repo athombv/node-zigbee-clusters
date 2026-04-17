@@ -203,7 +203,7 @@ function formatCommand(stringBuilder: StringBuilder, className: string, name: st
   if (definition.args !== undefined) {
     stringBuilder.print(", args: ");
     if (Object.keys(definition.args).length === 0) {
-      stringBuilder.print("Record<never, never> /* TODO fix */ ");
+      throw new Error(`Empty args definition for ${className} command ${name}`)
     } else {
       // Open args
       stringBuilder.print("{");

@@ -460,13 +460,13 @@ declare module "zigbee-clusters" {
   }
   type AlarmsClusterAttributes = Record<never, never>;
   type AlarmsClusterCommands = {
-    resetAllAlarms: { id: 0x01, direction: "DIRECTION_SERVER_TO_CLIENT", args: Record<never, never> /* TODO fix */ },
-    getAlarm: { id: 0x02, direction: "DIRECTION_SERVER_TO_CLIENT", args: Record<never, never> /* TODO fix */ },
-    resetAlarmLog: { id: 0x03, direction: "DIRECTION_SERVER_TO_CLIENT", args: Record<never, never> /* TODO fix */ },
+    resetAllAlarms: { id: 0x01, direction: "DIRECTION_SERVER_TO_CLIENT" },
+    getAlarm: { id: 0x02, direction: "DIRECTION_SERVER_TO_CLIENT" },
+    resetAlarmLog: { id: 0x03, direction: "DIRECTION_SERVER_TO_CLIENT" },
   };
   class AlarmsCluster<Attributes extends types.AttributeDefinitions = AlarmsClusterAttributes, Commands extends types.CommandDefinitions = AlarmsClusterCommands> extends Cluster<Attributes, Commands> {
     resetAllAlarms(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -476,7 +476,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     getAlarm(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -486,7 +486,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     resetAlarmLog(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
