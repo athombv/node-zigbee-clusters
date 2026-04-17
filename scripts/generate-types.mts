@@ -57,7 +57,7 @@ async function main(): Promise<void> {
   console.log('Writing clusters to', filePath);
 
   // Write preamble and open module declaration
-  await fs.writeFile(filePath, '/* eslint-disable @typescript-eslint/no-explicit-any */\ndeclare module "zigbee-clusters" {\n  import {Bitmap} from "@athombv/data-types";\n');
+  await fs.writeFile(filePath, 'declare module "zigbee-clusters" {\n  import {Bitmap} from "@athombv/data-types";\n');
 
   // @ts-expect-error No type declarations
   const clustersModule = await import("../lib/clusters/index.js");
@@ -279,10 +279,6 @@ function formatCommandMethod(stringBuilder: StringBuilder, className: string, na
 }
 
 
-/**
- * @returns whether indentation was increased
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function formatZCLDataTypeGeneric(stringBuilder: StringBuilder, className: string, command: string, definition: DataType<any>): void {
   const typeName = definition.shortName as keyof typeof DataTypes;
   const typeArgs: Array<unknown> = definition.args;

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 declare module "zigbee-clusters" {
   import {Bitmap} from "@athombv/data-types";
   type BasicClusterAttributes = {
