@@ -281,14 +281,14 @@ function formatCommandMethod(stringBuilder: StringBuilder, className: string, na
 
 function formatZCLDataTypeGeneric(stringBuilder: StringBuilder, className: string, command: string, definition: DataType<any>): void {
   const typeName = definition.shortName as keyof typeof DataTypes;
-  const typeArgs: Array<unknown> = definition.args;
+  const typeArgs: Array<any> = definition.args;
 
   if (typeName.startsWith('enum')) {
     formatEnumDataType(stringBuilder, className, command, typeName, typeArgs);
   } else if (typeName.startsWith('map')) {
     formatMapDataType(stringBuilder, className, command, typeName, typeArgs);
   } else if (typeName.startsWith("_Array")) {
-    stringBuilder.print("Array<unknown>");
+    formatArrayDataType(stringBuilder, className, command, typeName, typeArgs);
   } else {
     stringBuilder.print(zclDataTypeToValueType(typeName));
   }
@@ -326,6 +326,12 @@ function formatMapDataType(stringBuilder: StringBuilder, className: string, fiel
     stringBuilder.print(typeArgs.map(arg => JSON.stringify(arg)).join(" | "));
     stringBuilder.print(">");
   }
+}
+
+function formatArrayDataType(stringBuilder: StringBuilder, className: string, field: string, typeName: string, typeArgs: Array<DataType<any>>): void {
+  stringBuilder.print('Array<')
+  formatZCLDataTypeGeneric(stringBuilder, className, field, typeArgs[0])
+  stringBuilder.print('>')
 }
 
 

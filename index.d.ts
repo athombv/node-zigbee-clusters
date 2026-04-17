@@ -122,7 +122,7 @@ declare module "zigbee-clusters" {
       },
     },
     getGroupMembership: { id: 0x02, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
-        groupIds: ZCLDataType<Array<unknown>>,
+        groupIds: ZCLDataType<Array<number>>,
       },
     },
     removeGroup: { id: 0x03, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
@@ -163,7 +163,7 @@ declare module "zigbee-clusters" {
     getGroupMembership(
       args: {
         manufacturerId?: number,
-        groupIds: Array<unknown>,
+        groupIds: Array<number>,
       },
       opts?: {
         waitForResponse?: boolean,
