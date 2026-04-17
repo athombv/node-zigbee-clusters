@@ -108,7 +108,6 @@ async function main(): Promise<void> {
   await fs.appendFile(filePath, templateBody);
 
   console.log("Done!");
-  // await stall();
 }
 
 
@@ -403,11 +402,4 @@ function zclDataTypeToValueType(type: keyof typeof DataTypes): string {
       return "string";
   }
   throw new Error(`Unknown ZCL type ${type}`);
-}
-
-
-async function stall(): Promise<void> {
-  await new Promise(resolve => {
-    setTimeout(resolve, 1_000_000_000);
-  });
 }
