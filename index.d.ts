@@ -946,20 +946,20 @@ declare module "zigbee-clusters" {
   };
   type DoorLockClusterCommands = {
     lockDoor: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
-        pinCode: ZCLDataType<string>,
+        pinCode: ZCLDataType<Buffer>,
       },
     },
     unlockDoor: { id: 0x01, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
-        pinCode: ZCLDataType<string>,
+        pinCode: ZCLDataType<Buffer>,
       },
     },
     toggle: { id: 0x02, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
-        pinCode: ZCLDataType<string>,
+        pinCode: ZCLDataType<Buffer>,
       },
     },
     unlockWithTimeout: { id: 0x03, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
         timeout: ZCLDataType<number>,
-        pinCode: ZCLDataType<string>,
+        pinCode: ZCLDataType<Buffer>,
       },
     },
     getLogRecord: { id: 0x04, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
@@ -970,7 +970,7 @@ declare module "zigbee-clusters" {
         userId: ZCLDataType<number>,
         userStatus: ZCLDataType<"available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported">,
         userType: ZCLDataType<"unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported">,
-        pinCode: ZCLDataType<string>,
+        pinCode: ZCLDataType<Buffer>,
       },
     },
     getPINCode: { id: 0x06, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
@@ -1056,7 +1056,7 @@ declare module "zigbee-clusters" {
         userId: ZCLDataType<number>,
         userStatus: ZCLDataType<"available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported">,
         userType: ZCLDataType<"unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported">,
-        rfidCode: ZCLDataType<string>,
+        rfidCode: ZCLDataType<Buffer>,
       },
     },
     getRFIDCode: { id: 0x17, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
@@ -1072,20 +1072,20 @@ declare module "zigbee-clusters" {
         operationEventSource: ZCLDataType<number>,
         operationEventCode: ZCLDataType<number>,
         userId: ZCLDataType<number>,
-        pin: ZCLDataType<string>,
+        pin: ZCLDataType<Buffer>,
         zigBeeLocalTime: ZCLDataType<number>,
-        data: ZCLDataType<string>,
+        data: ZCLDataType<Buffer>,
       },
     },
     programmingEventNotification: { id: 0x21, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
         programEventSource: ZCLDataType<number>,
         programEventCode: ZCLDataType<number>,
         userId: ZCLDataType<number>,
-        pin: ZCLDataType<string>,
+        pin: ZCLDataType<Buffer>,
         userType: ZCLDataType<"unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported">,
         userStatus: ZCLDataType<"available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported">,
         zigBeeLocalTime: ZCLDataType<number>,
-        data: ZCLDataType<string>,
+        data: ZCLDataType<Buffer>,
       },
     },
   };
@@ -1093,7 +1093,7 @@ declare module "zigbee-clusters" {
     lockDoor(
       args: {
         manufacturerId?: number,
-        pinCode: string,
+        pinCode: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1104,7 +1104,7 @@ declare module "zigbee-clusters" {
     unlockDoor(
       args: {
         manufacturerId?: number,
-        pinCode: string,
+        pinCode: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1115,7 +1115,7 @@ declare module "zigbee-clusters" {
     toggle(
       args: {
         manufacturerId?: number,
-        pinCode: string,
+        pinCode: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1127,7 +1127,7 @@ declare module "zigbee-clusters" {
       args: {
         manufacturerId?: number,
         timeout: number,
-        pinCode: string,
+        pinCode: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1152,7 +1152,7 @@ declare module "zigbee-clusters" {
         userId: number,
         userStatus: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
         userType: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
-        pinCode: string,
+        pinCode: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1359,7 +1359,7 @@ declare module "zigbee-clusters" {
         userId: number,
         userStatus: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
         userType: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
-        rfidCode: string,
+        rfidCode: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1405,9 +1405,9 @@ declare module "zigbee-clusters" {
         operationEventSource: number,
         operationEventCode: number,
         userId: number,
-        pin: string,
+        pin: Buffer,
         zigBeeLocalTime: number,
-        data: string,
+        data: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1421,11 +1421,11 @@ declare module "zigbee-clusters" {
         programEventSource: number,
         programEventCode: number,
         userId: number,
-        pin: string,
+        pin: Buffer,
         userType: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
         userStatus: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
         zigBeeLocalTime: number,
-        data: string,
+        data: Buffer,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1453,8 +1453,8 @@ declare module "zigbee-clusters" {
     accelerationTimeLift: { id: 0x15, type: ZCLDataType<number> },
     decelerationTimeLift: { id: 0x16, type: ZCLDataType<number> },
     mode: { id: 0x17, type: ZCLDataType<Bitmap<"motorDirectionReversed" | "calibrationMode" | "maintenanceMode" | "ledFeedback">> },
-    intermediateSetpointsLift: { id: 0x18, type: ZCLDataType<string> },
-    intermediateSetpointsTilt: { id: 0x19, type: ZCLDataType<string> },
+    intermediateSetpointsLift: { id: 0x18, type: ZCLDataType<Buffer> },
+    intermediateSetpointsTilt: { id: 0x19, type: ZCLDataType<Buffer> },
   };
   type WindowCoveringClusterCommands = {
     upOpen: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT" },
@@ -1930,14 +1930,14 @@ declare module "zigbee-clusters" {
     unitOfMeasure: { id: 0x300, type: ZCLDataType<unknown> },
     multiplier: { id: 0x301, type: ZCLDataType<number> },
     divisor: { id: 0x302, type: ZCLDataType<number> },
-    siteId: { id: 0x307, type: ZCLDataType<string> },
-    meterSerialNumber: { id: 0x308, type: ZCLDataType<string> },
+    siteId: { id: 0x307, type: ZCLDataType<Buffer> },
+    meterSerialNumber: { id: 0x308, type: ZCLDataType<Buffer> },
     energyCarrierUnitOfMeasure: { id: 0x309, type: ZCLDataType<unknown> },
     temperatureUnitOfMeasure: { id: 0x30c, type: ZCLDataType<unknown> },
-    moduleSerialNumber: { id: 0x30e, type: ZCLDataType<string> },
-    operatingTariffLabelDelivered: { id: 0x30f, type: ZCLDataType<string> },
-    operatingTariffLabelReceived: { id: 0x310, type: ZCLDataType<string> },
-    customerIdNumber: { id: 0x311, type: ZCLDataType<string> },
+    moduleSerialNumber: { id: 0x30e, type: ZCLDataType<Buffer> },
+    operatingTariffLabelDelivered: { id: 0x30f, type: ZCLDataType<Buffer> },
+    operatingTariffLabelReceived: { id: 0x310, type: ZCLDataType<Buffer> },
+    customerIdNumber: { id: 0x311, type: ZCLDataType<Buffer> },
     alternativeUnitOfMeasure: { id: 0x312, type: ZCLDataType<unknown> },
     instantaneousDemand: { id: 0x400, type: ZCLDataType<number> },
     currentDayConsumptionDelivered: { id: 0x401, type: ZCLDataType<number> },

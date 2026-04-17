@@ -356,7 +356,7 @@ function zclDataTypeToValueType(type: keyof typeof DataTypes): string {
     case "data40":
     case "data48":
     case "data56":
-      return "number";
+      return "Buffer";
     case "bool":
       return "boolean";
     case "map8":
@@ -389,6 +389,7 @@ function zclDataTypeToValueType(type: keyof typeof DataTypes): string {
     case "double":
       return "number";
     case "octstr":
+      return "Buffer"
     case "string":
     case "EUI48":
     case "EUI64":
