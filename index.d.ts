@@ -22,7 +22,7 @@ declare module "zigbee-clusters" {
   };
   class BasicCluster<Attributes extends types.AttributeDefinitions = BasicClusterAttributes, Commands extends types.CommandDefinitions = BasicClusterCommands> extends Cluster<Attributes, Commands> {
     factoryReset(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -86,7 +86,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     identifyQuery(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -183,7 +183,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     removeAllGroups(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -233,7 +233,7 @@ declare module "zigbee-clusters" {
   };
   class OnOffCluster<Attributes extends types.AttributeDefinitions = OnOffClusterAttributes, Commands extends types.CommandDefinitions = OnOffClusterCommands> extends Cluster<Attributes, Commands> {
     setOff(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -243,7 +243,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     setOn(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -253,7 +253,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     toggle(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -275,7 +275,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     onWithRecallGlobalScene(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -386,7 +386,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     stop(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -433,7 +433,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     stopWithOnOff(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -706,13 +706,13 @@ declare module "zigbee-clusters" {
   };
   class OTACluster<Attributes extends types.AttributeDefinitions = OTAClusterAttributes, Commands extends types.CommandDefinitions = OTAClusterCommands> extends Cluster<Attributes, Commands> {
     onImageNotify(
-      args: {
+      args?: {
         manufacturerId?: number,
-        payloadType: "queryJitter" | "queryJitterAndManufacturerCode" | "queryJitterAndManufacturerCodeAndImageType" | "queryJitterAndManufacturerCodeAndImageTypeAndNewFileVersion",
-        queryJitter: number,
-        manufacturerCode: number,
-        imageType: number,
-        newFileVersion: number,
+        payloadType?: "queryJitter" | "queryJitterAndManufacturerCode" | "queryJitterAndManufacturerCodeAndImageType" | "queryJitterAndManufacturerCodeAndImageTypeAndNewFileVersion",
+        queryJitter?: number,
+        manufacturerCode?: number,
+        imageType?: number,
+        newFileVersion?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -721,13 +721,13 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     queryNextImageRequest(
-      args: {
+      args?: {
         manufacturerId?: number,
-        fieldControl: Bitmap<"hardwareVersionPresent">,
-        manufacturerCode: number,
-        imageType: number,
-        fileVersion: number,
-        hardwareVersion: number,
+        fieldControl?: Bitmap<"hardwareVersionPresent">,
+        manufacturerCode?: number,
+        imageType?: number,
+        fileVersion?: number,
+        hardwareVersion?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -736,16 +736,16 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     imageBlockRequest(
-      args: {
+      args?: {
         manufacturerId?: number,
-        fieldControl: Bitmap<"requestNodeAddressPresent" | "minimumBlockPeriodPresent">,
-        manufacturerCode: number,
-        imageType: number,
-        fileVersion: number,
-        fileOffset: number,
-        maximumDataSize: number,
-        requestNodeAddress: string,
-        minimumBlockPeriod: number,
+        fieldControl?: Bitmap<"requestNodeAddressPresent" | "minimumBlockPeriodPresent">,
+        manufacturerCode?: number,
+        imageType?: number,
+        fileVersion?: number,
+        fileOffset?: number,
+        maximumDataSize?: number,
+        requestNodeAddress?: string,
+        minimumBlockPeriod?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -754,17 +754,17 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     imagePageRequest(
-      args: {
+      args?: {
         manufacturerId?: number,
-        fieldControl: Bitmap<"requestNodeAddressPresent">,
-        manufacturerCode: number,
-        imageType: number,
-        fileVersion: number,
-        fileOffset: number,
-        maximumDataSize: number,
-        pageSize: number,
-        responseSpacing: number,
-        requestNodeAddress: string,
+        fieldControl?: Bitmap<"requestNodeAddressPresent">,
+        manufacturerCode?: number,
+        imageType?: number,
+        fileVersion?: number,
+        fileOffset?: number,
+        maximumDataSize?: number,
+        pageSize?: number,
+        responseSpacing?: number,
+        requestNodeAddress?: string,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -773,18 +773,18 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     onImageBlockResponse(
-      args: {
+      args?: {
         manufacturerId?: number,
-        status: "SUCCESS" | "FAILURE" | "NOT_AUTHORIZED" | "RESERVED_FIELD_NOT_ZERO" | "MALFORMED_COMMAND" | "UNSUP_CLUSTER_COMMAND" | "UNSUP_GENERAL_COMMAND" | "UNSUP_MANUF_CLUSTER_COMMAND" | "UNSUP_MANUF_GENERAL_COMMAND" | "INVALID_FIELD" | "UNSUPPORTED_ATTRIBUTE" | "INVALID_VALUE" | "READ_ONLY" | "INSUFFICIENT_SPACE" | "DUPLICATE_EXISTS" | "NOT_FOUND" | "UNREPORTABLE_ATTRIBUTE" | "INVALID_DATA_TYPE" | "INVALID_SELECTOR" | "WRITE_ONLY" | "INCONSISTENT_STARTUP_STATE" | "DEFINED_OUT_OF_BAND" | "INCONSISTENT" | "ACTION_DENIED" | "TIMEOUT" | "ABORT" | "INVALID_IMAGE" | "WAIT_FOR_DATA" | "NO_IMAGE_AVAILABLE" | "REQUIRE_MORE_IMAGE" | "NOTIFICATION_PENDING" | "HARDWARE_FAILURE" | "SOFTWARE_FAILURE" | "CALIBRATION_ERROR" | "UNSUPPORTED_CLUSTER",
-        manufacturerCode: number,
-        imageType: number,
-        fileVersion: number,
-        fileOffset: number,
-        dataSize: number,
-        imageData: Buffer,
-        currentTime: number,
-        requestTime: number,
-        minimumBlockPeriod: number,
+        status?: "SUCCESS" | "FAILURE" | "NOT_AUTHORIZED" | "RESERVED_FIELD_NOT_ZERO" | "MALFORMED_COMMAND" | "UNSUP_CLUSTER_COMMAND" | "UNSUP_GENERAL_COMMAND" | "UNSUP_MANUF_CLUSTER_COMMAND" | "UNSUP_MANUF_GENERAL_COMMAND" | "INVALID_FIELD" | "UNSUPPORTED_ATTRIBUTE" | "INVALID_VALUE" | "READ_ONLY" | "INSUFFICIENT_SPACE" | "DUPLICATE_EXISTS" | "NOT_FOUND" | "UNREPORTABLE_ATTRIBUTE" | "INVALID_DATA_TYPE" | "INVALID_SELECTOR" | "WRITE_ONLY" | "INCONSISTENT_STARTUP_STATE" | "DEFINED_OUT_OF_BAND" | "INCONSISTENT" | "ACTION_DENIED" | "TIMEOUT" | "ABORT" | "INVALID_IMAGE" | "WAIT_FOR_DATA" | "NO_IMAGE_AVAILABLE" | "REQUIRE_MORE_IMAGE" | "NOTIFICATION_PENDING" | "HARDWARE_FAILURE" | "SOFTWARE_FAILURE" | "CALIBRATION_ERROR" | "UNSUPPORTED_CLUSTER",
+        manufacturerCode?: number,
+        imageType?: number,
+        fileVersion?: number,
+        fileOffset?: number,
+        dataSize?: number,
+        imageData?: Buffer,
+        currentTime?: number,
+        requestTime?: number,
+        minimumBlockPeriod?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -863,7 +863,7 @@ declare module "zigbee-clusters" {
   };
   class PollControlCluster<Attributes extends types.AttributeDefinitions = PollControlClusterAttributes, Commands extends types.CommandDefinitions = PollControlClusterCommands> extends Cluster<Attributes, Commands> {
     fastPollStop(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -1183,7 +1183,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     clearAllPINCodes(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -1390,7 +1390,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     clearAllRFIDCodes(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -1479,7 +1479,7 @@ declare module "zigbee-clusters" {
   };
   class WindowCoveringCluster<Attributes extends types.AttributeDefinitions = WindowCoveringClusterAttributes, Commands extends types.CommandDefinitions = WindowCoveringClusterCommands> extends Cluster<Attributes, Commands> {
     upOpen(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -1489,7 +1489,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     downClose(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -1499,7 +1499,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     stop(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {
@@ -1880,7 +1880,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     initiateNormalOperationMode(
-      args: {
+      args?: {
         manufacturerId?: number,
       },
       opts?: {

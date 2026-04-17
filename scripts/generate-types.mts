@@ -247,13 +247,23 @@ function formatCommandMethod(stringBuilder: StringBuilder, className: string, na
 
   // Open args
   stringBuilder.increaseIndent();
-  stringBuilder.printLine("args: {");
+  stringBuilder.startLine();
+  stringBuilder.print("args");
+  if (definition.args === undefined || definition.encodeMissingFieldsBehavior !== undefined) {
+    stringBuilder.print("?")
+  }
+  stringBuilder.print(": {")
+  stringBuilder.endLine();
   stringBuilder.increaseIndent();
   stringBuilder.printLine("manufacturerId?: number,");
 
   for (const arg in definition.args) {
     stringBuilder.startLine();
-    stringBuilder.print(`${arg}: `);
+    stringBuilder.print(`${arg}`);
+    if (definition.encodeMissingFieldsBehavior !== undefined) {
+      stringBuilder.print("?")
+    }
+    stringBuilder.print(': ')
     formatZCLDataTypeGeneric(stringBuilder, className, name, definition.args[arg]);
     stringBuilder.print(",");
     stringBuilder.endLine();
