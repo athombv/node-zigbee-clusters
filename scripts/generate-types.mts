@@ -57,7 +57,7 @@ async function main(): Promise<void> {
   console.log('Writing clusters to', filePath);
 
   // Write preamble and open module declaration
-  await fs.writeFile(filePath, '/* eslint-disable @typescript-eslint/no-explicit-any */\ndeclare module "zigbee-clusters" {\n  import {BitMap} from "@athombv/data-types";\n');
+  await fs.writeFile(filePath, '/* eslint-disable @typescript-eslint/no-explicit-any */\ndeclare module "zigbee-clusters" {\n  import {Bitmap} from "@athombv/data-types";\n');
 
   // @ts-expect-error No type declarations
   const clustersModule = await import("../lib/clusters/index.js");
@@ -325,9 +325,9 @@ function formatMapDataType(stringBuilder: StringBuilder, className: string, fiel
     }
   }
   if (typeArgs.length === 0) {
-    stringBuilder.print('BitMap<string>');
+    stringBuilder.print('Bitmap<string>');
   } else {
-    stringBuilder.print('BitMap<');
+    stringBuilder.print('Bitmap<');
     stringBuilder.print(typeArgs.map(arg => JSON.stringify(arg)).join(" | "));
     stringBuilder.print(">");
   }

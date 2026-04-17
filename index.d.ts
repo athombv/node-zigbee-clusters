@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare module "zigbee-clusters" {
-  import {BitMap} from "@athombv/data-types";
+  import {Bitmap} from "@athombv/data-types";
   type BasicClusterAttributes = {
     zclVersion: { id: 0x00, type: ZCLDataType<number> },
     appVersion: { id: 0x01, type: ZCLDataType<number> },
@@ -14,8 +14,8 @@ declare module "zigbee-clusters" {
     locationDesc: { id: 0x10, type: ZCLDataType<string> },
     physicalEnv: { id: 0x11, type: ZCLDataType<"Unspecified" | "Atrium" | "Bar" | "Courtyard" | "Bathroom" | "Bedroom" | "BilliardRoom" | "UtilityRoom" | "Cellar" | "StorageCloset" | "Theater" | "Office" | "Deck" | "Den" | "DiningRoom" | "ElectricalRoom" | "Elevator" | "Entry" | "FamilyRoom" | "MainFloor" | "Upstairs" | "Downstairs" | "Basement" | "Gallery" | "GameRoom" | "Garage" | "Gym" | "Hallway" | "House" | "Kitchen" | "LaundryRoom" | "Library" | "MasterBedroom" | "MudRoom" | "Nursery" | "Pantry" | "Outside" | "Pool" | "Porch" | "SewingRoom" | "SittingRoom" | "Stairway" | "Yard" | "Attic" | "HotTub" | "LivingRoom" | "Sauna" | "Workshop" | "GuestBedroom" | "GuestBath" | "PowderRoom" | "BackYard" | "FrontYard" | "Patio" | "Driveway" | "SunRoom" | "Spa" | "Whirlpool" | "Shed" | "EquipmentStorage" | "HobbyRoom" | "Fountain" | "Pond" | "ReceptionRoom" | "BreakfastRoom" | "Nook" | "Garden" | "Balcony" | "PanicRoom" | "Terrace" | "Roof" | "Toilet" | "ToiletMain" | "OutsideToilet" | "ShowerRoom" | "Study" | "FrontGarden" | "BackGarden" | "Kettle" | "Television" | "Stove" | "Microwave" | "Toaster" | "Vacuum" | "Appliance" | "FrontDoor" | "BackDoor" | "FridgeDoor" | "MedicationCabinetDoor" | "WardrobeDoor" | "FrontCupboardDoor" | "OtherDoor" | "WaitingRoom" | "TriageRoom" | "DoctorsOffice" | "PatientsPrivateRoom" | "ConsultationRoom" | "NurseStation" | "Ward" | "Corridor" | "OperatingTheatre" | "DentalSurgeryRoom" | "MedicalImagingRoom" | "DecontaminationRoom" | "Unknown"> },
     deviceEnabled: { id: 0x12, type: ZCLDataType<boolean> },
-    alarmMask: { id: 0x13, type: ZCLDataType<BitMap<"hardwareFault" | "softwareFault">> },
-    disableLocalConfig: { id: 0x14, type: ZCLDataType<BitMap<"factoryResetDisabled" | "configurationDisabled">> },
+    alarmMask: { id: 0x13, type: ZCLDataType<Bitmap<"hardwareFault" | "softwareFault">> },
+    disableLocalConfig: { id: 0x14, type: ZCLDataType<Bitmap<"factoryResetDisabled" | "configurationDisabled">> },
     swBuildId: { id: 0x4000, type: ZCLDataType<string> },
   };
   type BasicClusterCommands = {
@@ -40,7 +40,7 @@ declare module "zigbee-clusters" {
     batteryQuantity: { id: 0x33, type: ZCLDataType<number> },
     batteryRatedVoltage: { id: 0x34, type: ZCLDataType<number> },
     batteryVoltageMinThreshold: { id: 0x36, type: ZCLDataType<number> },
-    batteryAlarmState: { id: 0x3e, type: ZCLDataType<BitMap<"batteryThresholdBatterySource1" | "batteryThreshold1BatterySource1" | "batteryThreshold2BatterySource1" | "batteryThreshold3BatterySource1" | "reserved4" | "reserved5" | "reserved6" | "reserved7" | "reserved8" | "reserved9" | "batteryThresholdBatterySource2" | "batteryThreshold1BatterySource2" | "batteryThreshold2BatterySource2" | "batteryThreshold3BatterySource2" | "reserved14" | "reserved15" | "reserved16" | "reserved17" | "reserved18" | "reserved19" | "batteryThresholdBatterySource3" | "batteryThreshold1BatterySource3" | "batteryThreshold2BatterySource3" | "batteryThreshold3BatterySource3" | "reserved24" | "reserved25" | "reserved26" | "reserved27" | "reserved28" | "reserved29" | "mainsPowerSupplyLostUnavailable">> },
+    batteryAlarmState: { id: 0x3e, type: ZCLDataType<Bitmap<"batteryThresholdBatterySource1" | "batteryThreshold1BatterySource1" | "batteryThreshold2BatterySource1" | "batteryThreshold3BatterySource1" | "reserved4" | "reserved5" | "reserved6" | "reserved7" | "reserved8" | "reserved9" | "batteryThresholdBatterySource2" | "batteryThreshold1BatterySource2" | "batteryThreshold2BatterySource2" | "batteryThreshold3BatterySource2" | "reserved14" | "reserved15" | "reserved16" | "reserved17" | "reserved18" | "reserved19" | "batteryThresholdBatterySource3" | "batteryThreshold1BatterySource3" | "batteryThreshold2BatterySource3" | "batteryThreshold3BatterySource3" | "reserved24" | "reserved25" | "reserved26" | "reserved27" | "reserved28" | "reserved29" | "mainsPowerSupplyLostUnavailable">> },
   };
   type PowerConfigurationClusterCommands = Record<never, never>;
   class PowerConfigurationCluster<Attributes extends types.AttributeDefinitions = PowerConfigurationClusterAttributes, Commands extends types.CommandDefinitions = PowerConfigurationClusterCommands> extends Cluster<Attributes, Commands> {
@@ -50,7 +50,7 @@ declare module "zigbee-clusters" {
     minTempExperienced: { id: 0x01, type: ZCLDataType<number> },
     maxTempExperienced: { id: 0x02, type: ZCLDataType<number> },
     overTempTotalDwell: { id: 0x03, type: ZCLDataType<number> },
-    deviceTempAlarmMask: { id: 0x10, type: ZCLDataType<BitMap<"deviceTemperatureTooLow" | "deviceTemperatureTooHigh">> },
+    deviceTempAlarmMask: { id: 0x10, type: ZCLDataType<Bitmap<"deviceTemperatureTooLow" | "deviceTemperatureTooHigh">> },
     lowTempThreshold: { id: 0x11, type: ZCLDataType<number> },
     highTempThreshold: { id: 0x12, type: ZCLDataType<number> },
     lowTempDwellTripPoint: { id: 0x13, type: ZCLDataType<number> },
@@ -110,7 +110,7 @@ declare module "zigbee-clusters" {
     ): Promise<void>;
   }
   type GroupsClusterAttributes = {
-    nameSupport: { id: 0x00, type: ZCLDataType<BitMap<null | null | null | null | null | null | null | "groupNames">> },
+    nameSupport: { id: 0x00, type: ZCLDataType<Bitmap<null | null | null | null | null | null | null | "groupNames">> },
   };
   type GroupsClusterCommands = {
     addGroup: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
@@ -494,7 +494,7 @@ declare module "zigbee-clusters" {
     presentValue: { id: 0x55, type: ZCLDataType<number> },
     reliability: { id: 0x67, type: ZCLDataType<"noFaultDetected" | "noSensor" | "overRange" | "underRange" | "openLoop" | "shortedLoop" | "noOutput" | "unreliableOther" | "processError" | "configurationError"> },
     resolution: { id: 0x6a, type: ZCLDataType<number> },
-    statusFlags: { id: 0x6f, type: ZCLDataType<BitMap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
+    statusFlags: { id: 0x6f, type: ZCLDataType<Bitmap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type AnalogInputClusterCommands = Record<never, never>;
@@ -509,7 +509,7 @@ declare module "zigbee-clusters" {
     reliability: { id: 0x67, type: ZCLDataType<"noFaultDetected" | "overRange" | "underRange" | "openLoop" | "shortedLoop" | "unreliableOther" | "processError" | "configurationError"> },
     relinquishDefault: { id: 0x68, type: ZCLDataType<number> },
     resolution: { id: 0x6a, type: ZCLDataType<number> },
-    statusFlags: { id: 0x6f, type: ZCLDataType<BitMap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
+    statusFlags: { id: 0x6f, type: ZCLDataType<Bitmap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type AnalogOutputClusterCommands = Record<never, never>;
@@ -521,7 +521,7 @@ declare module "zigbee-clusters" {
     presentValue: { id: 0x55, type: ZCLDataType<number> },
     reliability: { id: 0x67, type: ZCLDataType<"noFaultDetected" | "overRange" | "underRange" | "openLoop" | "shortedLoop" | "unreliableOther" | "processError" | "configurationError"> },
     relinquishDefault: { id: 0x68, type: ZCLDataType<number> },
-    statusFlags: { id: 0x6f, type: ZCLDataType<BitMap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
+    statusFlags: { id: 0x6f, type: ZCLDataType<Bitmap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type AnalogValueClusterCommands = Record<never, never>;
@@ -535,7 +535,7 @@ declare module "zigbee-clusters" {
     polarity: { id: 0x54, type: ZCLDataType<"normal" | "reverse"> },
     presentValue: { id: 0x55, type: ZCLDataType<boolean> },
     reliability: { id: 0x67, type: ZCLDataType<"noFaultDetected" | "noSensor" | "overRange" | "underRange" | "openLoop" | "shortedLoop" | "noOutput" | "unreliableOther" | "processError" | "configurationError"> },
-    statusFlags: { id: 0x6f, type: ZCLDataType<BitMap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
+    statusFlags: { id: 0x6f, type: ZCLDataType<Bitmap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type BinaryInputClusterCommands = Record<never, never>;
@@ -552,7 +552,7 @@ declare module "zigbee-clusters" {
     presentValue: { id: 0x55, type: ZCLDataType<boolean> },
     reliability: { id: 0x67, type: ZCLDataType<"noFaultDetected" | "overRange" | "underRange" | "openLoop" | "shortedLoop" | "unreliableOther" | "processError" | "configurationError"> },
     relinquishDefault: { id: 0x68, type: ZCLDataType<boolean> },
-    statusFlags: { id: 0x6f, type: ZCLDataType<BitMap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
+    statusFlags: { id: 0x6f, type: ZCLDataType<Bitmap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type BinaryOutputClusterCommands = Record<never, never>;
@@ -569,7 +569,7 @@ declare module "zigbee-clusters" {
     presentValue: { id: 0x55, type: ZCLDataType<boolean> },
     reliability: { id: 0x67, type: ZCLDataType<"noFaultDetected" | "overRange" | "underRange" | "openLoop" | "shortedLoop" | "unreliableOther" | "processError" | "configurationError"> },
     relinquishDefault: { id: 0x68, type: ZCLDataType<boolean> },
-    statusFlags: { id: 0x6f, type: ZCLDataType<BitMap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
+    statusFlags: { id: 0x6f, type: ZCLDataType<Bitmap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type BinaryValueClusterCommands = Record<never, never>;
@@ -581,7 +581,7 @@ declare module "zigbee-clusters" {
     outOfService: { id: 0x51, type: ZCLDataType<boolean> },
     presentValue: { id: 0x55, type: ZCLDataType<number> },
     reliability: { id: 0x67, type: ZCLDataType<"noFaultDetected" | "noSensor" | "overRange" | "underRange" | "openLoop" | "shortedLoop" | "noOutput" | "unreliableOther" | "processError" | "multiStateFault" | "configurationError"> },
-    statusFlags: { id: 0x6f, type: ZCLDataType<BitMap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
+    statusFlags: { id: 0x6f, type: ZCLDataType<Bitmap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type MultistateInputClusterCommands = Record<never, never>;
@@ -594,7 +594,7 @@ declare module "zigbee-clusters" {
     presentValue: { id: 0x55, type: ZCLDataType<number> },
     reliability: { id: 0x67, type: ZCLDataType<"noFaultDetected" | "overRange" | "underRange" | "openLoop" | "shortedLoop" | "unreliableOther" | "processError" | "multiStateFault" | "configurationError"> },
     relinquishDefault: { id: 0x68, type: ZCLDataType<number> },
-    statusFlags: { id: 0x6f, type: ZCLDataType<BitMap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
+    statusFlags: { id: 0x6f, type: ZCLDataType<Bitmap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type MultistateOutputClusterCommands = Record<never, never>;
@@ -607,7 +607,7 @@ declare module "zigbee-clusters" {
     presentValue: { id: 0x55, type: ZCLDataType<number> },
     reliability: { id: 0x67, type: ZCLDataType<"noFaultDetected" | "noSensor" | "overRange" | "underRange" | "openLoop" | "shortedLoop" | "noOutput" | "unreliableOther" | "processError" | "multiStateFault" | "configurationError"> },
     relinquishDefault: { id: 0x68, type: ZCLDataType<number> },
-    statusFlags: { id: 0x6f, type: ZCLDataType<BitMap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
+    statusFlags: { id: 0x6f, type: ZCLDataType<Bitmap<"inAlarm" | "fault" | "overridden" | "outOfService">> },
     applicationType: { id: 0x100, type: ZCLDataType<number> },
   };
   type MultistateValueClusterCommands = Record<never, never>;
@@ -638,7 +638,7 @@ declare module "zigbee-clusters" {
       },
     },
     queryNextImageRequest: { id: 0x01, direction: "DIRECTION_SERVER_TO_CLIENT", encodeMissingFieldsBehavior: "skip", args: {
-        fieldControl: ZCLDataType<BitMap<"hardwareVersionPresent">>,
+        fieldControl: ZCLDataType<Bitmap<"hardwareVersionPresent">>,
         manufacturerCode: ZCLDataType<number>,
         imageType: ZCLDataType<number>,
         fileVersion: ZCLDataType<number>,
@@ -646,7 +646,7 @@ declare module "zigbee-clusters" {
       },
     },
     imageBlockRequest: { id: 0x03, direction: "DIRECTION_SERVER_TO_CLIENT", encodeMissingFieldsBehavior: "skip", args: {
-        fieldControl: ZCLDataType<BitMap<"requestNodeAddressPresent" | "minimumBlockPeriodPresent">>,
+        fieldControl: ZCLDataType<Bitmap<"requestNodeAddressPresent" | "minimumBlockPeriodPresent">>,
         manufacturerCode: ZCLDataType<number>,
         imageType: ZCLDataType<number>,
         fileVersion: ZCLDataType<number>,
@@ -657,7 +657,7 @@ declare module "zigbee-clusters" {
       },
     },
     imagePageRequest: { id: 0x04, direction: "DIRECTION_SERVER_TO_CLIENT", encodeMissingFieldsBehavior: "skip", args: {
-        fieldControl: ZCLDataType<BitMap<"requestNodeAddressPresent">>,
+        fieldControl: ZCLDataType<Bitmap<"requestNodeAddressPresent">>,
         manufacturerCode: ZCLDataType<number>,
         imageType: ZCLDataType<number>,
         fileVersion: ZCLDataType<number>,
@@ -724,7 +724,7 @@ declare module "zigbee-clusters" {
     queryNextImageRequest(
       args: {
         manufacturerId?: number,
-        fieldControl: BitMap<"hardwareVersionPresent">,
+        fieldControl: Bitmap<"hardwareVersionPresent">,
         manufacturerCode: number,
         imageType: number,
         fileVersion: number,
@@ -739,7 +739,7 @@ declare module "zigbee-clusters" {
     imageBlockRequest(
       args: {
         manufacturerId?: number,
-        fieldControl: BitMap<"requestNodeAddressPresent" | "minimumBlockPeriodPresent">,
+        fieldControl: Bitmap<"requestNodeAddressPresent" | "minimumBlockPeriodPresent">,
         manufacturerCode: number,
         imageType: number,
         fileVersion: number,
@@ -757,7 +757,7 @@ declare module "zigbee-clusters" {
     imagePageRequest(
       args: {
         manufacturerId?: number,
-        fieldControl: BitMap<"requestNodeAddressPresent">,
+        fieldControl: Bitmap<"requestNodeAddressPresent">,
         manufacturerCode: number,
         imageType: number,
         fileVersion: number,
@@ -925,8 +925,8 @@ declare module "zigbee-clusters" {
     autoRelockTime: { id: 0x23, type: ZCLDataType<number> },
     soundVolume: { id: 0x24, type: ZCLDataType<number> },
     operatingMode: { id: 0x25, type: ZCLDataType<"normal" | "vacation" | "privacy" | "noRFLockOrUnlock" | "passage"> },
-    supportedOperatingModes: { id: 0x26, type: ZCLDataType<BitMap<"normal" | "vacation" | "privacy" | "noRFLockOrUnlock" | "passage">> },
-    defaultConfigurationRegister: { id: 0x27, type: ZCLDataType<BitMap<"enableLocalProgramming" | "keypadInterfaceDefaultAccess" | "rfInterfaceDefaultAccess" | "reserved3" | "reserved4" | "soundEnabled" | "autoRelockTimeSet" | "ledSettingsSet">> },
+    supportedOperatingModes: { id: 0x26, type: ZCLDataType<Bitmap<"normal" | "vacation" | "privacy" | "noRFLockOrUnlock" | "passage">> },
+    defaultConfigurationRegister: { id: 0x27, type: ZCLDataType<Bitmap<"enableLocalProgramming" | "keypadInterfaceDefaultAccess" | "rfInterfaceDefaultAccess" | "reserved3" | "reserved4" | "soundEnabled" | "autoRelockTimeSet" | "ledSettingsSet">> },
     enableLocalProgramming: { id: 0x28, type: ZCLDataType<boolean> },
     enableOneTouchLocking: { id: 0x29, type: ZCLDataType<boolean> },
     enableInsideStatusLED: { id: 0x2a, type: ZCLDataType<boolean> },
@@ -936,14 +936,14 @@ declare module "zigbee-clusters" {
     sendPINOverTheAir: { id: 0x32, type: ZCLDataType<boolean> },
     requirePINforRFOperation: { id: 0x33, type: ZCLDataType<boolean> },
     securityLevel: { id: 0x34, type: ZCLDataType<"network" | "apsSecurity"> },
-    alarmMask: { id: 0x40, type: ZCLDataType<BitMap<"deadboltJammed" | "lockResetToFactoryDefaults" | "reserved2" | "rfModulePowerCycled" | "tamperAlarmWrongCodeEntryLimit" | "tamperAlarmFrontEscutcheonRemoved" | "forcedDoorOpenUnderDoorLockedCondition">> },
-    keypadOperationEventMask: { id: 0x41, type: ZCLDataType<BitMap<"unknownOrManufacturerSpecificKeypadOperationEvent" | "lockSourceKeypad" | "unlockSourceKeypad" | "lockSourceKeypadErrorInvalidPIN" | "lockSourceKeypadErrorInvalidSchedule" | "unlockSourceKeypadErrorInvalidCode" | "unlockSourceKeypadErrorInvalidSchedule" | "nonAccessUserOperationEventSourceKeypad">> },
-    rfOperationEventMask: { id: 0x42, type: ZCLDataType<BitMap<"unknownOrManufacturerSpecificKeypadOperationEvent" | "lockSourceRF" | "unlockSourceRF" | "lockSourceRFErrorInvalidCode" | "lockSourceRFErrorInvalidSchedule" | "unlockSourceRFErrorInvalidCode" | "unlockSourceRFErrorInvalidSchedule">> },
-    manualOperationEventMask: { id: 0x43, type: ZCLDataType<BitMap<"unknownOrManufacturerSpecificManualOperationEvent" | "thumbturnLock" | "thumbturnUnlock" | "oneTouchLock" | "keyLock" | "keyUnlock" | "autoLock" | "scheduleLock" | "scheduleUnlock" | "manualLock" | "manualUnlock">> },
-    rfidOperationEventMask: { id: 0x44, type: ZCLDataType<BitMap<"unknownOrManufacturerSpecificKeypadOperationEvent" | "lockSourceRFID" | "unlockSourceRFID" | "lockSourceRFIDErrorInvalidRFIDID" | "lockSourceRFIDErrorInvalidSchedule" | "unlockSourceRFIDErrorInvalidRFIDID" | "unlockSourceRFIDErrorInvalidSchedule">> },
-    keypadProgrammingEventMask: { id: 0x45, type: ZCLDataType<BitMap<"unknownOrManufacturerSpecificKeypadProgrammingEvent" | "masterCodeChanged" | "pinCodeAdded" | "pinCodeDeleted" | "pinCodeChanged">> },
-    rfProgrammingEventMask: { id: 0x46, type: ZCLDataType<BitMap<"unknownOrManufacturerSpecificRFProgrammingEvent" | "reserved1" | "pinCodeAdded" | "pinCodeDeleted" | "pinCodeChanged" | "rfidCodeAdded" | "rfidCodeDeleted">> },
-    rfidProgrammingEventMask: { id: 0x47, type: ZCLDataType<BitMap<"unknownOrManufacturerSpecificRFIDProgrammingEvent" | "rfidCodeAdded" | "rfidCodeDeleted">> },
+    alarmMask: { id: 0x40, type: ZCLDataType<Bitmap<"deadboltJammed" | "lockResetToFactoryDefaults" | "reserved2" | "rfModulePowerCycled" | "tamperAlarmWrongCodeEntryLimit" | "tamperAlarmFrontEscutcheonRemoved" | "forcedDoorOpenUnderDoorLockedCondition">> },
+    keypadOperationEventMask: { id: 0x41, type: ZCLDataType<Bitmap<"unknownOrManufacturerSpecificKeypadOperationEvent" | "lockSourceKeypad" | "unlockSourceKeypad" | "lockSourceKeypadErrorInvalidPIN" | "lockSourceKeypadErrorInvalidSchedule" | "unlockSourceKeypadErrorInvalidCode" | "unlockSourceKeypadErrorInvalidSchedule" | "nonAccessUserOperationEventSourceKeypad">> },
+    rfOperationEventMask: { id: 0x42, type: ZCLDataType<Bitmap<"unknownOrManufacturerSpecificKeypadOperationEvent" | "lockSourceRF" | "unlockSourceRF" | "lockSourceRFErrorInvalidCode" | "lockSourceRFErrorInvalidSchedule" | "unlockSourceRFErrorInvalidCode" | "unlockSourceRFErrorInvalidSchedule">> },
+    manualOperationEventMask: { id: 0x43, type: ZCLDataType<Bitmap<"unknownOrManufacturerSpecificManualOperationEvent" | "thumbturnLock" | "thumbturnUnlock" | "oneTouchLock" | "keyLock" | "keyUnlock" | "autoLock" | "scheduleLock" | "scheduleUnlock" | "manualLock" | "manualUnlock">> },
+    rfidOperationEventMask: { id: 0x44, type: ZCLDataType<Bitmap<"unknownOrManufacturerSpecificKeypadOperationEvent" | "lockSourceRFID" | "unlockSourceRFID" | "lockSourceRFIDErrorInvalidRFIDID" | "lockSourceRFIDErrorInvalidSchedule" | "unlockSourceRFIDErrorInvalidRFIDID" | "unlockSourceRFIDErrorInvalidSchedule">> },
+    keypadProgrammingEventMask: { id: 0x45, type: ZCLDataType<Bitmap<"unknownOrManufacturerSpecificKeypadProgrammingEvent" | "masterCodeChanged" | "pinCodeAdded" | "pinCodeDeleted" | "pinCodeChanged">> },
+    rfProgrammingEventMask: { id: 0x46, type: ZCLDataType<Bitmap<"unknownOrManufacturerSpecificRFProgrammingEvent" | "reserved1" | "pinCodeAdded" | "pinCodeDeleted" | "pinCodeChanged" | "rfidCodeAdded" | "rfidCodeDeleted">> },
+    rfidProgrammingEventMask: { id: 0x47, type: ZCLDataType<Bitmap<"unknownOrManufacturerSpecificRFIDProgrammingEvent" | "rfidCodeAdded" | "rfidCodeDeleted">> },
   };
   type DoorLockClusterCommands = {
     lockDoor: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
@@ -995,7 +995,7 @@ declare module "zigbee-clusters" {
     setWeekDaySchedule: { id: 0x0b, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
         scheduleId: ZCLDataType<number>,
         userId: ZCLDataType<number>,
-        daysMask: ZCLDataType<BitMap<"sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday">>,
+        daysMask: ZCLDataType<Bitmap<"sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday">>,
         startHour: ZCLDataType<number>,
         startMinute: ZCLDataType<number>,
         endHour: ZCLDataType<number>,
@@ -1221,7 +1221,7 @@ declare module "zigbee-clusters" {
         manufacturerId?: number,
         scheduleId: number,
         userId: number,
-        daysMask: BitMap<"sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday">,
+        daysMask: Bitmap<"sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday">,
         startHour: number,
         startMinute: number,
         endHour: number,
@@ -1443,7 +1443,7 @@ declare module "zigbee-clusters" {
     currentPositionTilt: { id: 0x04, type: ZCLDataType<number> },
     numberofActuationsLift: { id: 0x05, type: ZCLDataType<number> },
     numberofActuationsTilt: { id: 0x06, type: ZCLDataType<number> },
-    configStatus: { id: 0x07, type: ZCLDataType<BitMap<"operational" | "online" | "reversalLiftCommands" | "controlLift" | "controlTilt" | "encoderLift" | "encoderTilt" | "reserved">> },
+    configStatus: { id: 0x07, type: ZCLDataType<Bitmap<"operational" | "online" | "reversalLiftCommands" | "controlLift" | "controlTilt" | "encoderLift" | "encoderTilt" | "reserved">> },
     currentPositionLiftPercentage: { id: 0x08, type: ZCLDataType<number> },
     currentPositionTiltPercentage: { id: 0x09, type: ZCLDataType<number> },
     installedOpenLimitLift: { id: 0x10, type: ZCLDataType<number> },
@@ -1453,7 +1453,7 @@ declare module "zigbee-clusters" {
     velocityLift: { id: 0x14, type: ZCLDataType<number> },
     accelerationTimeLift: { id: 0x15, type: ZCLDataType<number> },
     decelerationTimeLift: { id: 0x16, type: ZCLDataType<number> },
-    mode: { id: 0x17, type: ZCLDataType<BitMap<"motorDirectionReversed" | "calibrationMode" | "maintenanceMode" | "ledFeedback">> },
+    mode: { id: 0x17, type: ZCLDataType<Bitmap<"motorDirectionReversed" | "calibrationMode" | "maintenanceMode" | "ledFeedback">> },
     intermediateSetpointsLift: { id: 0x18, type: ZCLDataType<string> },
     intermediateSetpointsTilt: { id: 0x19, type: ZCLDataType<string> },
   };
@@ -1557,7 +1557,7 @@ declare module "zigbee-clusters" {
   type ThermostatClusterAttributes = {
     localTemperature: { id: 0x00, type: ZCLDataType<number> },
     outdoorTemperature: { id: 0x01, type: ZCLDataType<number> },
-    occupancy: { id: 0x02, type: ZCLDataType<BitMap<"occupied">> },
+    occupancy: { id: 0x02, type: ZCLDataType<Bitmap<"occupied">> },
     absMinHeatSetpointLimit: { id: 0x03, type: ZCLDataType<number> },
     absMaxHeatSetpointLimit: { id: 0x04, type: ZCLDataType<number> },
     absMinCoolSetpointLimit: { id: 0x05, type: ZCLDataType<number> },
@@ -1574,10 +1574,10 @@ declare module "zigbee-clusters" {
     minCoolSetpointLimit: { id: 0x17, type: ZCLDataType<number> },
     maxCoolSetpointLimit: { id: 0x18, type: ZCLDataType<number> },
     minSetpointDeadBand: { id: 0x19, type: ZCLDataType<number> },
-    remoteSensing: { id: 0x1a, type: ZCLDataType<BitMap<"localTemperature" | "outdoorTemperature" | "occupancy">> },
+    remoteSensing: { id: 0x1a, type: ZCLDataType<Bitmap<"localTemperature" | "outdoorTemperature" | "occupancy">> },
     controlSequenceOfOperation: { id: 0x1b, type: ZCLDataType<"cooling" | "coolingWithReheat" | "heating" | "heatingWithReheat" | "coolingAndHeating4Pipes" | "coolingAndHeating4PipesWithReheat"> },
     systemMode: { id: 0x1c, type: ZCLDataType<"off" | "auto" | "cool" | "heat" | "emergencyHeating" | "precooling" | "fanOnly" | "dry" | "sleep"> },
-    alarmMask: { id: 0x1d, type: ZCLDataType<BitMap<"initializationFailure" | "hardwareFailure" | "selfCalibrationFailure">> },
+    alarmMask: { id: 0x1d, type: ZCLDataType<Bitmap<"initializationFailure" | "hardwareFailure" | "selfCalibrationFailure">> },
   };
   type ThermostatClusterCommands = {
     setSetpoint: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
@@ -1619,7 +1619,7 @@ declare module "zigbee-clusters" {
     currentY: { id: 0x04, type: ZCLDataType<number> },
     colorTemperatureMireds: { id: 0x07, type: ZCLDataType<number> },
     colorMode: { id: 0x08, type: ZCLDataType<"currentHueAndCurrentSaturation" | "currentXAndCurrentY" | "colorTemperatureMireds"> },
-    colorCapabilities: { id: 0x400a, type: ZCLDataType<BitMap<"hueAndSaturation" | "enhancedHue" | "colorLoop" | "xy" | "colorTemperature">> },
+    colorCapabilities: { id: 0x400a, type: ZCLDataType<Bitmap<"hueAndSaturation" | "enhancedHue" | "colorLoop" | "xy" | "colorTemperature">> },
     colorTempPhysicalMinMireds: { id: 0x400b, type: ZCLDataType<number> },
     colorTempPhysicalMaxMireds: { id: 0x400c, type: ZCLDataType<number> },
   };
@@ -1721,7 +1721,7 @@ declare module "zigbee-clusters" {
   type BallastConfigurationClusterAttributes = {
     physicalMinLevel: { id: 0x00, type: ZCLDataType<number> },
     physicalMaxLevel: { id: 0x01, type: ZCLDataType<number> },
-    ballastStatus: { id: 0x02, type: ZCLDataType<BitMap<"nonOperational" | "lampNotInSocket">> },
+    ballastStatus: { id: 0x02, type: ZCLDataType<Bitmap<"nonOperational" | "lampNotInSocket">> },
     minLevel: { id: 0x10, type: ZCLDataType<number> },
     maxLevel: { id: 0x11, type: ZCLDataType<number> },
     powerOnLevel: { id: 0x12, type: ZCLDataType<number> },
@@ -1733,7 +1733,7 @@ declare module "zigbee-clusters" {
     lampManufacturer: { id: 0x31, type: ZCLDataType<string> },
     lampRatedHours: { id: 0x32, type: ZCLDataType<number> },
     lampBurnHours: { id: 0x33, type: ZCLDataType<number> },
-    lampAlarmMode: { id: 0x34, type: ZCLDataType<BitMap<"lampBurnHours">> },
+    lampAlarmMode: { id: 0x34, type: ZCLDataType<Bitmap<"lampBurnHours">> },
     lampBurnHoursTripPoint: { id: 0x35, type: ZCLDataType<number> },
   };
   type BallastConfigurationClusterCommands = Record<never, never>;
@@ -1798,9 +1798,9 @@ declare module "zigbee-clusters" {
   class RelativeHumidityCluster<Attributes extends types.AttributeDefinitions = RelativeHumidityClusterAttributes, Commands extends types.CommandDefinitions = RelativeHumidityClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type OccupancySensingClusterAttributes = {
-    occupancy: { id: 0x00, type: ZCLDataType<BitMap<"occupied">> },
+    occupancy: { id: 0x00, type: ZCLDataType<Bitmap<"occupied">> },
     occupancySensorType: { id: 0x01, type: ZCLDataType<"pir" | "ultrasonic" | "pirAndUltrasonic" | "physicalContact"> },
-    occupancySensorTypeBitmap: { id: 0x02, type: ZCLDataType<BitMap<"pir" | "ultrasonic" | "physicalContact">> },
+    occupancySensorTypeBitmap: { id: 0x02, type: ZCLDataType<Bitmap<"pir" | "ultrasonic" | "physicalContact">> },
     pirOccupiedToUnoccupiedDelay: { id: 0x10, type: ZCLDataType<number> },
     pirUnoccupiedToOccupiedDelay: { id: 0x11, type: ZCLDataType<number> },
     pirUnoccupiedToOccupiedThreshold: { id: 0x12, type: ZCLDataType<number> },
@@ -1817,13 +1817,13 @@ declare module "zigbee-clusters" {
   type IASZoneClusterAttributes = {
     zoneState: { id: 0x00, type: ZCLDataType<"notEnrolled" | "enrolled"> },
     zoneType: { id: 0x01, type: ZCLDataType<"standardCIE" | "motionSensor" | "contactSwitch" | "doorWindowHandle" | "fireSensor" | "waterSensor" | "carbonMonoxideSensor" | "personalEmergencyDevice" | "vibrationMovementSensor" | "remoteControl" | "keyFob" | "keypad" | "standardWarningDevice" | "glassBreakSensor" | "securityRepeater" | "invalidZoneType"> },
-    zoneStatus: { id: 0x02, type: ZCLDataType<BitMap<"alarm1" | "alarm2" | "tamper" | "battery" | "supervisionReports" | "restoreReports" | "trouble" | "acMains" | "test" | "batteryDefect">> },
+    zoneStatus: { id: 0x02, type: ZCLDataType<Bitmap<"alarm1" | "alarm2" | "tamper" | "battery" | "supervisionReports" | "restoreReports" | "trouble" | "acMains" | "test" | "batteryDefect">> },
     iasCIEAddress: { id: 0x10, type: ZCLDataType<string> },
     zoneId: { id: 0x11, type: ZCLDataType<number> },
   };
   type IASZoneClusterCommands = {
     zoneStatusChangeNotification: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
-        zoneStatus: ZCLDataType<BitMap<"alarm1" | "alarm2" | "tamper" | "battery" | "supervisionReports" | "restoreReports" | "trouble" | "acMains" | "test" | "batteryDefect">>,
+        zoneStatus: ZCLDataType<Bitmap<"alarm1" | "alarm2" | "tamper" | "battery" | "supervisionReports" | "restoreReports" | "trouble" | "acMains" | "test" | "batteryDefect">>,
         extendedStatus: ZCLDataType<number>,
         zoneId: ZCLDataType<number>,
         delay: ZCLDataType<number>,
@@ -1845,7 +1845,7 @@ declare module "zigbee-clusters" {
     onZoneStatusChangeNotification(
       args: {
         manufacturerId?: number,
-        zoneStatus: BitMap<"alarm1" | "alarm2" | "tamper" | "battery" | "supervisionReports" | "restoreReports" | "trouble" | "acMains" | "test" | "batteryDefect">,
+        zoneStatus: Bitmap<"alarm1" | "alarm2" | "tamper" | "battery" | "supervisionReports" | "restoreReports" | "trouble" | "acMains" | "test" | "batteryDefect">,
         extendedStatus: number,
         zoneId: number,
         delay: number,
@@ -1924,7 +1924,7 @@ declare module "zigbee-clusters" {
     currentTier3SummationReceived: { id: 0x105, type: ZCLDataType<number> },
     currentTier4SummationDelivered: { id: 0x106, type: ZCLDataType<number> },
     currentTier4SummationReceived: { id: 0x107, type: ZCLDataType<number> },
-    status: { id: 0x200, type: ZCLDataType<BitMap<"checkMeter" | "lowBattery" | "tamperDetect" | "powerFailure" | "powerQuality" | "leakDetect" | "serviceDisconnect">> },
+    status: { id: 0x200, type: ZCLDataType<Bitmap<"checkMeter" | "lowBattery" | "tamperDetect" | "powerFailure" | "powerQuality" | "leakDetect" | "serviceDisconnect">> },
     remainingBatteryLife: { id: 0x201, type: ZCLDataType<number> },
     hoursInOperation: { id: 0x202, type: ZCLDataType<number> },
     hoursInFault: { id: 0x203, type: ZCLDataType<number> },
@@ -2086,7 +2086,7 @@ declare module "zigbee-clusters" {
   class MeteringCluster<Attributes extends types.AttributeDefinitions = MeteringClusterAttributes, Commands extends types.CommandDefinitions = MeteringClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type ElectricalMeasurementClusterAttributes = {
-    measurementType: { id: 0x00, type: ZCLDataType<BitMap<"activeMeasurementAC" | "reactiveMeasurementAC" | "apparentMeasurementAC" | "phaseAMeasurement" | "phaseBMeasurement" | "phaseCMeasurement" | "dcMeasurement" | "harmonicsMeasurement" | "powerQualityMeasurement">> },
+    measurementType: { id: 0x00, type: ZCLDataType<Bitmap<"activeMeasurementAC" | "reactiveMeasurementAC" | "apparentMeasurementAC" | "phaseAMeasurement" | "phaseBMeasurement" | "phaseCMeasurement" | "dcMeasurement" | "harmonicsMeasurement" | "powerQualityMeasurement">> },
     acFrequency: { id: 0x300, type: ZCLDataType<number> },
     measuredPhase1stHarmonicCurrent: { id: 0x30d, type: ZCLDataType<number> },
     acFrequencyMultiplier: { id: 0x400, type: ZCLDataType<number> },
@@ -2102,7 +2102,7 @@ declare module "zigbee-clusters" {
     acCurrentDivisor: { id: 0x603, type: ZCLDataType<number> },
     acPowerMultiplier: { id: 0x604, type: ZCLDataType<number> },
     acPowerDivisor: { id: 0x605, type: ZCLDataType<number> },
-    acAlarmsMask: { id: 0x800, type: ZCLDataType<BitMap<"voltageOverload" | "currentOverload" | "activePowerOverload" | "reactivePowerOverload" | "averageRMSOverVoltage" | "averageRMSUnderVoltage" | "rmsExtremeOverVoltage" | "rmsExtremeUnderVoltage" | "rmsVoltageSag" | "rmsVoltageSwell">> },
+    acAlarmsMask: { id: 0x800, type: ZCLDataType<Bitmap<"voltageOverload" | "currentOverload" | "activePowerOverload" | "reactivePowerOverload" | "averageRMSOverVoltage" | "averageRMSUnderVoltage" | "rmsExtremeOverVoltage" | "rmsExtremeUnderVoltage" | "rmsVoltageSag" | "rmsVoltageSwell">> },
     acVoltageOverload: { id: 0x801, type: ZCLDataType<number> },
     acCurrentOverload: { id: 0x802, type: ZCLDataType<number> },
     acActivePowerOverload: { id: 0x803, type: ZCLDataType<number> },
@@ -2618,7 +2618,7 @@ declare module "zigbee-clusters" {
       | 'manufacturerSpecific'
       | 'directionToClient'
       | 'disableDefaultResponse';
-    type ZCLFrameControlBitmap = ZCLDataType<BitMap<FrameControlFlag>>;
+    type ZCLFrameControlBitmap = ZCLDataType<Bitmap<FrameControlFlag>>;
 
     type ZCLEnum8Status = 'SUCCESS' | 'FAILURE' | 'NOT_AUTHORIZED' | 'RESERVED_FIELD_NOT_ZERO' | 'MALFORMED_COMMAND' | 'UNSUP_CLUSTER_COMMAND' | 'UNSUP_GENERAL_COMMAND' | 'UNSUP_MANUF_CLUSTER_COMMAND' | 'UNSUP_MANUF_GENERAL_COMMAND' | 'INVALID_FIELD' | 'UNSUPPORTED_ATTRIBUTE' | 'INVALID_VALUE' | 'READ_ONLY' | 'INSUFFICIENT_SPACE' | 'DUPLICATE_EXISTS' | 'NOT_FOUND' | 'UNREPORTABLE_ATTRIBUTE' | 'INVALID_DATA_TYPE' | 'INVALID_SELECTOR' | 'WRITE_ONLY' | 'INCONSISTENT_STARTUP_STATE' | 'DEFINED_OUT_OF_BAND' | 'INCONSISTENT' | 'ACTION_DENIED' | 'TIMEOUT' | 'ABORT' | 'INVALID_IMAGE' | 'WAIT_FOR_DATA' | 'NO_IMAGE_AVAILABLE' | 'REQUIRE_MORE_IMAGE' | 'NOTIFICATION_PENDING' | 'HARDWARE_FAILURE' | 'SOFTWARE_FAILURE' | 'CALIBRATION_ERROR' | 'UNSUPPORTED_CLUSTER';
 
@@ -2839,7 +2839,7 @@ declare module "zigbee-clusters" {
             attributes: ZCLDataType<Array<ZCLStructInstance<{
               id: ZCLDataTypes["uint16"],
               dataTypeId: ZCLDataTypes["uint8"],
-              acl: ZCLDataType<import('@athombv/data-types').BitMap<'readable' | 'writable' | 'reportable'>>,
+              acl: ZCLDataType<import('@athombv/data-types').Bitmap<'readable' | 'writable' | 'reportable'>>,
             }>>>,
           },
         },
