@@ -49,6 +49,10 @@ class StringBuilder {
   }
 }
 
+// @ts-expect-error No type declarations
+const topModule = await import('../index.js');
+const enum8Status = topModule.ZCLDataTypes.enum8Status;
+
 const filePath = path.resolve('index.d.ts');
 const templatePath = path.resolve('scripts/template.d.ts.txt');
 await main();
@@ -319,7 +323,11 @@ function formatZCLDataTypeGeneric(stringBuilder: StringBuilder, className: strin
     // Struct
     stringBuilder.print('unknown');
   } else if (typeName.startsWith('enum')) {
-    formatEnumDataType(stringBuilder, className, command, typeName, typeArgs);
+    if (definition === enum8Status) {
+      stringBuilder.print('types.ZCLEnum8Status')
+    } else {
+      formatEnumDataType(stringBuilder, className, command, typeName, typeArgs);
+    }
   } else if (typeName.startsWith('map')) {
     formatMapDataType(stringBuilder, className, command, typeName, typeArgs);
   } else if (typeName.startsWith("_Array")) {
