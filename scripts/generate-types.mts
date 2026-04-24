@@ -60,19 +60,19 @@ await main();
 async function main(): Promise<void> {
   console.log('Writing clusters to', filePath);
 
+  const stringBuilder = new StringBuilder();
   // Write preamble and open module declaration
-  await fs.writeFile(filePath, 'declare module "zigbee-clusters" {\n  import {Bitmap} from "@athombv/data-types";\n');
+  stringBuilder.printLine('declare module "zigbee-clusters" {')
+  stringBuilder.increaseIndent();
+  stringBuilder.printLine('import {Bitmap} from "@athombv/data-types";')
 
   // @ts-expect-error No type declarations
   const clustersModule = await import("../lib/clusters/index.js");
   for (const [name, value] of Object.entries(clustersModule.default)) {
     if (name !== 'Cluster' && name !== 'CLUSTER') {
-      await formatCluster(name, value as typeof Cluster);
+      await formatCluster(stringBuilder, name, value as typeof Cluster);
     }
   }
-
-  const stringBuilder = new StringBuilder();
-  stringBuilder.setIndent(1);
 
   // Open CLUSTER
   stringBuilder.printLine("const CLUSTER: {");
@@ -103,23 +103,20 @@ async function main(): Promise<void> {
   stringBuilder.decreaseIndent();
   stringBuilder.printLine("};");
 
-  await fs.appendFile(filePath, stringBuilder.toString());
-
   const template = await fs.readFile(templatePath, 'utf8');
   const templateHeader = "declare module 'zigbee-clusters' {";
   const templateBody = template.slice(template.indexOf(templateHeader) + templateHeader.length);
   // Close module declaration
-  await fs.appendFile(filePath, templateBody);
+  stringBuilder.print(templateBody);
+
+  // Write the result to index.d.ts
+  await fs.writeFile(filePath, stringBuilder.toString());
 
   console.log("Done!");
 }
 
 
-async function formatCluster(className: string, classDefinition: typeof Cluster): Promise<void> {
-  const stringBuilder = new StringBuilder();
-  stringBuilder.setIndent(1);
-
-
+async function formatCluster(stringBuilder: StringBuilder, className: string, classDefinition: typeof Cluster): Promise<void> {
   stringBuilder.startLine();
   stringBuilder.print(`type ${className}Attributes = `);
   if (Object.keys(classDefinition.ATTRIBUTES).length === 0) {
@@ -170,8 +167,6 @@ async function formatCluster(className: string, classDefinition: typeof Cluster)
   // Close class
   stringBuilder.decreaseIndent();
   stringBuilder.printLine('}');
-
-  await fs.appendFile(filePath, stringBuilder.toString());
 }
 
 
