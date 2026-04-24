@@ -241,40 +241,66 @@ function formatCommandMethod(stringBuilder: StringBuilder, className: string, na
   // Open method
   stringBuilder.print("(");
   stringBuilder.endLine();
-
-  // Open args
   stringBuilder.increaseIndent();
-  stringBuilder.startLine();
-  stringBuilder.print("args");
-  if (definition.args === undefined || definition.encodeMissingFieldsBehavior !== undefined) {
-    stringBuilder.print("?")
-  }
-  stringBuilder.print(": {")
-  stringBuilder.endLine();
-  stringBuilder.increaseIndent();
-  stringBuilder.printLine("manufacturerId?: number,");
 
-  for (const arg in definition.args) {
+  if (definition.direction === 'DIRECTION_SERVER_TO_CLIENT') {
+    if (definition.args === undefined) {
+      stringBuilder.printLine('args: undefined,')
+    } else {
+      // Open args
+      stringBuilder.printLine('args: {');
+      stringBuilder.increaseIndent();
+
+      for (const arg in definition.args) {
+        stringBuilder.startLine();
+        stringBuilder.print(`${arg}?: `);
+        formatZCLDataTypeGeneric(stringBuilder, className, name, definition.args[arg]);
+        stringBuilder.print(',');
+        stringBuilder.endLine();
+      }
+
+      // Close args
+      stringBuilder.decreaseIndent();
+      stringBuilder.printLine('},');
+    }
+
+    stringBuilder.printLine("meta: object,")
+    stringBuilder.printLine("frame: object,")
+    stringBuilder.printLine("rawFrame: Buffer,")
+  } else {
+    // Open args
     stringBuilder.startLine();
-    stringBuilder.print(`${arg}?: `);
-    formatZCLDataTypeGeneric(stringBuilder, className, name, definition.args[arg]);
-    stringBuilder.print(",");
+    stringBuilder.print('args');
+    if (definition.args === undefined || definition.encodeMissingFieldsBehavior !== undefined) {
+      stringBuilder.print('?');
+    }
+    stringBuilder.print(': {');
     stringBuilder.endLine();
+    stringBuilder.increaseIndent();
+    stringBuilder.printLine('manufacturerId?: number,');
+
+    for (const arg in definition.args) {
+      stringBuilder.startLine();
+      stringBuilder.print(`${arg}?: `);
+      formatZCLDataTypeGeneric(stringBuilder, className, name, definition.args[arg]);
+      stringBuilder.print(',');
+      stringBuilder.endLine();
+    }
+
+    // Close args
+    stringBuilder.decreaseIndent();
+    stringBuilder.printLine('},');
+
+
+    // Opts
+    stringBuilder.printLine('opts?: {');
+    stringBuilder.increaseIndent();
+    stringBuilder.printLine('waitForResponse?: boolean,');
+    stringBuilder.printLine('timeout?: number,');
+    stringBuilder.printLine('disableDefaultResponse?: boolean,');
+    stringBuilder.decreaseIndent();
+    stringBuilder.printLine('},');
   }
-
-  // Close args
-  stringBuilder.decreaseIndent();
-  stringBuilder.printLine("},");
-
-
-  // Opts
-  stringBuilder.printLine("opts?: {");
-  stringBuilder.increaseIndent();
-  stringBuilder.printLine("waitForResponse?: boolean,");
-  stringBuilder.printLine("timeout?: number,");
-  stringBuilder.printLine("disableDefaultResponse?: boolean,");
-  stringBuilder.decreaseIndent();
-  stringBuilder.printLine("},");
 
   // Close method
   stringBuilder.decreaseIndent();

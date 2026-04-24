@@ -721,19 +721,16 @@ declare module "zigbee-clusters" {
   };
   class OTACluster<Attributes extends types.AttributeDefinitions = OTAClusterAttributes, Commands extends types.CommandDefinitions = OTAClusterCommands> extends Cluster<Attributes, Commands> {
     onImageNotify(
-      args?: {
-        manufacturerId?: number,
+      args: {
         payloadType?: "queryJitter" | "queryJitterAndManufacturerCode" | "queryJitterAndManufacturerCodeAndImageType" | "queryJitterAndManufacturerCodeAndImageTypeAndNewFileVersion",
         queryJitter?: number,
         manufacturerCode?: number,
         imageType?: number,
         newFileVersion?: number,
       },
-      opts?: {
-        waitForResponse?: boolean,
-        timeout?: number,
-        disableDefaultResponse?: boolean,
-      },
+      meta: object,
+      frame: object,
+      rawFrame: Buffer,
     ): Promise<void>;
     queryNextImageRequest(
       args?: {
@@ -816,8 +813,7 @@ declare module "zigbee-clusters" {
       minimumBlockPeriod?: number,
     }>;
     onImageBlockResponse(
-      args?: {
-        manufacturerId?: number,
+      args: {
         status?: types.ZCLEnum8Status,
         manufacturerCode?: number,
         imageType?: number,
@@ -829,11 +825,9 @@ declare module "zigbee-clusters" {
         requestTime?: number,
         minimumBlockPeriod?: number,
       },
-      opts?: {
-        waitForResponse?: boolean,
-        timeout?: number,
-        disableDefaultResponse?: boolean,
-      },
+      meta: object,
+      frame: object,
+      rawFrame: Buffer,
     ): Promise<void>;
     upgradeEndRequest(
       args: {
@@ -857,18 +851,15 @@ declare module "zigbee-clusters" {
     }>;
     onUpgradeEndResponse(
       args: {
-        manufacturerId?: number,
         manufacturerCode?: number,
         imageType?: number,
         fileVersion?: number,
         currentTime?: number,
         upgradeTime?: number,
       },
-      opts?: {
-        waitForResponse?: boolean,
-        timeout?: number,
-        disableDefaultResponse?: boolean,
-      },
+      meta: object,
+      frame: object,
+      rawFrame: Buffer,
     ): Promise<void>;
     queryDeviceSpecificFileRequest(
       args: {
@@ -1537,7 +1528,6 @@ declare module "zigbee-clusters" {
     }>;
     onOperationEventNotification(
       args: {
-        manufacturerId?: number,
         operationEventSource?: number,
         operationEventCode?: number,
         userId?: number,
@@ -1545,15 +1535,12 @@ declare module "zigbee-clusters" {
         zigBeeLocalTime?: number,
         data?: Buffer,
       },
-      opts?: {
-        waitForResponse?: boolean,
-        timeout?: number,
-        disableDefaultResponse?: boolean,
-      },
+      meta: object,
+      frame: object,
+      rawFrame: Buffer,
     ): Promise<void>;
     onProgrammingEventNotification(
       args: {
-        manufacturerId?: number,
         programEventSource?: number,
         programEventCode?: number,
         userId?: number,
@@ -1563,11 +1550,9 @@ declare module "zigbee-clusters" {
         zigBeeLocalTime?: number,
         data?: Buffer,
       },
-      opts?: {
-        waitForResponse?: boolean,
-        timeout?: number,
-        disableDefaultResponse?: boolean,
-      },
+      meta: object,
+      frame: object,
+      rawFrame: Buffer,
     ): Promise<void>;
   }
   type WindowCoveringClusterAttributes = {
@@ -1979,17 +1964,14 @@ declare module "zigbee-clusters" {
   class IASZoneCluster<Attributes extends types.AttributeDefinitions = IASZoneClusterAttributes, Commands extends types.CommandDefinitions = IASZoneClusterCommands> extends Cluster<Attributes, Commands> {
     onZoneStatusChangeNotification(
       args: {
-        manufacturerId?: number,
         zoneStatus?: Bitmap<"alarm1" | "alarm2" | "tamper" | "battery" | "supervisionReports" | "restoreReports" | "trouble" | "acMains" | "test" | "batteryDefect">,
         extendedStatus?: number,
         zoneId?: number,
         delay?: number,
       },
-      opts?: {
-        waitForResponse?: boolean,
-        timeout?: number,
-        disableDefaultResponse?: boolean,
-      },
+      meta: object,
+      frame: object,
+      rawFrame: Buffer,
     ): Promise<void>;
     zoneEnrollResponse(
       args: {
@@ -2005,15 +1987,12 @@ declare module "zigbee-clusters" {
     ): Promise<void>;
     onZoneEnrollRequest(
       args: {
-        manufacturerId?: number,
         zoneType?: "standardCIE" | "motionSensor" | "contactSwitch" | "doorWindowHandle" | "fireSensor" | "waterSensor" | "carbonMonoxideSensor" | "personalEmergencyDevice" | "vibrationMovementSensor" | "remoteControl" | "keyFob" | "keypad" | "standardWarningDevice" | "glassBreakSensor" | "securityRepeater" | "invalidZoneType",
         manufacturerCode?: number,
       },
-      opts?: {
-        waitForResponse?: boolean,
-        timeout?: number,
-        disableDefaultResponse?: boolean,
-      },
+      meta: object,
+      frame: object,
+      rawFrame: Buffer,
     ): Promise<void>;
     initiateNormalOperationMode(
       args?: {
