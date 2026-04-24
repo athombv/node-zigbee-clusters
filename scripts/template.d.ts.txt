@@ -1,12 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare module 'zigbee-clusters' {
   import {EventEmitter} from "events";
-  import {ZigBeeNode} from "homey";
+
   type ZCLDataTypes = typeof import('@athombv/data-types').DataTypes & {
     enum8Status: ZCLDataType<types.ZCLEnum8Status>
   };
 
   function debug(flag: boolean, namespaces: string): void;
+
+  interface ZigBeeNode {
+    /**
+     * Call this method to send a frame this ZigBeeNode.
+     */
+    sendFrame(endpointId: number, clusterId: number, frame: Buffer): Promise<void>;
+    /**
+     * This method is called when a frame has been received from this ZigBeeNode.
+     * This method must be overridden.
+     */
+    handleFrame(endpointId: number, clusterId: number, frame: Buffer, meta: object): Promise<void>;
+  }
 
   class ZCLNode extends EventEmitter {
     constructor(node: ZigBeeNode);
