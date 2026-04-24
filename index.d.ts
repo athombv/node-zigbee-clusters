@@ -3015,6 +3015,34 @@ declare module "zigbee-clusters" {
       [commandName: string]: CommandDefinition,
     }
 
+    type CommandsFromDefinition<Commands extends CommandDefinitions> = {
+      [name in Extract<keyof Commands, string> as Commands[name]['direction'] extends 'DIRECTION_SERVER_TO_CLIENT'
+        ? `on${Capitalize<name>}`
+        : name]: Commands[name]['direction'] extends 'DIRECTION_SERVER_TO_CLIENT'
+        ? FunctionFromServerCommand<Commands[name]>
+        : FunctionFromClientCommand<Commands[name]>;
+    };
+
+    type FunctionFromServerCommand<Definition extends CommandDefinition> = (
+      args: {
+        [arg in keyof Definition['args']]?: FromZCLDataType<Definition['args'][arg]>;
+      },
+      meta: object,
+      frame: object,
+      rawFrame: Buffer,
+    ) => Promise<void>;
+
+    type FunctionFromClientCommand<Definition extends CommandDefinition> = (
+      args?: { manufacturerId?: number } & {
+        [arg in keyof Definition['args']]?: FromZCLDataType<Definition['args'][arg]>;
+      },
+      opts?: {
+        waitForResponse?: boolean;
+        timeout?: number;
+        disableDefaultResponse?: boolean;
+      },
+    ) => Promise<void>;
+
     type AttributeReportingConfiguration<AttributeKey extends string> = {
       [attribute in AttributeKey]: {
         minInterval?: number,
