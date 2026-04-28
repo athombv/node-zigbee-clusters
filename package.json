@@ -7,7 +7,7 @@
   "scripts": {
     "test": "mocha --reporter list",
     "lint": "eslint .",
-    "generate-types": "node scripts/generate-types.js",
+    "generate-types": "tsx scripts/generate-types.mts",
     "serve": "concurrently \"serve build/\" \"npm run build:watch\"",
     "build": "jsdoc --configure ./docs/jsdoc.json",
     "build:clean": "rm -rf ./build",
@@ -43,6 +43,7 @@
     "mocha": "^10.1.0",
     "serve": "^14.0.1",
     "sinon": "^19.0.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "watch": "^1.0.2"
   },
