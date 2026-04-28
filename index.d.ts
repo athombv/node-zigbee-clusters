@@ -75,7 +75,7 @@ declare module "zigbee-clusters" {
   };
   class IdentifyCluster<Attributes extends types.AttributeDefinitions = IdentifyClusterAttributes, Commands extends types.CommandDefinitions = IdentifyClusterCommands> extends Cluster<Attributes, Commands> {
     identify(
-      args: {
+      args?: {
         manufacturerId?: number,
         identifyTime?: number,
       },
@@ -98,7 +98,7 @@ declare module "zigbee-clusters" {
       timeout: number,
     }>;
     triggerEffect(
-      args: {
+      args?: {
         manufacturerId?: number,
         effectIdentifier?: "blink" | "breathe" | "okay" | "channelChange" | "finish" | "stop",
         effectVariant?: number,
@@ -140,7 +140,7 @@ declare module "zigbee-clusters" {
   };
   class GroupsCluster<Attributes extends types.AttributeDefinitions = GroupsClusterAttributes, Commands extends types.CommandDefinitions = GroupsClusterCommands> extends Cluster<Attributes, Commands> {
     addGroup(
-      args: {
+      args?: {
         manufacturerId?: number,
         groupId?: number,
         groupName?: string,
@@ -155,7 +155,7 @@ declare module "zigbee-clusters" {
       groupId: number,
     }>;
     viewGroup(
-      args: {
+      args?: {
         manufacturerId?: number,
         groupId?: number,
       },
@@ -170,7 +170,7 @@ declare module "zigbee-clusters" {
       groupNames: string,
     }>;
     getGroupMembership(
-      args: {
+      args?: {
         manufacturerId?: number,
         groupIds?: Array<number>,
       },
@@ -184,7 +184,7 @@ declare module "zigbee-clusters" {
       groups: Array<number>,
     }>;
     removeGroup(
-      args: {
+      args?: {
         manufacturerId?: number,
         groupId?: number,
       },
@@ -208,7 +208,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     addGroupIfIdentify(
-      args: {
+      args?: {
         manufacturerId?: number,
         groupId?: number,
         groupName?: string,
@@ -278,7 +278,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     offWithEffect(
-      args: {
+      args?: {
         manufacturerId?: number,
         effectIdentifier?: number,
         effectVariant?: number,
@@ -300,7 +300,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     onWithTimedOff(
-      args: {
+      args?: {
         manufacturerId?: number,
         onOffControl?: number,
         onTime?: number,
@@ -364,7 +364,7 @@ declare module "zigbee-clusters" {
   };
   class LevelControlCluster<Attributes extends types.AttributeDefinitions = LevelControlClusterAttributes, Commands extends types.CommandDefinitions = LevelControlClusterCommands> extends Cluster<Attributes, Commands> {
     moveToLevel(
-      args: {
+      args?: {
         manufacturerId?: number,
         level?: number,
         transitionTime?: number,
@@ -376,7 +376,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     move(
-      args: {
+      args?: {
         manufacturerId?: number,
         moveMode?: "up" | "down",
         rate?: number,
@@ -388,7 +388,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     step(
-      args: {
+      args?: {
         manufacturerId?: number,
         mode?: "up" | "down",
         stepSize?: number,
@@ -411,7 +411,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     moveToLevelWithOnOff(
-      args: {
+      args?: {
         manufacturerId?: number,
         level?: number,
         transitionTime?: number,
@@ -423,7 +423,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     moveWithOnOff(
-      args: {
+      args?: {
         manufacturerId?: number,
         moveMode?: "up" | "down",
         rate?: number,
@@ -435,7 +435,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     stepWithOnOff(
-      args: {
+      args?: {
         manufacturerId?: number,
         mode?: "up" | "down",
         stepSize?: number,
@@ -830,7 +830,7 @@ declare module "zigbee-clusters" {
       rawFrame: Buffer,
     ): Promise<void>;
     upgradeEndRequest(
-      args: {
+      args?: {
         manufacturerId?: number,
         status?: types.ZCLEnum8Status,
         manufacturerCode?: number,
@@ -862,7 +862,7 @@ declare module "zigbee-clusters" {
       rawFrame: Buffer,
     ): Promise<void>;
     queryDeviceSpecificFileRequest(
-      args: {
+      args?: {
         manufacturerId?: number,
         requestNodeAddress?: string,
         manufacturerCode?: number,
@@ -919,7 +919,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     setLongPollInterval(
-      args: {
+      args?: {
         manufacturerId?: number,
         newLongPollInterval?: number,
       },
@@ -930,7 +930,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     setShortPollInterval(
-      args: {
+      args?: {
         manufacturerId?: number,
         newShortPollInterval?: number,
       },
@@ -1137,7 +1137,7 @@ declare module "zigbee-clusters" {
   };
   class DoorLockCluster<Attributes extends types.AttributeDefinitions = DoorLockClusterAttributes, Commands extends types.CommandDefinitions = DoorLockClusterCommands> extends Cluster<Attributes, Commands> {
     lockDoor(
-      args: {
+      args?: {
         manufacturerId?: number,
         pinCode?: Buffer,
       },
@@ -1150,7 +1150,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     unlockDoor(
-      args: {
+      args?: {
         manufacturerId?: number,
         pinCode?: Buffer,
       },
@@ -1163,7 +1163,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     toggle(
-      args: {
+      args?: {
         manufacturerId?: number,
         pinCode?: Buffer,
       },
@@ -1176,7 +1176,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     unlockWithTimeout(
-      args: {
+      args?: {
         manufacturerId?: number,
         timeout?: number,
         pinCode?: Buffer,
@@ -1190,7 +1190,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     getLogRecord(
-      args: {
+      args?: {
         manufacturerId?: number,
         logIndex?: number,
       },
@@ -1209,7 +1209,7 @@ declare module "zigbee-clusters" {
       pin: Buffer,
     }>;
     setPINCode(
-      args: {
+      args?: {
         manufacturerId?: number,
         userId?: number,
         userStatus?: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
@@ -1225,7 +1225,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     getPINCode(
-      args: {
+      args?: {
         manufacturerId?: number,
         userId?: number,
       },
@@ -1241,7 +1241,7 @@ declare module "zigbee-clusters" {
       pinCode: Buffer,
     }>;
     clearPINCode(
-      args: {
+      args?: {
         manufacturerId?: number,
         userId?: number,
       },
@@ -1266,7 +1266,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     setUserStatus(
-      args: {
+      args?: {
         manufacturerId?: number,
         userId?: number,
         userStatus?: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
@@ -1280,7 +1280,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     getUserStatus(
-      args: {
+      args?: {
         manufacturerId?: number,
         userId?: number,
       },
@@ -1294,7 +1294,7 @@ declare module "zigbee-clusters" {
       userStatus: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
     }>;
     setWeekDaySchedule(
-      args: {
+      args?: {
         manufacturerId?: number,
         scheduleId?: number,
         userId?: number,
@@ -1313,7 +1313,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     getWeekDaySchedule(
-      args: {
+      args?: {
         manufacturerId?: number,
         scheduleId?: number,
         userId?: number,
@@ -1334,7 +1334,7 @@ declare module "zigbee-clusters" {
       endMinute: number,
     }>;
     clearWeekDaySchedule(
-      args: {
+      args?: {
         manufacturerId?: number,
         scheduleId?: number,
         userId?: number,
@@ -1348,7 +1348,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     setYearDaySchedule(
-      args: {
+      args?: {
         manufacturerId?: number,
         scheduleId?: number,
         userId?: number,
@@ -1364,7 +1364,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     getYearDaySchedule(
-      args: {
+      args?: {
         manufacturerId?: number,
         scheduleId?: number,
         userId?: number,
@@ -1382,7 +1382,7 @@ declare module "zigbee-clusters" {
       localEndTime: number,
     }>;
     clearYearDaySchedule(
-      args: {
+      args?: {
         manufacturerId?: number,
         scheduleId?: number,
         userId?: number,
@@ -1396,7 +1396,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     setHolidaySchedule(
-      args: {
+      args?: {
         manufacturerId?: number,
         holidayScheduleId?: number,
         localStartTime?: number,
@@ -1412,7 +1412,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     getHolidaySchedule(
-      args: {
+      args?: {
         manufacturerId?: number,
         holidayScheduleId?: number,
       },
@@ -1429,7 +1429,7 @@ declare module "zigbee-clusters" {
       operatingMode: "normal" | "vacation" | "privacy" | "noRFLockOrUnlock" | "passage",
     }>;
     clearHolidaySchedule(
-      args: {
+      args?: {
         manufacturerId?: number,
         holidayScheduleId?: number,
       },
@@ -1442,7 +1442,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     setUserType(
-      args: {
+      args?: {
         manufacturerId?: number,
         userId?: number,
         userType?: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
@@ -1456,7 +1456,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     getUserType(
-      args: {
+      args?: {
         manufacturerId?: number,
         userId?: number,
       },
@@ -1470,7 +1470,7 @@ declare module "zigbee-clusters" {
       userType: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
     }>;
     setRFIDCode(
-      args: {
+      args?: {
         manufacturerId?: number,
         userId?: number,
         userStatus?: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
@@ -1486,7 +1486,7 @@ declare module "zigbee-clusters" {
       status: number,
     }>;
     getRFIDCode(
-      args: {
+      args?: {
         manufacturerId?: number,
         userId?: number,
       },
@@ -1502,7 +1502,7 @@ declare module "zigbee-clusters" {
       rfidCode: Buffer,
     }>;
     clearRFIDCode(
-      args: {
+      args?: {
         manufacturerId?: number,
         userId?: number,
       },
@@ -1630,7 +1630,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     goToLiftValue(
-      args: {
+      args?: {
         manufacturerId?: number,
         liftValue?: number,
       },
@@ -1641,7 +1641,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     goToLiftPercentage(
-      args: {
+      args?: {
         manufacturerId?: number,
         percentageLiftValue?: number,
       },
@@ -1652,7 +1652,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     goToTiltValue(
-      args: {
+      args?: {
         manufacturerId?: number,
         tiltValue?: number,
       },
@@ -1663,7 +1663,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     goToTiltPercentage(
-      args: {
+      args?: {
         manufacturerId?: number,
         percentageTiltValue?: number,
       },
@@ -1708,7 +1708,7 @@ declare module "zigbee-clusters" {
   };
   class ThermostatCluster<Attributes extends types.AttributeDefinitions = ThermostatClusterAttributes, Commands extends types.CommandDefinitions = ThermostatClusterCommands> extends Cluster<Attributes, Commands> {
     setSetpoint(
-      args: {
+      args?: {
         manufacturerId?: number,
         mode?: "heat" | "cool" | "both",
         amount?: number,
@@ -1775,7 +1775,7 @@ declare module "zigbee-clusters" {
   };
   class ColorControlCluster<Attributes extends types.AttributeDefinitions = ColorControlClusterAttributes, Commands extends types.CommandDefinitions = ColorControlClusterCommands> extends Cluster<Attributes, Commands> {
     moveToHue(
-      args: {
+      args?: {
         manufacturerId?: number,
         hue?: number,
         direction?: "shortestDistance" | "longestDistance" | "up" | "down",
@@ -1788,7 +1788,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     moveToSaturation(
-      args: {
+      args?: {
         manufacturerId?: number,
         saturation?: number,
         transitionTime?: number,
@@ -1800,7 +1800,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     moveToHueAndSaturation(
-      args: {
+      args?: {
         manufacturerId?: number,
         hue?: number,
         saturation?: number,
@@ -1813,7 +1813,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     moveToColor(
-      args: {
+      args?: {
         manufacturerId?: number,
         colorX?: number,
         colorY?: number,
@@ -1826,7 +1826,7 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
     moveToColorTemperature(
-      args: {
+      args?: {
         manufacturerId?: number,
         colorTemperature?: number,
         transitionTime?: number,
@@ -1974,7 +1974,7 @@ declare module "zigbee-clusters" {
       rawFrame: Buffer,
     ): Promise<void>;
     zoneEnrollResponse(
-      args: {
+      args?: {
         manufacturerId?: number,
         enrollResponseCode?: "success" | "notSupported" | "noEnrollPermit" | "tooManyZones",
         zoneId?: number,
@@ -2237,7 +2237,7 @@ declare module "zigbee-clusters" {
   };
   class TouchLinkCluster<Attributes extends types.AttributeDefinitions = TouchLinkClusterAttributes, Commands extends types.CommandDefinitions = TouchLinkClusterCommands> extends Cluster<Attributes, Commands> {
     getGroups(
-      args: {
+      args?: {
         manufacturerId?: number,
         startIdx?: number,
       },

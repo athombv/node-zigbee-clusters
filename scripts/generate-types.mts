@@ -270,11 +270,7 @@ function formatCommandMethod(stringBuilder: StringBuilder, className: string, na
   } else {
     // Open args
     stringBuilder.startLine();
-    stringBuilder.print('args');
-    if (definition.args === undefined || definition.encodeMissingFieldsBehavior !== undefined) {
-      stringBuilder.print('?');
-    }
-    stringBuilder.print(': {');
+    stringBuilder.print('args?: {');
     stringBuilder.endLine();
     stringBuilder.increaseIndent();
     stringBuilder.printLine('manufacturerId?: number,');
