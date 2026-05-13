@@ -2718,6 +2718,18 @@ declare module "zigbee-clusters" {
     // @ts-expect-error Type should be defined on non-abstract inheritors
     static get COMMANDS(): Commands;
 
+    // `attributes`/`commands` are the merged ATTRIBUTES + GLOBAL_ATTRIBUTES (and the same for
+    // commands), stored on the class (not the instance) by `Cluster.addCluster`.
+    // `attributesById`/`commandsById` index those merged maps by numeric ID.
+    // @ts-expect-error Type should be defined on non-abstract inheritors
+    static get attributes(): Attributes & types.GLOBAL_ATTRIBUTES;
+    // @ts-expect-error Type should be defined on non-abstract inheritors
+    static get attributesById(): {[Attribute in keyof (Attributes & types.GLOBAL_ATTRIBUTES) as (Attributes & types.GLOBAL_ATTRIBUTES)[Attribute]['id']]: { name: Attribute } & (Attributes & types.GLOBAL_ATTRIBUTES)[Attribute] };
+    // @ts-expect-error Type should be defined on non-abstract inheritors
+    static get commands(): Commands & types.GLOBAL_COMMANDS;
+    // @ts-expect-error Type should be defined on non-abstract inheritors
+    static get commandsById(): {[Command in keyof Commands as Commands[Command]['id']]: Array<{name: Command} & Commands[Command]>};
+
     static DIRECTION_SERVER_TO_CLIENT: types.CommandToClientDirection;
     static DIRECTION_CLIENT_TO_SERVER: types.CommandToServerDirection;
 
@@ -2744,12 +2756,6 @@ declare module "zigbee-clusters" {
 
     on<Event extends Extract<keyof Attributes, string>>(eventName: `attr.${Event}`, listener: (value: types.AttributesFromDefinition<Attributes>[Event]) => void): this;
     on<Values extends Array<any> = unknown[]>(eventName: string, listener: (...args: Values) => void): this;
-
-    attributes: Attributes & types.GLOBAL_ATTRIBUTES;
-    attributesById: {[Attribute in keyof (Attributes & types.GLOBAL_ATTRIBUTES) as (Attributes & types.GLOBAL_ATTRIBUTES)[Attribute]['id']]: { name: Attribute } & (Attributes & types.GLOBAL_ATTRIBUTES)[Attribute] };
-
-    commands: Commands & types.GLOBAL_COMMANDS;
-    commandsById: {[Command in keyof Commands as Commands[Command]['id']]: Array<{name: Command} & Commands[Command]>}; // Adding the global commands here results in types too big for TypeScript
   }
 
   // TODO
