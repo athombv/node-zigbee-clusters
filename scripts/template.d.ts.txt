@@ -193,7 +193,7 @@ declare module 'zigbee-clusters' {
     INVALID_ZONE_TYPE: 0xffff,
   };
 
-  abstract class Cluster<Attributes extends types.AttributeDefinitions, Commands extends types.CommandDefinitions> extends EventEmitter {
+  abstract class Cluster<Attributes extends types.AttributeDefinitions = types.AttributeDefinitions, Commands extends types.CommandDefinitions = types.CommandDefinitions> extends EventEmitter {
     static get ID(): number;
     static get NAME(): string;
     // @ts-expect-error Type should be defined on non-abstract inheritors
