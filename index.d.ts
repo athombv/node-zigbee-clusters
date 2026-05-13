@@ -2525,20 +2525,20 @@ declare module "zigbee-clusters" {
 
   function debug(flag: boolean, namespaces: string): void;
 
-  interface ZigBeeNode {
+  interface ZigbeeNode {
     /**
-     * Call this method to send a frame this ZigBeeNode.
+     * Call this method to send a frame this ZigbeeNode.
      */
     sendFrame(endpointId: number, clusterId: number, frame: Buffer): Promise<void>;
     /**
-     * This method is called when a frame has been received from this ZigBeeNode.
+     * This method is called when a frame has been received from this ZigbeeNode.
      * This method must be overridden.
      */
     handleFrame(endpointId: number, clusterId: number, frame: Buffer, meta: object): Promise<void>;
   }
 
   class ZCLNode extends EventEmitter {
-    constructor(node: ZigBeeNode);
+    constructor(node: ZigbeeNode);
     endpoints: Record<number, ZCLNodeEndpoint>;
 
     getLogId(endpointId: number, clusterId: number): string;
