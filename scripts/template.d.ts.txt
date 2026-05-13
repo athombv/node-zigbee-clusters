@@ -40,6 +40,16 @@ declare module 'zigbee-clusters' {
     constructor(node: ZCLNodeInput);
     endpoints: Record<number, ZCLNodeEndpoint>;
 
+    /**
+     * Handles an incoming frame for this node.
+     */
+    handleFrame(
+      endpointId: number,
+      clusterId: number,
+      frame: Buffer,
+      meta?: unknown,
+    ): Promise<void>;
+
     getLogId(endpointId: number, clusterId: number): string;
   }
 
