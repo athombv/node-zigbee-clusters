@@ -20,8 +20,24 @@ declare module 'zigbee-clusters' {
     handleFrame(endpointId: number, clusterId: number, frame: Buffer, meta: object): Promise<void>;
   }
 
+  /**
+   * Minimum shape accepted by the {@link ZCLNode} constructor. A real
+   * `Homey.ZigBeeNode` satisfies this; user-constructed nodes only need to
+   * provide `sendFrame` (and optionally `endpointDescriptors`). Note that
+   * `ZCLNode` assigns its own `handleFrame` onto the passed object, so any
+   * pre-existing `handleFrame` will be overwritten.
+   */
+  type ZCLNodeInput = {
+    sendFrame: ZigbeeNode['sendFrame'];
+    endpointDescriptors?: Array<{
+      endpointId: number;
+      inputClusters: number[];
+      outputClusters: number[];
+    }>;
+  };
+
   class ZCLNode extends EventEmitter {
-    constructor(node: ZigbeeNode);
+    constructor(node: ZCLNodeInput);
     endpoints: Record<number, ZCLNodeEndpoint>;
 
     getLogId(endpointId: number, clusterId: number): string;
