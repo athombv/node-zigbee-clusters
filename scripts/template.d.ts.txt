@@ -241,12 +241,54 @@ declare module 'zigbee-clusters' {
     on<Values extends Array<any> = unknown[]>(eventName: string, listener: (...args: Values) => void): this;
   }
 
-  // TODO
-  abstract class BoundCluster {
+  abstract class BoundCluster<Attributes extends types.AttributeDefinitions = types.AttributeDefinitions, Commands extends types.CommandDefinitions = types.CommandDefinitions> {
     endpoint: number;
-    cluster: Cluster<any, any>;
+    clusterRevision: number;
+    cluster: Cluster<Attributes, Commands>;
 
     get logId(): string;
+
+    discoverCommandsReceived(options?: { startValue?: number, maxResults?: number }): Promise<{commandIds: number[], lastResponse: boolean}>
+    discoverCommandsGenerated(options?: { startValue?: number, maxResults?: number }): Promise<{commandIds: number[], lastResponse: boolean}>
+
+    readAttributes(args: { attributes: Array<string> }): Promise<
+      {
+        attributes: Buffer
+      }
+    >
+
+    writeAttributes(args: { attributes: Array<object> }): Promise<{
+      attributes: Array<
+        {
+          id: number,
+          status: types.ZCLEnum8Status
+        }
+      >
+    }>
+
+    discoverAttributes(options?: { startValue?: number, maxResults?: number }): Promise<
+      {
+        lastResponse: boolean,
+        attributes: Array<
+          {
+            id: number,
+            dataTypeId: number,
+          }
+        >
+      }
+    >
+
+    discoverAttributesExtended(options?: { startValue?: number, maxResults?: number }): Promise<
+      {
+        lastResponse: boolean,
+        attributes: Array<
+          {
+            id: number,
+            dataTypeId: number,
+            acl: Array<"readable" | "writable" | "reportable">
+          }
+      >}
+    >;
   }
 
   namespace types {
