@@ -60,15 +60,12 @@ jobs:
         with:
           node-version: 16
           # Needed for publishing to npm
-          registry-url: https://npm.pkg.github.com
 
       # Run `npm ci && npm run build` to re-create your local environment (make sure to commit your - package-lock.json!).
       - name: Build
         run: |
           npm ci
           npm run build
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
 
       - name: Version bump patch
         if: github.event.inputs.versionBumpType == 'patch' || contains(github.event.head_commit.message, '#patch') && !contains(github.event.head_commit.message, '#minor') && !contains(github.event.head_commit.message, '#major')
@@ -76,8 +73,6 @@ jobs:
           npm version patch
           git pull
           git push --follow-tags
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
 
       - name: Version bump minor
         if: github.event.inputs.versionBumpType == 'minor' || contains(github.event.head_commit.message, '#minor') && !contains(github.event.head_commit.message, '#major')
