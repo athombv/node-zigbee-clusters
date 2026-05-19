@@ -41,10 +41,10 @@ jobs:
     runs-on: ubuntu-latest
 
     # `id-token: write` is required for npm OIDC (trusted publishing).
-    # `contents: write` lets the bot push the version-bump commit/tag.
+    # We don't need `contents: write` because the version-bump push uses the
+    # bot PAT supplied to `actions/checkout`, not the default GITHUB_TOKEN.
     permissions:
       id-token: write
-      contents: write
 
     steps:
 

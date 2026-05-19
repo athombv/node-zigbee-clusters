@@ -27,7 +27,7 @@ jobs:
       # Configures a Node.js environment.
       - uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc # Important: use the matrix.node property when using a matrix strategy
+          node-version-file: .nvmrc
 
       # Run `npm ci` to re-create your local environment (make sure to commit your package-lock.json!).
       # Finally run `npm test` (make sure you have defined a proper test command in package.json).
