@@ -80,7 +80,9 @@ async function main(): Promise<void> {
 
   for (const [key, value] of Object.entries(clustersModule.default.CLUSTER)) {
     const definition = value as {ID: number, NAME: string};
-    const clusterClass = clustersModule.default.Cluster.clusters[definition.ID];
+    // `lib/clusters/index.js` no longer re-exports `Cluster` (PR #182), so
+    // reach the static `Cluster.clusters` registry via the top-level entry.
+    const clusterClass = topModule.Cluster.clusters[definition.ID];
     let clusterName = clusterClass.name;
     // Class names are inconsistent
     if (clusterName === 'TouchlinkCluster') {
