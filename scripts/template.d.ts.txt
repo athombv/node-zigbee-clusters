@@ -59,7 +59,11 @@ declare module 'zigbee-clusters' {
       inputClusters: number[];
       outputClusters: number[];
     }[]);
-    clusters: Record<string, Cluster<any, any>>;
+    // Typed lookup: known cluster names (per the generated `ClustersByName`)
+    // resolve to their specific class (e.g. `clusters.onOff` is `OnOffCluster`),
+    // while unknown keys fall back to the generic Cluster via the index half.
+    // All known keys are optional - an endpoint may not implement every cluster.
+    clusters: ClustersByName & Record<string, Cluster<any, any>>;
     bindings: Record<string, BoundCluster>;
 
     bind(clusterName: string, clusterImpl: BoundCluster): void;

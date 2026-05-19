@@ -2626,6 +2626,53 @@ declare module "zigbee-clusters" {
       COMMANDS: Readonly<TouchLinkClusterCommands>,
     },
   };
+  type ClustersByName = {
+    "basic"?: BasicCluster;
+    "powerConfiguration"?: PowerConfigurationCluster;
+    "deviceTemperature"?: DeviceTemperatureCluster;
+    "identify"?: IdentifyCluster;
+    "groups"?: GroupsCluster;
+    "scenes"?: ScenesCluster;
+    "onOff"?: OnOffCluster;
+    "onOffSwitch"?: OnOffSwitchCluster;
+    "levelControl"?: LevelControlCluster;
+    "alarms"?: AlarmsCluster;
+    "time"?: TimeCluster;
+    "analogInput"?: AnalogInputCluster;
+    "analogOutput"?: AnalogOutputCluster;
+    "analogValue"?: AnalogValueCluster;
+    "binaryInput"?: BinaryInputCluster;
+    "binaryOutput"?: BinaryOutputCluster;
+    "binaryValue"?: BinaryValueCluster;
+    "multistateInput"?: MultistateInputCluster;
+    "multistateOutput"?: MultistateOutputCluster;
+    "multistateValue"?: MultistateValueCluster;
+    "ota"?: OTACluster;
+    "powerProfile"?: PowerProfileCluster;
+    "pollControl"?: PollControlCluster;
+    "shadeConfiguration"?: ShadeConfigurationCluster;
+    "doorLock"?: DoorLockCluster;
+    "windowCovering"?: WindowCoveringCluster;
+    "thermostat"?: ThermostatCluster;
+    "pumpConfigurationAndControl"?: PumpConfigurationAndControlCluster;
+    "fanControl"?: FanControlCluster;
+    "colorControl"?: ColorControlCluster;
+    "ballastConfiguration"?: BallastConfigurationCluster;
+    "illuminanceMeasurement"?: IlluminanceMeasurementCluster;
+    "illuminanceLevelSensing"?: IlluminanceLevelSensingCluster;
+    "temperatureMeasurement"?: TemperatureMeasurementCluster;
+    "pressureMeasurement"?: PressureMeasurementCluster;
+    "flowMeasurement"?: FlowMeasurementCluster;
+    "relativeHumidity"?: RelativeHumidityCluster;
+    "occupancySensing"?: OccupancySensingCluster;
+    "iasZone"?: IASZoneCluster;
+    "iasACE"?: IASACECluster;
+    "iasWD"?: IASWDCluster;
+    "metering"?: MeteringCluster;
+    "electricalMeasurement"?: ElectricalMeasurementCluster;
+    "diagnostics"?: DiagnosticsCluster;
+    "touchlink"?: TouchLinkCluster;
+  };
 
   import {EventEmitter} from "events";
 
@@ -2686,7 +2733,11 @@ declare module "zigbee-clusters" {
       inputClusters: number[];
       outputClusters: number[];
     }[]);
-    clusters: Record<string, Cluster<any, any>>;
+    // Typed lookup: known cluster names (per the generated `ClustersByName`)
+    // resolve to their specific class (e.g. `clusters.onOff` is `OnOffCluster`),
+    // while unknown keys fall back to the generic Cluster via the index half.
+    // All known keys are optional - an endpoint may not implement every cluster.
+    clusters: ClustersByName & Record<string, Cluster<any, any>>;
     bindings: Record<string, BoundCluster>;
 
     bind(clusterName: string, clusterImpl: BoundCluster): void;

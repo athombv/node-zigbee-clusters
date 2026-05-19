@@ -78,6 +78,11 @@ async function main(): Promise<void> {
   stringBuilder.printLine("const CLUSTER: {");
   stringBuilder.increaseIndent();
 
+  // Collect (NAME, ClassName) pairs to emit a typed lookup map after the
+  // CLUSTER block — used by `ZCLNodeEndpoint.clusters` so consumers get
+  // typed access (e.g. `endpoint.clusters.onOff` is `OnOffCluster`).
+  const clusterClassByName: Array<{ name: string; className: string }> = [];
+
   for (const [key, value] of Object.entries(clustersModule.default.CLUSTER)) {
     const definition = value as {ID: number, NAME: string};
     // `lib/clusters/index.js` no longer re-exports `Cluster` (PR #182), so
@@ -91,6 +96,7 @@ async function main(): Promise<void> {
     if (!clusterName.endsWith("Cluster")) {
       clusterName = `${clusterName}Cluster`;
     }
+    clusterClassByName.push({ name: definition.NAME, className: clusterName });
     stringBuilder.printLine(`${key}: {`);
     stringBuilder.increaseIndent();
     stringBuilder.printLine(`ID: 0x${definition.ID.toString(16).padStart(4, "0")},`);
@@ -102,6 +108,19 @@ async function main(): Promise<void> {
   }
 
   // Close CLUSTER
+  stringBuilder.decreaseIndent();
+  stringBuilder.printLine("};");
+
+  // Emit a name->class lookup map used by `ZCLNodeEndpoint.clusters` for
+  // typed access to known cluster classes. Keys are optional because an
+  // endpoint may not implement every cluster; an unknown cluster name
+  // (e.g. manufacturer-specific) falls through the intersection with
+  // `Record<string, Cluster<any, any>>` in the template.
+  stringBuilder.printLine("type ClustersByName = {");
+  stringBuilder.increaseIndent();
+  for (const { name, className } of clusterClassByName) {
+    stringBuilder.printLine(`${JSON.stringify(name)}?: ${className};`);
+  }
   stringBuilder.decreaseIndent();
   stringBuilder.printLine("};");
 
