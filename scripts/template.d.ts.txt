@@ -592,6 +592,17 @@ declare module 'zigbee-clusters' {
       },
     ) => Promise<void>;
 
+    type BoundClusterInterface<Commands extends CommandDefinitions> = {
+      [name in keyof Commands]?: (
+        args: {
+          [arg in keyof Commands[name]['args']]: FromZCLDataType<Commands[name]['args'][arg]>;
+        },
+        meta: object,
+        frame: object,
+        rawFrame: Buffer,
+      ) => unknown | Promise<unknown>
+    }
+
     type AttributeReportingConfiguration<AttributeKey extends string> = {
       [attribute in AttributeKey]: {
         minInterval?: number,
