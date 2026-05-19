@@ -27,7 +27,7 @@ jobs:
       # Configures a Node.js environment.
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
 
       # Run `npm ci` to re-create your local environment (make sure to commit your package-lock.json!).
       # Finally run `npm run lint` (make sure you have defined a lint command in package.json e.g. "lint": "eslint .").

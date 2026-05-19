@@ -66,7 +66,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           registry-url: https://registry.npmjs.org
 
       # Run `npm ci && npm run build` to re-create your local environment (make sure to commit your - package-lock.json!).
