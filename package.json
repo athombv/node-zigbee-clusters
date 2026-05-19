@@ -28,7 +28,7 @@
     "url": "https://github.com/athombv/node-zigbee-clusters/issues"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=22"
   },
   "homepage": "https://github.com/athombv/node-zigbee-clusters#readme",
   "devDependencies": {
