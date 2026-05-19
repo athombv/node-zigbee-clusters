@@ -27,21 +27,18 @@ jobs:
     name: Build & Deploy to GitHub Pages
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Setup Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
-        node-version: 16
-        registry-url: https://npm.pkg.github.com
+        node-version-file: .nvmrc
 
       # Build
     - name: Build
       run: |
         npm ci
         npm run build
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
 
     # Deploy
     - name: Deploy To GitHub Pages

@@ -39,11 +39,18 @@ jobs:
         && (github.event.inputs.versionBumpType == 'patch' || github.event.inputs.versionBumpType == 'minor' || github.event.inputs.versionBumpType == 'major' || contains(github.event.head_commit.message, '#patch') || contains(github.event.head_commit.message, '#minor') || contains(github.event.head_commit.message, '#major'))
 
     runs-on: ubuntu-latest
+
+    # `id-token: write` is required for npm OIDC (trusted publishing).
+    # We don't need `contents: write` because the version-bump push uses the
+    # bot PAT supplied to `actions/checkout`, not the default GITHUB_TOKEN.
+    permissions:
+      id-token: write
+
     steps:
 
       # Checks out the current repository.
       - name: Checkout git repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           # The token below is only necessary if you want to push the version bump to a protected branch
           token: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
@@ -54,21 +61,19 @@ jobs:
           git config --local user.email "sysadmin+githubactions@athom.com"
           git config --local user.name "Homey Github Actions Bot"
 
-      # Configures a Node.js environment.
-      - name: Set up node 12 environment
-        uses: actions/setup-node@v1
+      # Configures a Node.js environment pointed at the public npm registry so
+      # `npm publish` uses OIDC against npmjs.org.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
-          # Needed for publishing to npm
-          registry-url: https://npm.pkg.github.com
+          node-version-file: .nvmrc
+          registry-url: https://registry.npmjs.org
 
       # Run `npm ci && npm run build` to re-create your local environment (make sure to commit your - package-lock.json!).
       - name: Build
         run: |
           npm ci
           npm run build
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
 
       - name: Version bump patch
         if: github.event.inputs.versionBumpType == 'patch' || contains(github.event.head_commit.message, '#patch') && !contains(github.event.head_commit.message, '#minor') && !contains(github.event.head_commit.message, '#major')
@@ -76,8 +81,6 @@ jobs:
           npm version patch
           git pull
           git push --follow-tags
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
 
       - name: Version bump minor
         if: github.event.inputs.versionBumpType == 'minor' || contains(github.event.head_commit.message, '#minor') && !contains(github.event.head_commit.message, '#major')
@@ -93,24 +96,20 @@ jobs:
           git pull
           git push --follow-tags
 
-      # Publish when this action is running on branch production
+      # Publish when this action is running on branch production.
+      # No NPM_AUTH_TOKEN: auth is brokered via OIDC against the npm
+      # Trusted Publisher configured on the package on npmjs.com.
       - name: Publish
         if: github.ref == 'refs/heads/production'
         run: |
-          npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
-          npm publish
+          npm publish --provenance
           VERSION="$(node -p "require('./package.json').version")"
           echo package_version=${VERSION} >> $GITHUB_ENV
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
 
-      # Publish to beta when this action is running on branch testing
+      # Publish to beta when this action is running on branch testing.
       - name: Publish to beta
         if: github.ref == 'refs/heads/testing'
         run: |
-          npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
-          npm publish --tag beta
+          npm publish --provenance --tag beta
           VERSION="$(node -p "require('./package.json').version")@beta"
           echo package_version=${VERSION} >> $GITHUB_ENV
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
