@@ -221,6 +221,17 @@ declare module 'zigbee-clusters' {
     discoverCommandsGenerated({startValue, maxResults}?: {startValue?: number, maxResults?: number}, opts?: {timeout?: number}): Promise<Array<number>>;
     discoverCommandsReceived({startValue, maxResults}?: {startValue?: number, maxResults?: number}, opts?: {timeout?: number}): Promise<Array<number>>;
 
+    /**
+     * Receive-side command handler slot. The dispatch loop in `handleFrame`
+     * resolves incoming commands via `this[\`on\${CommandName}\`]`, so callers
+     * install handlers by assigning to a property like `cluster.onImageNotify`
+     * (or `delete cluster.onImageNotify` to remove). Subclasses that declare
+     * a specific `on<Name>` method (e.g. the generated cluster classes) keep
+     * their typed signature - this index signature only kicks in for keys
+     * that aren't otherwise declared.
+     */
+    [handlerKey: `on${Capitalize<string>}`]: ((...args: any[]) => unknown) | undefined;
+
     readAttributes<K extends keyof (Attributes & types.GLOBAL_ATTRIBUTES) | number>(attributes: ReadonlyArray<K>, opts?: {timeout?: number}): Promise<{[attribute in K]: types.AttributesFromDefinition<Attributes & types.GLOBAL_ATTRIBUTES>[attribute]}>;
     writeAttributes<K extends keyof (Attributes & types.GLOBAL_ATTRIBUTES)>(attributes: {[attribute in K]: types.AttributesFromDefinition<Attributes & types.GLOBAL_ATTRIBUTES>[attribute]}, opts?: {timeout?: number}): Promise<{[attribute in K]: {id: number, status: 'SUCCESS' | 'FAILURE'}}>
 

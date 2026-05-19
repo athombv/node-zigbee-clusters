@@ -231,51 +231,76 @@ function formatCommand(stringBuilder: StringBuilder, className: string, name: st
 
 
 function formatCommandMethod(stringBuilder: StringBuilder, className: string, name: string, definition: types.CommandDefinition): void {
-  // Method name
-  stringBuilder.startLine();
+  // The runtime `Cluster.addCluster` installs a sendable method for every
+  // command regardless of direction (see lib/Cluster.js around the
+  // `Object.defineProperty(proto, cmdName, ...)` loop). Emit the sendable
+  // form unconditionally so callers acting in the "sending" role get typed
+  // access (e.g. Homey sending the OTA cluster's `imageNotify` command when
+  // it acts as OTA server). Additionally, for DIRECTION_SERVER_TO_CLIENT
+  // commands, emit the `on<Name>` handler shape used by the dispatch loop
+  // when a frame is received.
+  emitSendableCommandMethod(stringBuilder, className, name, definition);
   if (definition.direction === 'DIRECTION_SERVER_TO_CLIENT') {
-    // Bound cluster
-    stringBuilder.print("on", name.charAt(0).toUpperCase(), name.slice(1));
-  } else {
-    stringBuilder.print(name);
+    emitCommandHandlerMethod(stringBuilder, className, name, definition);
   }
+}
+
+function emitSendableCommandMethod(stringBuilder: StringBuilder, className: string, name: string, definition: types.CommandDefinition): void {
+  stringBuilder.startLine();
+  stringBuilder.print(name);
 
   // Open method
   stringBuilder.print("(");
   stringBuilder.endLine();
   stringBuilder.increaseIndent();
 
-  if (definition.direction === 'DIRECTION_SERVER_TO_CLIENT') {
-    if (definition.args === undefined) {
-      stringBuilder.printLine('args: undefined,')
-    } else {
-      // Open args
-      stringBuilder.printLine('args: {');
-      stringBuilder.increaseIndent();
+  // Open args
+  stringBuilder.startLine();
+  stringBuilder.print('args?: {');
+  stringBuilder.endLine();
+  stringBuilder.increaseIndent();
+  stringBuilder.printLine('manufacturerId?: number,');
 
-      for (const arg in definition.args) {
-        stringBuilder.startLine();
-        stringBuilder.print(`${arg}?: `);
-        formatZCLDataTypeGeneric(stringBuilder, className, name, definition.args[arg]);
-        stringBuilder.print(',');
-        stringBuilder.endLine();
-      }
+  for (const arg in definition.args) {
+    stringBuilder.startLine();
+    stringBuilder.print(`${arg}?: `);
+    formatZCLDataTypeGeneric(stringBuilder, className, name, definition.args[arg]);
+    stringBuilder.print(',');
+    stringBuilder.endLine();
+  }
 
-      // Close args
-      stringBuilder.decreaseIndent();
-      stringBuilder.printLine('},');
-    }
+  // Close args
+  stringBuilder.decreaseIndent();
+  stringBuilder.printLine('},');
 
-    stringBuilder.printLine("meta: object,")
-    stringBuilder.printLine("frame: object,")
-    stringBuilder.printLine("rawFrame: Buffer,")
+
+  // Opts
+  stringBuilder.printLine('opts?: {');
+  stringBuilder.increaseIndent();
+  stringBuilder.printLine('waitForResponse?: boolean,');
+  stringBuilder.printLine('timeout?: number,');
+  stringBuilder.printLine('disableDefaultResponse?: boolean,');
+  stringBuilder.decreaseIndent();
+  stringBuilder.printLine('},');
+
+  closeCommandMethod(stringBuilder, className, name, definition);
+}
+
+function emitCommandHandlerMethod(stringBuilder: StringBuilder, className: string, name: string, definition: types.CommandDefinition): void {
+  stringBuilder.startLine();
+  stringBuilder.print("on", name.charAt(0).toUpperCase(), name.slice(1));
+
+  // Open method
+  stringBuilder.print("(");
+  stringBuilder.endLine();
+  stringBuilder.increaseIndent();
+
+  if (definition.args === undefined) {
+    stringBuilder.printLine('args: undefined,')
   } else {
     // Open args
-    stringBuilder.startLine();
-    stringBuilder.print('args?: {');
-    stringBuilder.endLine();
+    stringBuilder.printLine('args: {');
     stringBuilder.increaseIndent();
-    stringBuilder.printLine('manufacturerId?: number,');
 
     for (const arg in definition.args) {
       stringBuilder.startLine();
@@ -288,18 +313,16 @@ function formatCommandMethod(stringBuilder: StringBuilder, className: string, na
     // Close args
     stringBuilder.decreaseIndent();
     stringBuilder.printLine('},');
-
-
-    // Opts
-    stringBuilder.printLine('opts?: {');
-    stringBuilder.increaseIndent();
-    stringBuilder.printLine('waitForResponse?: boolean,');
-    stringBuilder.printLine('timeout?: number,');
-    stringBuilder.printLine('disableDefaultResponse?: boolean,');
-    stringBuilder.decreaseIndent();
-    stringBuilder.printLine('},');
   }
 
+  stringBuilder.printLine("meta: object,")
+  stringBuilder.printLine("frame: object,")
+  stringBuilder.printLine("rawFrame: Buffer,")
+
+  closeCommandMethod(stringBuilder, className, name, definition);
+}
+
+function closeCommandMethod(stringBuilder: StringBuilder, className: string, name: string, definition: types.CommandDefinition): void {
   // Close method
   stringBuilder.decreaseIndent();
   stringBuilder.startLine();

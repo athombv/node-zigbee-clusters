@@ -720,6 +720,21 @@ declare module "zigbee-clusters" {
     },
   };
   class OTACluster<Attributes extends types.AttributeDefinitions = OTAClusterAttributes, Commands extends types.CommandDefinitions = OTAClusterCommands> extends Cluster<Attributes, Commands> {
+    imageNotify(
+      args?: {
+        manufacturerId?: number,
+        payloadType?: "queryJitter" | "queryJitterAndManufacturerCode" | "queryJitterAndManufacturerCodeAndImageType" | "queryJitterAndManufacturerCodeAndImageTypeAndNewFileVersion",
+        queryJitter?: number,
+        manufacturerCode?: number,
+        imageType?: number,
+        newFileVersion?: number,
+      },
+      opts?: {
+        waitForResponse?: boolean,
+        timeout?: number,
+        disableDefaultResponse?: boolean,
+      },
+    ): Promise<void>;
     onImageNotify(
       args: {
         payloadType?: "queryJitter" | "queryJitterAndManufacturerCode" | "queryJitterAndManufacturerCodeAndImageType" | "queryJitterAndManufacturerCodeAndImageTypeAndNewFileVersion",
@@ -812,6 +827,26 @@ declare module "zigbee-clusters" {
       requestTime?: number,
       minimumBlockPeriod?: number,
     }>;
+    imageBlockResponse(
+      args?: {
+        manufacturerId?: number,
+        status?: types.ZCLEnum8Status,
+        manufacturerCode?: number,
+        imageType?: number,
+        fileVersion?: number,
+        fileOffset?: number,
+        dataSize?: number,
+        imageData?: Buffer,
+        currentTime?: number,
+        requestTime?: number,
+        minimumBlockPeriod?: number,
+      },
+      opts?: {
+        waitForResponse?: boolean,
+        timeout?: number,
+        disableDefaultResponse?: boolean,
+      },
+    ): Promise<void>;
     onImageBlockResponse(
       args: {
         status?: types.ZCLEnum8Status,
@@ -849,6 +884,21 @@ declare module "zigbee-clusters" {
       currentTime: number,
       upgradeTime: number,
     }>;
+    upgradeEndResponse(
+      args?: {
+        manufacturerId?: number,
+        manufacturerCode?: number,
+        imageType?: number,
+        fileVersion?: number,
+        currentTime?: number,
+        upgradeTime?: number,
+      },
+      opts?: {
+        waitForResponse?: boolean,
+        timeout?: number,
+        disableDefaultResponse?: boolean,
+      },
+    ): Promise<void>;
     onUpgradeEndResponse(
       args: {
         manufacturerCode?: number,
@@ -1526,6 +1576,22 @@ declare module "zigbee-clusters" {
     ): Promise<{
       status: number,
     }>;
+    operationEventNotification(
+      args?: {
+        manufacturerId?: number,
+        operationEventSource?: number,
+        operationEventCode?: number,
+        userId?: number,
+        pin?: Buffer,
+        zigBeeLocalTime?: number,
+        data?: Buffer,
+      },
+      opts?: {
+        waitForResponse?: boolean,
+        timeout?: number,
+        disableDefaultResponse?: boolean,
+      },
+    ): Promise<void>;
     onOperationEventNotification(
       args: {
         operationEventSource?: number,
@@ -1538,6 +1604,24 @@ declare module "zigbee-clusters" {
       meta: object,
       frame: object,
       rawFrame: Buffer,
+    ): Promise<void>;
+    programmingEventNotification(
+      args?: {
+        manufacturerId?: number,
+        programEventSource?: number,
+        programEventCode?: number,
+        userId?: number,
+        pin?: Buffer,
+        userType?: "unrestricted" | "yearDayScheduleUser" | "weekDayScheduleUser" | "masterUser" | "nonAccessUser" | "notSupported",
+        userStatus?: "available" | "occupiedEnabled" | "occupiedDisabled" | "notSupported",
+        zigBeeLocalTime?: number,
+        data?: Buffer,
+      },
+      opts?: {
+        waitForResponse?: boolean,
+        timeout?: number,
+        disableDefaultResponse?: boolean,
+      },
     ): Promise<void>;
     onProgrammingEventNotification(
       args: {
@@ -1962,6 +2046,20 @@ declare module "zigbee-clusters" {
     initiateNormalOperationMode: { id: 0x01, direction: "DIRECTION_CLIENT_TO_SERVER" },
   };
   class IASZoneCluster<Attributes extends types.AttributeDefinitions = IASZoneClusterAttributes, Commands extends types.CommandDefinitions = IASZoneClusterCommands> extends Cluster<Attributes, Commands> {
+    zoneStatusChangeNotification(
+      args?: {
+        manufacturerId?: number,
+        zoneStatus?: Bitmap<"alarm1" | "alarm2" | "tamper" | "battery" | "supervisionReports" | "restoreReports" | "trouble" | "acMains" | "test" | "batteryDefect">,
+        extendedStatus?: number,
+        zoneId?: number,
+        delay?: number,
+      },
+      opts?: {
+        waitForResponse?: boolean,
+        timeout?: number,
+        disableDefaultResponse?: boolean,
+      },
+    ): Promise<void>;
     onZoneStatusChangeNotification(
       args: {
         zoneStatus?: Bitmap<"alarm1" | "alarm2" | "tamper" | "battery" | "supervisionReports" | "restoreReports" | "trouble" | "acMains" | "test" | "batteryDefect">,
@@ -1978,6 +2076,18 @@ declare module "zigbee-clusters" {
         manufacturerId?: number,
         enrollResponseCode?: "success" | "notSupported" | "noEnrollPermit" | "tooManyZones",
         zoneId?: number,
+      },
+      opts?: {
+        waitForResponse?: boolean,
+        timeout?: number,
+        disableDefaultResponse?: boolean,
+      },
+    ): Promise<void>;
+    zoneEnrollRequest(
+      args?: {
+        manufacturerId?: number,
+        zoneType?: "standardCIE" | "motionSensor" | "contactSwitch" | "doorWindowHandle" | "fireSensor" | "waterSensor" | "carbonMonoxideSensor" | "personalEmergencyDevice" | "vibrationMovementSensor" | "remoteControl" | "keyFob" | "keypad" | "standardWarningDevice" | "glassBreakSensor" | "securityRepeater" | "invalidZoneType",
+        manufacturerCode?: number,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -2737,6 +2847,17 @@ declare module "zigbee-clusters" {
 
     discoverCommandsGenerated({startValue, maxResults}?: {startValue?: number, maxResults?: number}, opts?: {timeout?: number}): Promise<Array<number>>;
     discoverCommandsReceived({startValue, maxResults}?: {startValue?: number, maxResults?: number}, opts?: {timeout?: number}): Promise<Array<number>>;
+
+    /**
+     * Receive-side command handler slot. The dispatch loop in `handleFrame`
+     * resolves incoming commands via `this[\`on\${CommandName}\`]`, so callers
+     * install handlers by assigning to a property like `cluster.onImageNotify`
+     * (or `delete cluster.onImageNotify` to remove). Subclasses that declare
+     * a specific `on<Name>` method (e.g. the generated cluster classes) keep
+     * their typed signature - this index signature only kicks in for keys
+     * that aren't otherwise declared.
+     */
+    [handlerKey: `on${Capitalize<string>}`]: ((...args: any[]) => unknown) | undefined;
 
     readAttributes<K extends keyof (Attributes & types.GLOBAL_ATTRIBUTES) | number>(attributes: ReadonlyArray<K>, opts?: {timeout?: number}): Promise<{[attribute in K]: types.AttributesFromDefinition<Attributes & types.GLOBAL_ATTRIBUTES>[attribute]}>;
     writeAttributes<K extends keyof (Attributes & types.GLOBAL_ATTRIBUTES)>(attributes: {[attribute in K]: types.AttributesFromDefinition<Attributes & types.GLOBAL_ATTRIBUTES>[attribute]}, opts?: {timeout?: number}): Promise<{[attribute in K]: {id: number, status: 'SUCCESS' | 'FAILURE'}}>
