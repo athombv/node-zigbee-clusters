@@ -7,8 +7,10 @@ on:
       - testing
     paths:
       - "lib/clusters/**/*.js"
-      - "scripts/generate-types.js"
+      - "scripts/generate-types.mts"
+      - "scripts/template.d.ts.txt"
       - "index.js"
+      - "lib/Cluster.js"
       - "lib/constants.js"
   workflow_dispatch:
 
