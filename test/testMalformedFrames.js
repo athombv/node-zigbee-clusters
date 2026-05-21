@@ -1,11 +1,16 @@
+// eslint-disable-next-line max-classes-per-file,lines-around-directive
 'use strict';
 
 const assert = require('assert');
 const Node = require('../lib/Node');
 const BoundCluster = require('../lib/BoundCluster');
 const IASZoneCluster = require('../lib/clusters/iasZone');
+const OTACluster = require('../lib/clusters/ota');
 const { ZCLStandardHeader } = require('../lib/zclFrames');
 const { ZCLDataTypes } = require('../lib/zclTypes');
+
+// ZCL data-type id for map16 (declared in @athombv/data-types).
+const ZCL_TYPE_ID_MAP16 = 25;
 
 /**
  * Helper: build a mock Node that captures every frame sent back via sendFrame.
@@ -158,6 +163,131 @@ describe('Malformed frame hardening', function() {
       assert.ok(response, 'expected a default-response frame to be sent back');
       assert.strictEqual(response.status, 'MALFORMED_COMMAND',
         `expected MALFORMED_COMMAND, got ${response.status}`);
+    });
+  });
+
+  describe('Attribute report (reportAttributes / cmdId 0x0A)', function() {
+    /**
+     * Build a reportAttributes frame carrying one attribute record.
+     * @param {number} attrId
+     * @param {number} typeId
+     * @param {Buffer} value - the raw value bytes (may be truncated for tests).
+     */
+    function buildReportAttributesFrame(attrId, typeId, value) {
+      const frame = new ZCLStandardHeader();
+      frame.cmdId = 0x0A;
+      frame.frameControl.directionToClient = true;
+      frame.frameControl.clusterSpecific = false; // global command
+      const header = Buffer.alloc(3);
+      header.writeUInt16LE(attrId, 0);
+      header.writeUInt8(typeId, 2);
+      frame.data = Buffer.concat([header, value]);
+      return frame;
+    }
+
+    it('should not emit attr.zoneStatus on truncated map16 value', async function() {
+      const { node } = createCapturingNode(1, IASZoneCluster.ID);
+
+      let emitted = false;
+      node.endpoints[1].clusters.iasZone.on('attr.zoneStatus', () => {
+        emitted = true;
+      });
+
+      // Attribute id=0x0002 (zoneStatus), type=map16, value bytes missing entirely.
+      const frame = buildReportAttributesFrame(0x0002, ZCL_TYPE_ID_MAP16, Buffer.alloc(0));
+      await node.handleFrame(1, IASZoneCluster.ID, frame.toBuffer(), {});
+
+      assert.strictEqual(emitted, false,
+        'attr.zoneStatus must not fire when the map16 value bytes are missing');
+    });
+
+    it('should respond with MALFORMED_COMMAND on truncated attribute value', async function() {
+      const { node, sentFrames } = createCapturingNode(1, IASZoneCluster.ID);
+
+      // 1 byte of map16 instead of 2.
+      const frame = buildReportAttributesFrame(0x0002, ZCL_TYPE_ID_MAP16, Buffer.from([0x01]));
+      await node.handleFrame(1, IASZoneCluster.ID, frame.toBuffer(), {});
+
+      const response = sentFrames
+        .map(f => parseDefaultResponse(f.raw))
+        .find(r => r && r.forCmdId === 0x0A);
+
+      assert.ok(response, 'expected a default-response frame to be sent back');
+      assert.strictEqual(response.status, 'MALFORMED_COMMAND',
+        `expected MALFORMED_COMMAND, got ${response.status}`);
+    });
+
+    it('should still emit attr.zoneStatus on well-formed report (regression)', async function() {
+      const { node } = createCapturingNode(1, IASZoneCluster.ID);
+
+      let received = null;
+      node.endpoints[1].clusters.iasZone.on('attr.zoneStatus', val => {
+        received = val;
+      });
+
+      // Full report: attrId=0x0002, typeId=map16, value=[0x01, 0x00] (alarm1 bit set).
+      const value = Buffer.from([0x01, 0x00]);
+      const frame = buildReportAttributesFrame(0x0002, ZCL_TYPE_ID_MAP16, value);
+      await node.handleFrame(1, IASZoneCluster.ID, frame.toBuffer(), {});
+
+      assert.ok(received, 'attr.zoneStatus should have fired');
+      assert.strictEqual(received.alarm1, true);
+    });
+  });
+
+  describe('encodeMissingFieldsBehavior: "skip" - empty payload', function() {
+    it('should reject empty queryNextImageRequest', async function() {
+      const { node, sentFrames } = createCapturingNode(1, OTACluster.ID);
+      node.endpoints[1].bind('ota', new BoundCluster());
+
+      const frame = new ZCLStandardHeader();
+      frame.cmdId = OTACluster.COMMANDS.queryNextImageRequest.id;
+      frame.frameControl.directionToClient = false;
+      frame.frameControl.clusterSpecific = true;
+      frame.data = Buffer.alloc(0); // Pre-fix: parses with all zero-filled fields.
+
+      await node.handleFrame(1, OTACluster.ID, frame.toBuffer(), {});
+
+      const response = sentFrames
+        .map(f => parseDefaultResponse(f.raw))
+        .find(r => r && r.forCmdId === OTACluster.COMMANDS.queryNextImageRequest.id);
+
+      assert.ok(response, 'expected a default-response frame');
+      assert.strictEqual(response.status, 'MALFORMED_COMMAND',
+        `expected MALFORMED_COMMAND, got ${response.status}`);
+    });
+
+    it('should still accept queryNextImageRequest without trailing hardwareVersion (regression)', async function() {
+      const { node } = createCapturingNode(1, OTACluster.ID);
+
+      let receivedArgs = null;
+      node.endpoints[1].bind('ota', new (class extends BoundCluster {
+
+        async queryNextImageRequest(args) {
+          receivedArgs = args;
+          return { status: 'NO_IMAGE_AVAILABLE' };
+        }
+
+      })());
+
+      const frame = new ZCLStandardHeader();
+      frame.cmdId = OTACluster.COMMANDS.queryNextImageRequest.id;
+      frame.frameControl.directionToClient = false;
+      frame.frameControl.clusterSpecific = true;
+      // 9 bytes: fieldControl(1) + manufacturerCode(2) + imageType(2) + fileVersion(4).
+      // Trailing hardwareVersion(2) omitted because fieldControl bit 0 is not set.
+      frame.data = Buffer.from([
+        0x00, // fieldControl
+        0x34, 0x12, // manufacturerCode = 0x1234
+        0x21, 0x43, // imageType = 0x4321
+        0x01, 0x00, 0x00, 0x00, // fileVersion = 1
+      ]);
+
+      await node.handleFrame(1, OTACluster.ID, frame.toBuffer(), {});
+
+      assert.ok(receivedArgs, 'handler should have been called');
+      assert.strictEqual(receivedArgs.manufacturerCode, 0x1234);
+      assert.strictEqual(receivedArgs.imageType, 0x4321);
     });
   });
 });
