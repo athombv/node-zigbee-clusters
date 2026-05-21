@@ -2680,7 +2680,7 @@ declare module "zigbee-clusters" {
     enum8Status: ZCLDataType<types.ZCLEnum8Status>
   };
 
-  function debug(flag: boolean, namespaces: string): void;
+  function debug(flag?: boolean, namespaces?: string): void;
 
   interface ZigbeeNode {
     /**
