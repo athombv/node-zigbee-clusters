@@ -2911,7 +2911,7 @@ declare module "zigbee-clusters" {
     [handlerKey: `on${Capitalize<string>}`]: ((...args: any[]) => unknown) | undefined;
 
     readAttributes<K extends keyof (Attributes & types.GLOBAL_ATTRIBUTES) | number>(attributes: ReadonlyArray<K>, opts?: {timeout?: number}): Promise<{[attribute in K]: types.AttributesFromDefinition<Attributes & types.GLOBAL_ATTRIBUTES>[attribute]}>;
-    writeAttributes<K extends keyof (Attributes & types.GLOBAL_ATTRIBUTES)>(attributes: {[attribute in K]: types.AttributesFromDefinition<Attributes & types.GLOBAL_ATTRIBUTES>[attribute]}, opts?: {timeout?: number}): Promise<{[attribute in K]: {id: number, status: 'SUCCESS' | 'FAILURE'}}>
+    writeAttributes<K extends keyof (Attributes & types.GLOBAL_ATTRIBUTES)>(attributes: {[attribute in K]?: types.AttributesFromDefinition<Attributes & types.GLOBAL_ATTRIBUTES>[attribute]}, opts?: {timeout?: number}): Promise<{[attribute in K]: {id: number, status: 'SUCCESS' | 'FAILURE'}}>
 
     configureReporting(attributes: types.AttributeReportingConfiguration<Extract<keyof (Attributes & types.GLOBAL_ATTRIBUTES), string>>, opts?: {timeout?: number}): Promise<void>;
     readReportingConfiguration(attributes: ReadonlyArray<Extract<keyof (Attributes & types.GLOBAL_ATTRIBUTES), string> | number>, opts?: {timeout?: number}): Promise<Array<types.ReadReportingConfigurationResponse>>;
