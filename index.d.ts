@@ -1782,6 +1782,7 @@ declare module "zigbee-clusters" {
     controlSequenceOfOperation: { id: 0x1b, type: ZCLDataType<"cooling" | "coolingWithReheat" | "heating" | "heatingWithReheat" | "coolingAndHeating4Pipes" | "coolingAndHeating4PipesWithReheat"> },
     systemMode: { id: 0x1c, type: ZCLDataType<"off" | "auto" | "cool" | "heat" | "emergencyHeating" | "precooling" | "fanOnly" | "dry" | "sleep"> },
     alarmMask: { id: 0x1d, type: ZCLDataType<Bitmap<"initializationFailure" | "hardwareFailure" | "selfCalibrationFailure">> },
+    runningMode: { id: 0x1e, type: ZCLDataType<"off" | "cool" | "heat"> },
   };
   type ThermostatClusterCommands = {
     setSetpoint: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
