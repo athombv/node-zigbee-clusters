@@ -1817,6 +1817,14 @@ declare module "zigbee-clusters" {
   type DehumidificationControlClusterCommands = Record<never, never>;
   class DehumidificationControlCluster<Attributes extends types.AttributeDefinitions = DehumidificationControlClusterAttributes, Commands extends types.CommandDefinitions = DehumidificationControlClusterCommands> extends Cluster<Attributes, Commands> {
   }
+  type ThermostatUserInterfaceConfigurationClusterAttributes = {
+    temperatureDisplayMode: { id: 0x00, type: ZCLDataType<"celsius" | "fahrenheit"> },
+    keypadLockout: { id: 0x01, type: ZCLDataType<"none" | "level1" | "level2" | "level3" | "level4" | "level5"> },
+    scheduleProgrammingVisibility: { id: 0x02, type: ZCLDataType<"enabled" | "disabled"> },
+  };
+  type ThermostatUserInterfaceConfigurationClusterCommands = Record<never, never>;
+  class ThermostatUserInterfaceConfigurationCluster<Attributes extends types.AttributeDefinitions = ThermostatUserInterfaceConfigurationClusterAttributes, Commands extends types.CommandDefinitions = ThermostatUserInterfaceConfigurationClusterCommands> extends Cluster<Attributes, Commands> {
+  }
   type ColorControlClusterAttributes = {
     currentHue: { id: 0x00, type: ZCLDataType<number> },
     currentSaturation: { id: 0x01, type: ZCLDataType<number> },
@@ -2518,6 +2526,12 @@ declare module "zigbee-clusters" {
       ATTRIBUTES: Readonly<ThermostatClusterAttributes>,
       COMMANDS: Readonly<ThermostatClusterCommands>,
     },
+    THERMOSTAT_UI_CONFIGURATION: {
+      ID: 0x0204,
+      NAME: "thermostatUserInterfaceConfiguration",
+      ATTRIBUTES: Readonly<ThermostatUserInterfaceConfigurationClusterAttributes>,
+      COMMANDS: Readonly<ThermostatUserInterfaceConfigurationClusterCommands>,
+    },
     PUMP_CONFIGURATION_AND_CONTROL: {
       ID: 0x0200,
       NAME: "pumpConfigurationAndControl",
@@ -2655,6 +2669,7 @@ declare module "zigbee-clusters" {
     "doorLock"?: DoorLockCluster;
     "windowCovering"?: WindowCoveringCluster;
     "thermostat"?: ThermostatCluster;
+    "thermostatUserInterfaceConfiguration"?: ThermostatUserInterfaceConfigurationCluster;
     "pumpConfigurationAndControl"?: PumpConfigurationAndControlCluster;
     "fanControl"?: FanControlCluster;
     "colorControl"?: ColorControlCluster;
