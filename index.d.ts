@@ -1782,6 +1782,7 @@ declare module "zigbee-clusters" {
     controlSequenceOfOperation: { id: 0x1b, type: ZCLDataType<"cooling" | "coolingWithReheat" | "heating" | "heatingWithReheat" | "coolingAndHeating4Pipes" | "coolingAndHeating4PipesWithReheat"> },
     systemMode: { id: 0x1c, type: ZCLDataType<"off" | "auto" | "cool" | "heat" | "emergencyHeating" | "precooling" | "fanOnly" | "dry" | "sleep"> },
     alarmMask: { id: 0x1d, type: ZCLDataType<Bitmap<"initializationFailure" | "hardwareFailure" | "selfCalibrationFailure">> },
+    runningMode: { id: 0x1e, type: ZCLDataType<"off" | "cool" | "heat"> },
   };
   type ThermostatClusterCommands = {
     setSetpoint: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
@@ -1815,6 +1816,14 @@ declare module "zigbee-clusters" {
   type DehumidificationControlClusterAttributes = Record<never, never>;
   type DehumidificationControlClusterCommands = Record<never, never>;
   class DehumidificationControlCluster<Attributes extends types.AttributeDefinitions = DehumidificationControlClusterAttributes, Commands extends types.CommandDefinitions = DehumidificationControlClusterCommands> extends Cluster<Attributes, Commands> {
+  }
+  type ThermostatUserInterfaceConfigurationClusterAttributes = {
+    temperatureDisplayMode: { id: 0x00, type: ZCLDataType<"celsius" | "fahrenheit"> },
+    keypadLockout: { id: 0x01, type: ZCLDataType<"none" | "level1" | "level2" | "level3" | "level4" | "level5"> },
+    scheduleProgrammingVisibility: { id: 0x02, type: ZCLDataType<"enabled" | "disabled"> },
+  };
+  type ThermostatUserInterfaceConfigurationClusterCommands = Record<never, never>;
+  class ThermostatUserInterfaceConfigurationCluster<Attributes extends types.AttributeDefinitions = ThermostatUserInterfaceConfigurationClusterAttributes, Commands extends types.CommandDefinitions = ThermostatUserInterfaceConfigurationClusterCommands> extends Cluster<Attributes, Commands> {
   }
   type ColorControlClusterAttributes = {
     currentHue: { id: 0x00, type: ZCLDataType<number> },
@@ -2517,6 +2526,12 @@ declare module "zigbee-clusters" {
       ATTRIBUTES: Readonly<ThermostatClusterAttributes>,
       COMMANDS: Readonly<ThermostatClusterCommands>,
     },
+    THERMOSTAT_UI_CONFIGURATION: {
+      ID: 0x0204,
+      NAME: "thermostatUserInterfaceConfiguration",
+      ATTRIBUTES: Readonly<ThermostatUserInterfaceConfigurationClusterAttributes>,
+      COMMANDS: Readonly<ThermostatUserInterfaceConfigurationClusterCommands>,
+    },
     PUMP_CONFIGURATION_AND_CONTROL: {
       ID: 0x0200,
       NAME: "pumpConfigurationAndControl",
@@ -2654,6 +2669,7 @@ declare module "zigbee-clusters" {
     "doorLock"?: DoorLockCluster;
     "windowCovering"?: WindowCoveringCluster;
     "thermostat"?: ThermostatCluster;
+    "thermostatUserInterfaceConfiguration"?: ThermostatUserInterfaceConfigurationCluster;
     "pumpConfigurationAndControl"?: PumpConfigurationAndControlCluster;
     "fanControl"?: FanControlCluster;
     "colorControl"?: ColorControlCluster;
@@ -3239,6 +3255,7 @@ declare module "zigbee-clusters" {
 
     type CommandDefinition = {
       id: number,
+      manufacturerId?: number,
       direction?: CommandDirection,
       args?: {
         [argName: string]: ZCLDataType<any>,
