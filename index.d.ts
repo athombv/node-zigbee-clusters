@@ -3239,6 +3239,7 @@ declare module "zigbee-clusters" {
 
     type CommandDefinition = {
       id: number,
+      manufacturerId?: number,
       direction?: CommandDirection,
       args?: {
         [argName: string]: ZCLDataType<any>,
