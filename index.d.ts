@@ -327,6 +327,7 @@ declare module "zigbee-clusters" {
     onTransitionTime: { id: 0x12, type: ZCLDataType<number> },
     offTransitionTime: { id: 0x13, type: ZCLDataType<number> },
     defaultMoveRate: { id: 0x14, type: ZCLDataType<number> },
+    startUpCurrentLevel: { id: 0x4000, type: ZCLDataType<number> },
   };
   type LevelControlClusterCommands = {
     moveToLevel: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
@@ -1837,6 +1838,7 @@ declare module "zigbee-clusters" {
     colorCapabilities: { id: 0x400a, type: ZCLDataType<Bitmap<"hueAndSaturation" | "enhancedHue" | "colorLoop" | "xy" | "colorTemperature">> },
     colorTempPhysicalMinMireds: { id: 0x400b, type: ZCLDataType<number> },
     colorTempPhysicalMaxMireds: { id: 0x400c, type: ZCLDataType<number> },
+    startUpColorTemperatureMireds: { id: 0x4010, type: ZCLDataType<number> },
   };
   type ColorControlClusterCommands = {
     moveToHue: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
