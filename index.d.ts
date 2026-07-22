@@ -226,8 +226,10 @@ declare module "zigbee-clusters" {
   }
   type OnOffClusterAttributes = {
     onOff: { id: 0x00, type: ZCLDataType<boolean> },
+    globalSceneControl: { id: 0x4000, type: ZCLDataType<boolean> },
     onTime: { id: 0x4001, type: ZCLDataType<number> },
     offWaitTime: { id: 0x4002, type: ZCLDataType<number> },
+    startUpOnOff: { id: 0x4003, type: ZCLDataType<"off" | "on" | "toggle" | "previous"> },
   };
   type OnOffClusterCommands = {
     setOff: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT" },
