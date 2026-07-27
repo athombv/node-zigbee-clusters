@@ -1835,6 +1835,14 @@ declare module "zigbee-clusters" {
     currentY: { id: 0x04, type: ZCLDataType<number> },
     colorTemperatureMireds: { id: 0x07, type: ZCLDataType<number> },
     colorMode: { id: 0x08, type: ZCLDataType<"currentHueAndCurrentSaturation" | "currentXAndCurrentY" | "colorTemperatureMireds"> },
+    options: { id: 0x0f, type: ZCLDataType<Bitmap<"executeIfOff">> },
+    enhancedCurrentHue: { id: 0x4000, type: ZCLDataType<number> },
+    enhancedColorMode: { id: 0x4001, type: ZCLDataType<"currentHueAndCurrentSaturation" | "currentXAndCurrentY" | "colorTemperatureMireds" | "enhancedCurrentHueAndCurrentSaturation"> },
+    colorLoopActive: { id: 0x4002, type: ZCLDataType<number> },
+    colorLoopDirection: { id: 0x4003, type: ZCLDataType<number> },
+    colorLoopTime: { id: 0x4004, type: ZCLDataType<number> },
+    colorLoopStartEnhancedHue: { id: 0x4005, type: ZCLDataType<number> },
+    colorLoopStoredEnhancedHue: { id: 0x4006, type: ZCLDataType<number> },
     colorCapabilities: { id: 0x400a, type: ZCLDataType<Bitmap<"hueAndSaturation" | "enhancedHue" | "colorLoop" | "xy" | "colorTemperature">> },
     colorTempPhysicalMinMireds: { id: 0x400b, type: ZCLDataType<number> },
     colorTempPhysicalMaxMireds: { id: 0x400c, type: ZCLDataType<number> },
@@ -1867,6 +1875,14 @@ declare module "zigbee-clusters" {
     moveToColorTemperature: { id: 0x0a, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
         colorTemperature: ZCLDataType<number>,
         transitionTime: ZCLDataType<number>,
+      },
+    },
+    colorLoopSet: { id: 0x44, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
+        updateFlags: ZCLDataType<Bitmap<"updateAction" | "updateDirection" | "updateTime" | "updateStartHue">>,
+        action: ZCLDataType<"deactivate" | "activateFromColorLoopStartEnhancedHue" | "activateFromEnhancedCurrentHue">,
+        direction: ZCLDataType<"decrementHue" | "incrementHue">,
+        time: ZCLDataType<number>,
+        startHue: ZCLDataType<number>,
       },
     },
   };
@@ -1927,6 +1943,21 @@ declare module "zigbee-clusters" {
         manufacturerId?: number,
         colorTemperature?: number,
         transitionTime?: number,
+      },
+      opts?: {
+        waitForResponse?: boolean,
+        timeout?: number,
+        disableDefaultResponse?: boolean,
+      },
+    ): Promise<void>;
+    colorLoopSet(
+      args?: {
+        manufacturerId?: number,
+        updateFlags?: Bitmap<"updateAction" | "updateDirection" | "updateTime" | "updateStartHue">,
+        action?: "deactivate" | "activateFromColorLoopStartEnhancedHue" | "activateFromEnhancedCurrentHue",
+        direction?: "decrementHue" | "incrementHue",
+        time?: number,
+        startHue?: number,
       },
       opts?: {
         waitForResponse?: boolean,
