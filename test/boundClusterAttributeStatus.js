@@ -69,6 +69,23 @@ describe('BoundCluster attribute status codes', function() {
       assert.equal(records[0].status, 'FAILURE');
     });
 
+    it('reports UNSUPPORTED_ATTRIBUTE for a write-only attribute, not 0x8f', async function() {
+      const bound = bind(new class extends BoundCluster {
+
+        set modelId(value) {
+          this._modelId = value;
+        }
+
+      }());
+      const records = readStatuses(await bound.readAttributes({ attributes: [MODEL_ID] }));
+
+      // ZCL R8 deprecates WRITE_ONLY and reassigns 0x8f to NOT_AUTHORIZED ("a request has been
+      // made to read an attribute that the requestor is not authorized to read"), which is about
+      // permission, not about the attribute being unreadable. R8 defines no read status for a
+      // write-only attribute, so UNSUPPORTED_ATTRIBUTE stays the honest answer: not readable here.
+      assert.equal(records[0].status, 'UNSUPPORTED_ATTRIBUTE');
+    });
+
     it('still reports SUCCESS with a value for an implemented attribute', async function() {
       const bound = bind(new class extends BoundCluster {
 
