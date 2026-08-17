@@ -2778,21 +2778,12 @@ declare module "zigbee-clusters" {
     getLogId(endpointId: number, clusterId: number): string;
   }
 
-  /**
-   * Minimum shape an Endpoint needs from its owner. Endpoint only ever calls `sendFrame`, so a
-   * plain object is enough - a device serving bound clusters does not need a full ZCLNode, which
-   * models one remote peer and bakes that peer's address into its own `sendFrame`.
-   */
-  type EndpointInput = {
-    sendFrame(endpointId: number, clusterId: number, frame: Buffer): Promise<unknown>;
-  };
-
-  class Endpoint extends EventEmitter {
-    constructor(node: EndpointInput, descriptor: {
+  class ZCLNodeEndpoint extends EventEmitter {
+    constructor(node: ZCLNode, descriptor: {
       endpointId: number;
       inputClusters: number[];
-      outputClusters?: number[];
-    });
+      outputClusters: number[];
+    }[]);
     // Typed lookup: known cluster names (per the generated `ClustersByName`)
     // resolve to their specific class (e.g. `clusters.onOff` is `OnOffCluster`),
     // while unknown keys fall back to the generic Cluster via the index half.
@@ -2804,19 +2795,7 @@ declare module "zigbee-clusters" {
     unbind(clusterName: string): void;
 
     makeDefaultResponseFrame(receivedFrame: unknown, success: boolean, status: types.ZCLEnum8Status): typeof zclFrames.ZCLStandardHeader | typeof zclFrames.ZCLMfgSpecificHeader;
-
-    /**
-     * Dispatch an incoming ZCL frame to the bound cluster and write the response. Handles the
-     * command-response rules: no reply to a Default Response or a group-addressed frame (ZCL 2.5.12.2),
-     * a Default Response carrying a thrown ZCLError's status, and `disableDefaultResponse`.
-     *
-     * Pass `meta.groupId` for a group-addressed frame, or the response suppression cannot be applied.
-     */
-    handleFrame(clusterId: number, frame: Buffer, meta?: { groupId?: number }): Promise<void>;
   }
-
-  /** @deprecated Use {@link Endpoint}; kept so existing references keep compiling. */
-  type ZCLNodeEndpoint = Endpoint;
 
   type ZCLDataType<Value> = import('@athombv/data-types').DataType<Value>;
   const ZCLDataTypes: ZCLDataTypes;
