@@ -3,6 +3,7 @@
 const _debug = require('debug');
 
 const ZCLNode = require('./lib/Node');
+const Endpoint = require('./lib/Endpoint');
 const Cluster = require('./lib/Cluster');
 const BoundCluster = require('./lib/BoundCluster');
 const zclTypes = require('./lib/zclTypes');
@@ -105,6 +106,7 @@ module.exports = {
 
   // ZCL
   ZCLNode,
+  Endpoint,
   zclTypes,
   zclFrames,
   ZCLDataTypes,
