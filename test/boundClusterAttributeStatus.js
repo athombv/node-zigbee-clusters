@@ -5,6 +5,7 @@ const assert = require('assert');
 
 const BoundCluster = require('../lib/BoundCluster');
 const BasicCluster = require('../lib/clusters/basic');
+const { ZCLError } = require('../lib/util');
 
 // Attribute ids on the basic cluster.
 const MODEL_ID = 0x0005;
@@ -86,6 +87,21 @@ describe('BoundCluster attribute status codes', function() {
       assert.equal(records[0].status, 'UNSUPPORTED_ATTRIBUTE');
     });
 
+    it('honours a ZCLError thrown by a getter instead of flattening it to FAILURE', async function() {
+      const bound = bind(new class extends BoundCluster {
+
+        get modelId() {
+          throw new ZCLError('NOT_AUTHORIZED');
+        }
+
+      }());
+      const records = readStatuses(await bound.readAttributes({ attributes: [MODEL_ID] }));
+
+      // The per-attribute status is data on the error, so an implementation can pick its own rather
+      // than being limited to the two this class throws itself.
+      assert.equal(records[0].status, 'NOT_AUTHORIZED');
+    });
+
     it('still reports SUCCESS with a value for an implemented attribute', async function() {
       const bound = bind(new class extends BoundCluster {
 
@@ -149,6 +165,25 @@ describe('BoundCluster attribute status codes', function() {
 
       // ZCL R8 2.5.4.2 check 3: a read-only attribute SHALL be READ_ONLY, not FAILURE.
       assert.equal(attributes[0].status, 'READ_ONLY');
+    });
+
+    it('honours a ZCLError thrown by a setter', async function() {
+      const bound = bind(new class extends BoundCluster {
+
+        get modelId() {
+          return this._modelId;
+        }
+
+        set modelId(value) {
+          throw new ZCLError('INVALID_VALUE');
+        }
+
+      }());
+      const { attributes } = await bound.writeAttributes({
+        attributes: writeBuffer([{ id: MODEL_ID, value: 'Other' }]),
+      });
+
+      assert.equal(attributes[0].status, 'INVALID_VALUE');
     });
 
     it('still reports SUCCESS for a writable attribute', async function() {
