@@ -4,6 +4,10 @@
   "description": "Zigbee Cluster Library for Node.js",
   "main": "index.js",
   "types": "index.d.ts",
+  "files": [
+    "index.d.ts",
+    "lib"
+  ],
   "scripts": {
     "test": "mocha --reporter list",
     "lint": "eslint .",

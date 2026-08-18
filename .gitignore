@@ -1,3 +1,4 @@
 node_modules
 build
 .envrc
+.DS_Store

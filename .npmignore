@@ -1,8 +1,0 @@
-build
-docs
-test
-
-.eslintrc.json
-.eslintignore
-.editorconfig
-.github
