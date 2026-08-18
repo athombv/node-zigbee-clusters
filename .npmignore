@@ -1,6 +1,7 @@
 build
 docs
 test
+scripts
 
 .eslintrc.json
 .eslintignore
