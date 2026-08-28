@@ -499,7 +499,18 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
   }
-  type TimeClusterAttributes = Record<never, never>;
+  type TimeClusterAttributes = {
+    time: { id: 0x00, type: ZCLDataType<number> },
+    timeStatus: { id: 0x01, type: ZCLDataType<Bitmap<"master" | "synchronized" | "masterZoneDst" | "superseding">> },
+    timeZone: { id: 0x02, type: ZCLDataType<number> },
+    dstStart: { id: 0x03, type: ZCLDataType<number> },
+    dstEnd: { id: 0x04, type: ZCLDataType<number> },
+    dstShift: { id: 0x05, type: ZCLDataType<number> },
+    standardTime: { id: 0x06, type: ZCLDataType<number> },
+    localTime: { id: 0x07, type: ZCLDataType<number> },
+    lastSetTime: { id: 0x08, type: ZCLDataType<number> },
+    validUntilTime: { id: 0x09, type: ZCLDataType<number> },
+  };
   type TimeClusterCommands = Record<never, never>;
   class TimeCluster<Attributes extends types.AttributeDefinitions = TimeClusterAttributes, Commands extends types.CommandDefinitions = TimeClusterCommands> extends Cluster<Attributes, Commands> {
   }
