@@ -474,6 +474,7 @@ function zclDataTypeToValueType(type: keyof typeof DataTypes): string {
     case "int32":
     case "int40":
     case "int48":
+    case "UTC":
       return "number";
     case "enum8":
     case "enum16":
