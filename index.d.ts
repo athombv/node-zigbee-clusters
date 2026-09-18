@@ -315,7 +315,10 @@ declare module "zigbee-clusters" {
       },
     ): Promise<void>;
   }
-  type OnOffSwitchClusterAttributes = Record<never, never>;
+  type OnOffSwitchClusterAttributes = {
+    switchType: { id: 0x00, type: ZCLDataType<"toggle" | "momentary" | "multifunction"> },
+    switchActions: { id: 0x10, type: ZCLDataType<"onOff" | "offOn" | "toggle"> },
+  };
   type OnOffSwitchClusterCommands = Record<never, never>;
   class OnOffSwitchCluster<Attributes extends types.AttributeDefinitions = OnOffSwitchClusterAttributes, Commands extends types.CommandDefinitions = OnOffSwitchClusterCommands> extends Cluster<Attributes, Commands> {
   }
