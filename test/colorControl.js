@@ -36,6 +36,30 @@ async function sendColorLoopSet(args) {
   return Endpoint.parseFrame(sendFrameSpy.getCall(0).args[2]);
 }
 
+// Sends a color command on a fresh node and returns the parsed outgoing frame (see above)
+async function sendColorCommand(commandName, args) {
+  const node = createMockNode({
+    loopback: true,
+    endpoints: [{
+      endpointId: 1,
+      inputClusters: [ColorControlCluster.ID],
+    }],
+  });
+
+  node.endpoints[1].bind('colorControl', new (class extends BoundCluster {
+
+    async [commandName]() {
+      // Accept the command so no error response is generated
+    }
+
+  })());
+
+  const sendFrameSpy = sandbox.spy(node, 'sendFrame');
+  await node.endpoints[1].clusters.colorControl[commandName](args);
+
+  return Endpoint.parseFrame(sendFrameSpy.getCall(0).args[2]);
+}
+
 describe('Color Control', function() {
   afterEach(function() {
     sandbox.restore();
@@ -199,5 +223,76 @@ describe('Color Control', function() {
 
       assert.strictEqual(frame.data[0], expectedByte, `wrong bit for ${flag}`);
     }
+  });
+  // ZCL r8 Figure 5-12: Color Temperature Mireds (uint16), Transition Time (uint16), OptionsMask
+  // (map8), OptionsOverride (map8); 5.2.2.3.3: missing fields are interpreted for legacy devices
+  it('should encode moveToColorTemperature without options as before', async function() {
+    const frame = await sendColorCommand('moveToColorTemperature', {
+      colorTemperature: 0x011E, // 286, uint16 little endian, so 1e 01
+      transitionTime: 15, // 0f 00
+    });
+
+    assert.strictEqual(frame.cmdId, 0x0A);
+    assert.deepStrictEqual(frame.data, Buffer.from([0x1E, 0x01, 0x0F, 0x00]));
+  });
+
+  it('should encode moveToColorTemperature with options as specified by the ZCL', async function() {
+    const frame = await sendColorCommand('moveToColorTemperature', {
+      colorTemperature: 0x011E,
+      transitionTime: 15,
+      optionsMask: ['executeIfOff'], // Bit 0, so 0x01
+      optionsOverride: ['executeIfOff'],
+    });
+
+    assert.strictEqual(frame.cmdId, 0x0A);
+    assert.deepStrictEqual(frame.data, Buffer.from([0x1E, 0x01, 0x0F, 0x00, 0x01, 0x01]));
+  });
+
+  // ZCL r8 Figure 5-9: Color X, Color Y, Transition Time (uint16), OptionsMask, OptionsOverride
+  it('should encode moveToColor with options as specified by the ZCL', async function() {
+    const frame = await sendColorCommand('moveToColor', {
+      colorX: 0x5000,
+      colorY: 0x3000,
+      transitionTime: 20,
+      optionsMask: ['executeIfOff'],
+      optionsOverride: [], // Mask set, override cleared: do not execute when off
+    });
+
+    assert.strictEqual(frame.cmdId, 0x07);
+    assert.deepStrictEqual(
+      frame.data,
+      Buffer.from([0x00, 0x50, 0x00, 0x30, 0x14, 0x00, 0x01, 0x00]),
+    );
+  });
+
+  it('should receive moveToColorTemperature with options', async function() {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [{
+        endpointId: 1,
+        inputClusters: [ColorControlCluster.ID],
+      }],
+    });
+
+    let receivedData = null;
+    node.endpoints[1].bind('colorControl', new (class extends BoundCluster {
+
+      async moveToColorTemperature(data) {
+        receivedData = data;
+      }
+
+    })());
+
+    await node.endpoints[1].clusters.colorControl.moveToColorTemperature({
+      colorTemperature: 370,
+      transitionTime: 15,
+      optionsMask: ['executeIfOff'],
+      optionsOverride: ['executeIfOff'],
+    });
+
+    assert.strictEqual(receivedData.colorTemperature, 370);
+    assert.strictEqual(receivedData.transitionTime, 15);
+    assert.deepStrictEqual(receivedData.optionsMask.getBits(), ['executeIfOff']);
+    assert.deepStrictEqual(receivedData.optionsOverride.getBits(), ['executeIfOff']);
   });
 });

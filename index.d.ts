@@ -1863,32 +1863,42 @@ declare module "zigbee-clusters" {
     startUpColorTemperatureMireds: { id: 0x4010, type: ZCLDataType<number> },
   };
   type ColorControlClusterCommands = {
-    moveToHue: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
+    moveToHue: { id: 0x00, direction: "DIRECTION_SERVER_TO_CLIENT", encodeMissingFieldsBehavior: "skip", args: {
         hue: ZCLDataType<number>,
         direction: ZCLDataType<"shortestDistance" | "longestDistance" | "up" | "down">,
         transitionTime: ZCLDataType<number>,
+        optionsMask: ZCLDataType<Bitmap<"executeIfOff">>,
+        optionsOverride: ZCLDataType<Bitmap<"executeIfOff">>,
       },
     },
-    moveToSaturation: { id: 0x03, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
+    moveToSaturation: { id: 0x03, direction: "DIRECTION_SERVER_TO_CLIENT", encodeMissingFieldsBehavior: "skip", args: {
         saturation: ZCLDataType<number>,
         transitionTime: ZCLDataType<number>,
+        optionsMask: ZCLDataType<Bitmap<"executeIfOff">>,
+        optionsOverride: ZCLDataType<Bitmap<"executeIfOff">>,
       },
     },
-    moveToHueAndSaturation: { id: 0x06, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
+    moveToHueAndSaturation: { id: 0x06, direction: "DIRECTION_SERVER_TO_CLIENT", encodeMissingFieldsBehavior: "skip", args: {
         hue: ZCLDataType<number>,
         saturation: ZCLDataType<number>,
         transitionTime: ZCLDataType<number>,
+        optionsMask: ZCLDataType<Bitmap<"executeIfOff">>,
+        optionsOverride: ZCLDataType<Bitmap<"executeIfOff">>,
       },
     },
-    moveToColor: { id: 0x07, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
+    moveToColor: { id: 0x07, direction: "DIRECTION_SERVER_TO_CLIENT", encodeMissingFieldsBehavior: "skip", args: {
         colorX: ZCLDataType<number>,
         colorY: ZCLDataType<number>,
         transitionTime: ZCLDataType<number>,
+        optionsMask: ZCLDataType<Bitmap<"executeIfOff">>,
+        optionsOverride: ZCLDataType<Bitmap<"executeIfOff">>,
       },
     },
-    moveToColorTemperature: { id: 0x0a, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
+    moveToColorTemperature: { id: 0x0a, direction: "DIRECTION_SERVER_TO_CLIENT", encodeMissingFieldsBehavior: "skip", args: {
         colorTemperature: ZCLDataType<number>,
         transitionTime: ZCLDataType<number>,
+        optionsMask: ZCLDataType<Bitmap<"executeIfOff">>,
+        optionsOverride: ZCLDataType<Bitmap<"executeIfOff">>,
       },
     },
     colorLoopSet: { id: 0x44, direction: "DIRECTION_SERVER_TO_CLIENT", args: {
@@ -1907,6 +1917,8 @@ declare module "zigbee-clusters" {
         hue?: number,
         direction?: "shortestDistance" | "longestDistance" | "up" | "down",
         transitionTime?: number,
+        optionsMask?: Bitmap<"executeIfOff">,
+        optionsOverride?: Bitmap<"executeIfOff">,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1919,6 +1931,8 @@ declare module "zigbee-clusters" {
         manufacturerId?: number,
         saturation?: number,
         transitionTime?: number,
+        optionsMask?: Bitmap<"executeIfOff">,
+        optionsOverride?: Bitmap<"executeIfOff">,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1932,6 +1946,8 @@ declare module "zigbee-clusters" {
         hue?: number,
         saturation?: number,
         transitionTime?: number,
+        optionsMask?: Bitmap<"executeIfOff">,
+        optionsOverride?: Bitmap<"executeIfOff">,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1945,6 +1961,8 @@ declare module "zigbee-clusters" {
         colorX?: number,
         colorY?: number,
         transitionTime?: number,
+        optionsMask?: Bitmap<"executeIfOff">,
+        optionsOverride?: Bitmap<"executeIfOff">,
       },
       opts?: {
         waitForResponse?: boolean,
@@ -1957,6 +1975,8 @@ declare module "zigbee-clusters" {
         manufacturerId?: number,
         colorTemperature?: number,
         transitionTime?: number,
+        optionsMask?: Bitmap<"executeIfOff">,
+        optionsOverride?: Bitmap<"executeIfOff">,
       },
       opts?: {
         waitForResponse?: boolean,
