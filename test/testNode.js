@@ -281,8 +281,8 @@ describe('Node', function() {
 
     const sendingNodeHandleFrameSpy = sandbox.spy(sendingNode, 'handleFrame');
 
-    // Execute toggle and expect a failure as the command is not implemented
-    await assert.rejects(sendingNode.endpoints[1].clusters['onOff'].toggle(), { message: 'FAILURE' });
+    // Execute toggle and expect UNSUP_COMMAND as the command is not implemented (ZCL R8 2.5.12.2)
+    await assert.rejects(sendingNode.endpoints[1].clusters['onOff'].toggle(), { message: 'UNSUP_CLUSTER_COMMAND' });
 
     // 1 frame received by sending node, the default response error
     assert.equal(sendingNodeHandleFrameSpy.callCount, 1);
@@ -290,7 +290,7 @@ describe('Node', function() {
     // Parse the received frame
     const frame = Endpoint.parseFrame(sendingNodeHandleFrameSpy.getCall(0).args[2]);
     assert.equal(frame.cmdId, 0x0B);
-    assert.equal(frame.data[1], 0x01); // Error status
+    assert.equal(frame.data[1], 0x81); // UNSUP_COMMAND
   });
 
   it('should not respond to a group cast frame', async function() {
