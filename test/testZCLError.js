@@ -6,6 +6,7 @@ const assert = require('assert');
 const BoundCluster = require('../lib/BoundCluster');
 const Node = require('../lib/Node');
 const OnOffCluster = require('../lib/clusters/onOff');
+const LevelControlCluster = require('../lib/clusters/levelControl');
 const { ZCLStandardHeader } = require('../lib/zclFrames');
 const { ZCLError } = require('../lib/util');
 const { createMockNode } = require('./util');
@@ -36,6 +37,16 @@ function createSpyNodePair() {
   deviceNode = new Node(mockDevice);
 
   return { controllerNode, deviceNode, capturedFrames };
+}
+
+function makeToClientFrame(cmdId) {
+  const header = new ZCLStandardHeader();
+  header.frameControl.clusterSpecific = true;
+  header.frameControl.directionToClient = true;
+  header.trxSequenceNumber = 1;
+  header.cmdId = cmdId;
+  header.data = Buffer.alloc(0);
+  return header.toBuffer();
 }
 
 describe('ZCLError handling', function() {
@@ -177,6 +188,40 @@ describe('ZCLError handling', function() {
       'Default Response should reference the received setOn command ID');
     assert.strictEqual(defaultResponseFrame.data[1], SUCCESS_STATUS_BYTE,
       'Default Response should encode SUCCESS (0x00) as the status byte');
+  });
+
+  // ZCL R8 2.5.12.2
+  it('should send UNSUP_COMMAND (0x81) for a command the BoundCluster does not implement', async function() {
+    const { controllerNode, deviceNode, capturedFrames } = createSpyNodePair();
+    deviceNode.endpoints[1].bind('onOff', new BoundCluster());
+
+    await assert.rejects(() => controllerNode.endpoints[1].clusters.onOff.setOn(), { message: 'UNSUP_CLUSTER_COMMAND' });
+
+    const defaultResponseFrame = ZCLStandardHeader.fromBuffer(capturedFrames[0].data);
+    assert.strictEqual(defaultResponseFrame.cmdId, 0x0B);
+    assert.strictEqual(defaultResponseFrame.data[1], 0x81);
+  });
+
+  it('should send UNSUP_COMMAND (0x81) for an unknown command id on a client cluster', async function() {
+    const { deviceNode, capturedFrames } = createSpyNodePair();
+    await deviceNode.handleFrame(1, OnOffCluster.ID, makeToClientFrame(0x7f), {});
+    assert.strictEqual(ZCLStandardHeader.fromBuffer(capturedFrames[0].data).data[1], 0x81);
+  });
+
+  it('should send UNSUPPORTED_CLUSTER (0xc3) for a server-to-client frame on a cluster the endpoint lacks', async function() {
+    const { deviceNode, capturedFrames } = createSpyNodePair();
+    await deviceNode.handleFrame(1, LevelControlCluster.ID, makeToClientFrame(0x00), {});
+    assert.strictEqual(ZCLStandardHeader.fromBuffer(capturedFrames[0].data).data[1], 0xc3);
+  });
+
+  it('should send UNSUPPORTED_CLUSTER (0xc3) when the endpoint has no binding for the cluster', async function() {
+    const { controllerNode, capturedFrames } = createSpyNodePair();
+
+    await assert.rejects(() => controllerNode.endpoints[1].clusters.onOff.setOn(), { message: 'UNSUPPORTED_CLUSTER' });
+
+    const defaultResponseFrame = ZCLStandardHeader.fromBuffer(capturedFrames[0].data);
+    assert.strictEqual(defaultResponseFrame.cmdId, 0x0B);
+    assert.strictEqual(defaultResponseFrame.data[1], 0xc3);
   });
 
   it('should propagate different ZCLError status codes', async function() {
