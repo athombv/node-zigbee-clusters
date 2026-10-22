@@ -4,7 +4,9 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
+const Cluster = require('../lib/Cluster');
 const Node = require('../lib/Node');
+const { ZCLDataTypes } = require('../lib/zclTypes');
 const BoundCluster = require('../lib/BoundCluster');
 const OnOffCluster = require('../lib/clusters/onOff');
 const AlarmsCluster = require('../lib/clusters/alarms');
@@ -155,5 +157,63 @@ describe('Cluster Response Timeout', function() {
 
     assert.strictEqual(response.alarmCode, 2);
     assert.strictEqual(response.timeStamp, 1234);
+  });
+
+  it('should resolve a command without declared response on a cluster-specific reply', async function() {
+    class TuyaLikeCluster extends Cluster {
+
+      static get ID() {
+        return 0xEF00;
+      }
+
+      static get NAME() {
+        return 'tuyaLike';
+      }
+
+      static get COMMANDS() {
+        return {
+          datapoint: { id: 0x00, args: { value: ZCLDataTypes.uint8 } },
+          dataResponse: {
+            id: 0x01,
+            direction: Cluster.DIRECTION_SERVER_TO_CLIENT,
+            args: { value: ZCLDataTypes.uint8 },
+          },
+        };
+      }
+
+    }
+    Cluster.addCluster(TuyaLikeCluster);
+
+    try {
+      const pair = [TuyaLikeCluster.ID];
+      const sender = new Node({
+        // eslint-disable-next-line no-use-before-define
+        sendFrame: (...args) => receiver.handleFrame(...args),
+        endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
+      });
+      const receiver = new Node({
+        sendFrame: (...args) => sender.handleFrame(...args),
+        endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
+      });
+      receiver.endpoints[1].bind('tuyaLike', new class extends BoundCluster {
+
+        // Reply like a Tuya MCU: its own command with the request's TSN, no Default Response
+        async datapoint({ value }, meta, frame) {
+          await sender.handleFrame(1, TuyaLikeCluster.ID, Buffer.from([
+            0x19, frame.trxSequenceNumber, 0x01, value,
+          ]));
+        }
+
+      }());
+
+      const { tuyaLike } = sender.endpoints[1].clusters;
+      const response = await tuyaLike.datapoint(
+        { value: 7 }, { disableDefaultResponse: true, timeout: 1000 },
+      );
+
+      assert.strictEqual(response.value, 7);
+    } finally {
+      Cluster.removeCluster(TuyaLikeCluster.ID);
+    }
   });
 });
