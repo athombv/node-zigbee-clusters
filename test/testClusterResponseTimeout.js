@@ -106,4 +106,25 @@ describe('Cluster Response Timeout', function() {
     // Only one frame should be sent (the command itself)
     assert.strictEqual(sendingNodeSendFrameSpy.callCount, 1);
   });
+
+  it('should not resolve with a device-initiated frame that reuses the pending TSN', async function() {
+    const reportedValues = [];
+    sendingNode.endpoints[1].clusters.onOff.on('attr.onOff', value => reportedValues.push(value));
+
+    receivingNode.endpoints[1].bind('onOff', new class extends BoundCluster {
+
+      async toggle(args, meta, frame) {
+        // Device sends an attribute report numbered from its own counter, colliding with the TSN
+        await sendingNode.handleFrame(1, OnOffCluster.ID, Buffer.from([
+          0x18, frame.trxSequenceNumber, 0x0A, 0x00, 0x00, 0x10, 0x01,
+        ]));
+      }
+
+    }());
+
+    const result = await sendingNode.endpoints[1].clusters.onOff.toggle();
+
+    assert.deepStrictEqual(reportedValues, [true]);
+    assert.strictEqual(result, undefined);
+  });
 });
