@@ -330,14 +330,27 @@ describe('Node', function() {
     assert.equal(receivingNodeSendFrameSpy.callCount, 0);
   });
 
-  it('should not send a default response error to a frame for the broadcast endpoint', async function() {
+  it('should not send a default response error to a broadcast frame', async function() {
     receivingNode.endpoints[1].bind('onOff', new class extends BoundCluster {}());
 
     const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
 
     // toggle is not implemented, so this would otherwise get a default response error
-    await receivingNode.handleFrame(1, 6, Buffer.from([0x01, 0x01, 0x02]), { dstEndpoint: 0xFF });
+    await receivingNode.handleFrame(1, 6, Buffer.from([0x01, 0x01, 0x02]), { broadcast: true });
     assert.equal(receivingNodeSendFrameSpy.callCount, 0);
+  });
+
+  it('should send a default response to a unicast frame for the broadcast endpoint', async function() {
+    receivingNode.endpoints[1].bind('onOff', new class extends BoundCluster {
+
+      toggle() {}
+
+    }());
+
+    const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
+
+    await receivingNode.handleFrame(1, 6, Buffer.from([0x01, 0x01, 0x02]), { dstEndpoint: 0xFF });
+    assert.equal(receivingNodeSendFrameSpy.callCount, 1);
   });
 
   it('should write attributes', async function() {
