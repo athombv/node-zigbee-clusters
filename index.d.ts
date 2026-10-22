@@ -3389,8 +3389,11 @@ declare module "zigbee-clusters" {
     }
 
     type AttributeReportMeta = {
-      trxSequenceNumber?: number;
-      [key: string]: unknown;
+      /**
+       * ZCL transaction sequence number of the report frame. It wraps at 256 and some devices
+       * reuse a fixed value, so only treat equal values as a duplicate within a short time window.
+       */
+      transactionSequenceNumber: number;
     };
 
     type ReadReportingConfigurationResponse = {

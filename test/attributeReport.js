@@ -16,7 +16,8 @@ describe('Attribute report', function() {
 
     node.endpoints[1].clusters.onOff.on('attr.onOff', (value, meta) => {
       assert.strictEqual(value, true);
-      assert.strictEqual(meta.trxSequenceNumber, 42);
+      // Only whitelisted fields, not the stack's frame meta
+      assert.deepStrictEqual(meta, { transactionSequenceNumber: 42 });
       done();
     });
 
@@ -27,6 +28,6 @@ describe('Attribute report', function() {
     // attributeId 0x0000 (onOff), dataType 0x10 (bool), value true
     frame.data = Buffer.from([0x00, 0x00, 0x10, 0x01]);
 
-    node.handleFrame(1, OnOffCluster.ID, frame.toBuffer(), {});
+    node.handleFrame(1, OnOffCluster.ID, frame.toBuffer(), { dstEndpoint: 1, linkQuality: 200 });
   });
 });
