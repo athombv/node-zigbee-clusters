@@ -54,12 +54,14 @@ declare module 'zigbee-clusters' {
   }
 
   /**
-   * Minimum shape an Endpoint needs from its owner. Endpoint only ever calls `sendFrame`, so a
-   * plain object is enough - a device serving bound clusters does not need a full ZCLNode, which
-   * models one remote peer and bakes that peer's address into its own `sendFrame`.
+   * Minimum shape an Endpoint needs from its owner. Endpoint only needs `sendFrame`, so a plain
+   * object is enough - a device serving bound clusters does not need a full ZCLNode, which
+   * models one remote peer and bakes that peer's address into its own `sendFrame`. Without
+   * `nextSeqNr` the Endpoint keeps its own transaction sequence number counter.
    */
   type EndpointInput = {
     sendFrame(endpointId: number, clusterId: number, frame: Buffer): Promise<unknown>;
+    nextSeqNr?(): number;
   };
 
   class Endpoint extends EventEmitter {
