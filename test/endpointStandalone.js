@@ -19,8 +19,8 @@ describe('Endpoint standalone', function() {
   it('serves bound clusters with nothing but a sendFrame owner', async function() {
     // The whole point of the export: a device answering incoming commands is not a peer, so it
     // should not have to construct a ZCLNode - which models one remote node and bakes that node's
-    // address into its own sendFrame. Endpoint touches its owner in exactly one place (sendFrame),
-    // so a plain object is enough. If that ever stops being true, this fails.
+    // address into its own sendFrame. Endpoint only needs sendFrame from its owner (nextSeqNr is
+    // optional), so a plain object is enough. If that ever stops being true, this fails.
     let sent;
     const endpoint = new Endpoint(
       {
@@ -36,5 +36,15 @@ describe('Endpoint standalone', function() {
     await endpoint.handleFrame(BASIC_CLUSTER_ID, request);
 
     assert.equal(sent.toString('hex'), '180701050000420c486f6d657920427269646765');
+  });
+
+  it('allocates transaction sequence numbers without a node counter', function() {
+    const endpoint = new Endpoint(
+      { sendFrame: async () => {} },
+      { endpointId: 1, inputClusters: [BASIC_CLUSTER_ID], outputClusters: [] },
+    );
+    const first = endpoint.clusters.basic.nextSeqNr();
+
+    assert.equal(endpoint.clusters.basic.nextSeqNr(), (first + 1) % 256);
   });
 });

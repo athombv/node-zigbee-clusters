@@ -332,4 +332,26 @@ describe('Cluster Response Timeout', function() {
       await sender.endpoints[1].clusters.onOff.toggle(undefined, { timeout: 1000 });
     });
   });
+
+  it('should resolve when the response arrives before sendFrame rejects', async function() {
+    receivingNode.endpoints[1].bind('onOff', new class extends BoundCluster {
+
+      toggle() {}
+
+    }());
+    sendingNode.sendFrame = async (endpointId, clusterId, frame) => {
+      await receivingNode.handleFrame(endpointId, clusterId, frame);
+      throw new Error('device not responding');
+    };
+
+    await sendingNode.endpoints[1].clusters.onOff.toggle();
+  });
+
+  it('should reject when sendFrame rejects without a response', async function() {
+    sendingNode.sendFrame = async () => {
+      throw new Error('device not responding');
+    };
+
+    await assert.rejects(sendingNode.endpoints[1].clusters.onOff.toggle(), /device not responding/);
+  });
 });
