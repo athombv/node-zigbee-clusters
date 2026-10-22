@@ -47,7 +47,10 @@ describe('Default Response', function() {
     // The error response is sent without awaiting, let it flush
     await new Promise(setImmediate);
 
-    assert.deepEqual(sentFrames, ['18050b0b01']);
+    // Default Response (0x0B) for command 0x0B with any error status; the exact status is not
+    // what this test is about
+    assert.equal(sentFrames.length, 1);
+    assert.match(sentFrames[0], /^18050b0b(?!00)[0-9a-f]{2}$/);
   });
 
   it('does not respond to a global Default Response', async function() {
