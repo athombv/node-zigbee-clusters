@@ -7,6 +7,7 @@ const sinon = require('sinon');
 const Node = require('../lib/Node');
 const BoundCluster = require('../lib/BoundCluster');
 const OnOffCluster = require('../lib/clusters/onOff');
+const AlarmsCluster = require('../lib/clusters/alarms');
 
 const sandbox = sinon.createSandbox();
 
@@ -126,5 +127,33 @@ describe('Cluster Response Timeout', function() {
 
     assert.deepStrictEqual(reportedValues, [true]);
     assert.strictEqual(result, undefined);
+  });
+
+  it('should resolve getAlarm with a Get Alarm Response alone', async function() {
+    const pair = [AlarmsCluster.ID];
+    const sender = new Node({
+      // eslint-disable-next-line no-use-before-define
+      sendFrame: (...args) => receiver.handleFrame(...args),
+      endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
+    });
+    const receiver = new Node({
+      sendFrame: (...args) => sender.handleFrame(...args),
+      endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
+    });
+    receiver.endpoints[1].bind('alarms', new class extends BoundCluster {
+
+      getAlarm() {
+        return {
+          status: 'SUCCESS', alarmCode: 2, clusterId: 6, timeStamp: 1234,
+        };
+      }
+
+    }());
+
+    const { alarms } = sender.endpoints[1].clusters;
+    const response = await alarms.getAlarm(undefined, { timeout: 1000 });
+
+    assert.strictEqual(response.alarmCode, 2);
+    assert.strictEqual(response.timeStamp, 1234);
   });
 });

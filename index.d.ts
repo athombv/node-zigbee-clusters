@@ -490,7 +490,12 @@ declare module "zigbee-clusters" {
         timeout?: number,
         disableDefaultResponse?: boolean,
       },
-    ): Promise<void>;
+    ): Promise<{
+      status?: types.ZCLEnum8Status,
+      alarmCode?: number,
+      clusterId?: number,
+      timeStamp?: number,
+    }>;
     resetAlarmLog(
       args?: {
         manufacturerId?: number,
