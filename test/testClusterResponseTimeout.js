@@ -10,6 +10,7 @@ const { ZCLDataTypes } = require('../lib/zclTypes');
 const BoundCluster = require('../lib/BoundCluster');
 const OnOffCluster = require('../lib/clusters/onOff');
 const AlarmsCluster = require('../lib/clusters/alarms');
+const IasZoneCluster = require('../lib/clusters/iasZone');
 
 const sandbox = sinon.createSandbox();
 
@@ -276,5 +277,59 @@ describe('Cluster Response Timeout', function() {
     } finally {
       Cluster.removeCluster(EchoCluster.ID);
     }
+  });
+
+  describe('pending response matching', function() {
+    // Node pair where the receiving side first sends `colliding(tsn)` with the request's TSN,
+    // then its real reply
+    function createCollidingPair(clusterId, colliding) {
+      const descriptors = [{ endpointId: 1, inputClusters: [clusterId] }];
+      const sender = new Node({
+        // eslint-disable-next-line no-use-before-define
+        sendFrame: (...args) => receiver.handleFrame(...args),
+        endpointDescriptors: descriptors,
+      });
+      const receiver = new Node({
+        sendFrame: async (endpointId, frameClusterId, frame) => {
+          await sender.handleFrame(endpointId, frameClusterId, colliding(frame[1]));
+          await sender.handleFrame(endpointId, frameClusterId, frame);
+        },
+        endpointDescriptors: descriptors,
+      });
+      return { sender, receiver };
+    }
+
+    it('should not resolve a global command on a cluster-specific frame with its response id', async function() {
+      // IAS Zone Enroll Request is cluster-specific 0x01, the same id as Read Attributes Response
+      const { sender, receiver } = createCollidingPair(IasZoneCluster.ID, tsn => Buffer.from([
+        0x19, tsn, 0x01, 0x0D, 0x00, 0x00, 0x00,
+      ]));
+      receiver.endpoints[1].bind('iasZone', new class extends BoundCluster {
+
+        get zoneState() {
+          return 'enrolled';
+        }
+
+      }());
+
+      const { iasZone } = sender.endpoints[1].clusters;
+      const result = await iasZone.readAttributes(['zoneState'], { timeout: 1000 });
+
+      assert.deepStrictEqual(result, { zoneState: 'enrolled' });
+    });
+
+    it('should not resolve on a Default Response for another command', async function() {
+      // Default Response with FAILURE for cmdId 0x01 (on), while toggle (0x02) is pending
+      const { sender, receiver } = createCollidingPair(OnOffCluster.ID, tsn => Buffer.from([
+        0x18, tsn, 0x0B, 0x01, 0x01,
+      ]));
+      receiver.endpoints[1].bind('onOff', new class extends BoundCluster {
+
+        toggle() {}
+
+      }());
+
+      await sender.endpoints[1].clusters.onOff.toggle(undefined, { timeout: 1000 });
+    });
   });
 });
