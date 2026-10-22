@@ -3020,7 +3020,7 @@ declare module "zigbee-clusters" {
     static removeCluster(clusterIdOrName: string | number): void;
     static getCluster<Attributes extends types.AttributeDefinitions, Commands extends types.CommandDefinitions>(clusterIdOrName: string | number): Cluster<Attributes, Commands>;
 
-    on<Event extends Extract<keyof Attributes, string>>(eventName: `attr.${Event}`, listener: (value: types.AttributesFromDefinition<Attributes>[Event]) => void): this;
+    on<Event extends Extract<keyof Attributes, string>>(eventName: `attr.${Event}`, listener: (value: types.AttributesFromDefinition<Attributes>[Event], meta: types.AttributeReportMeta) => void): this;
     on<Values extends Array<any> = unknown[]>(eventName: string, listener: (...args: Values) => void): this;
   }
 
@@ -3394,6 +3394,14 @@ declare module "zigbee-clusters" {
         minChange?: number
       }
     }
+
+    type AttributeReportMeta = {
+      /**
+       * ZCL transaction sequence number of the report frame. It wraps at 256 and some devices
+       * reuse a fixed value, so only treat equal values as a duplicate within a short time window.
+       */
+      transactionSequenceNumber: number;
+    };
 
     type ReadReportingConfigurationResponse = {
       status: ZCLEnum8Status,
