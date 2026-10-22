@@ -216,4 +216,65 @@ describe('Cluster Response Timeout', function() {
       Cluster.removeCluster(TuyaLikeCluster.ID);
     }
   });
+
+  it('should treat a declared response without id as the command id', async function() {
+    class EchoCluster extends Cluster {
+
+      static get ID() {
+        return 0xFC01;
+      }
+
+      static get NAME() {
+        return 'echo';
+      }
+
+      static get COMMANDS() {
+        return {
+          ping: {
+            id: 0x05,
+            args: { value: ZCLDataTypes.uint8 },
+            response: { args: { value: ZCLDataTypes.uint8 } },
+          },
+          notify: {
+            id: 0x06,
+            direction: Cluster.DIRECTION_SERVER_TO_CLIENT,
+            args: { value: ZCLDataTypes.uint8 },
+          },
+        };
+      }
+
+    }
+    Cluster.addCluster(EchoCluster);
+
+    try {
+      const pair = [EchoCluster.ID];
+      const sender = new Node({
+        // eslint-disable-next-line no-use-before-define
+        sendFrame: (...args) => receiver.handleFrame(...args),
+        endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
+      });
+      const receiver = new Node({
+        sendFrame: (...args) => sender.handleFrame(...args),
+        endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
+      });
+      receiver.endpoints[1].bind('echo', new class extends BoundCluster {
+
+        // An unrelated device command reuses the TSN first, then the real response (id 0x05)
+        async ping({ value }, meta, frame) {
+          await sender.handleFrame(1, EchoCluster.ID, Buffer.from([
+            0x19, frame.trxSequenceNumber, 0x06, 99,
+          ]));
+          return { value };
+        }
+
+      }());
+
+      const { echo } = sender.endpoints[1].clusters;
+      const response = await echo.ping({ value: 7 }, { timeout: 1000 });
+
+      assert.strictEqual(response.value, 7);
+    } finally {
+      Cluster.removeCluster(EchoCluster.ID);
+    }
+  });
 });
