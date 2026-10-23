@@ -1,29 +1,32 @@
-// eslint-disable-next-line max-classes-per-file,lines-around-directive
 'use strict';
 
-const assert = require('assert');
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const LevelControlCluster = require('../lib/clusters/levelControl');
 const { createMockNode } = require('./util');
 
-describe('Level Control', function() {
-  it('should receive moveToLevel', async function() {
+describe('Level Control', function () {
+  it('should receive moveToLevel', async function () {
     const node = createMockNode({
       loopback: true,
-      endpoints: [{
-        endpointId: 1,
-        inputClusters: [LevelControlCluster.ID],
-      }],
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [LevelControlCluster.ID],
+        },
+      ],
     });
 
     let receivedData = null;
-    node.endpoints[1].bind('levelControl', new (class extends BoundCluster {
-
-      async moveToLevel(data) {
-        receivedData = data;
-      }
-
-    })());
+    node.endpoints[1].bind(
+      'levelControl',
+      new (class extends BoundCluster {
+        async moveToLevel(data) {
+          receivedData = data;
+        }
+      })(),
+    );
 
     await node.endpoints[1].clusters.levelControl.moveToLevel({
       level: 128,
@@ -34,23 +37,26 @@ describe('Level Control', function() {
     assert.strictEqual(receivedData.transitionTime, 10);
   });
 
-  it('should receive step', async function() {
+  it('should receive step', async function () {
     const node = createMockNode({
       loopback: true,
-      endpoints: [{
-        endpointId: 1,
-        inputClusters: [LevelControlCluster.ID],
-      }],
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [LevelControlCluster.ID],
+        },
+      ],
     });
 
     let receivedData = null;
-    node.endpoints[1].bind('levelControl', new (class extends BoundCluster {
-
-      async step(data) {
-        receivedData = data;
-      }
-
-    })());
+    node.endpoints[1].bind(
+      'levelControl',
+      new (class extends BoundCluster {
+        async step(data) {
+          receivedData = data;
+        }
+      })(),
+    );
 
     await node.endpoints[1].clusters.levelControl.step({
       mode: 'up',
@@ -63,23 +69,26 @@ describe('Level Control', function() {
     assert.strictEqual(receivedData.transitionTime, 5);
   });
 
-  it('should receive stop', async function() {
+  it('should receive stop', async function () {
     const node = createMockNode({
       loopback: true,
-      endpoints: [{
-        endpointId: 1,
-        inputClusters: [LevelControlCluster.ID],
-      }],
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [LevelControlCluster.ID],
+        },
+      ],
     });
 
     let called = false;
-    node.endpoints[1].bind('levelControl', new (class extends BoundCluster {
-
-      async stop() {
-        called = true;
-      }
-
-    })());
+    node.endpoints[1].bind(
+      'levelControl',
+      new (class extends BoundCluster {
+        async stop() {
+          called = true;
+        }
+      })(),
+    );
 
     await node.endpoints[1].clusters.levelControl.stop();
     assert.strictEqual(called, true);

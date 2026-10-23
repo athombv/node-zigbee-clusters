@@ -24,63 +24,70 @@ const attributes = {
 };
 
 // custom data type parser with dynamic length with minimal 3 bytes, and no declared ZCL id.
-const XiaomiLifelineDataRecord = new ZCLDataType(NaN, 'XiaomiLifelineDataRecord', -3, function(buf, v, i) {
-  throw new Error('generating xiaomi structs is not implemented');
-}, function(buf, i, returnLength) {
-  i = i || 0;
-  const startByte = i;
-  const res = {};
-  res.id = ZCLDataTypes.uint8.fromBuffer(buf, i);
-  i += ZCLDataTypes.uint8.length;
+const XiaomiLifelineDataRecord = new ZCLDataType(
+  NaN,
+  'XiaomiLifelineDataRecord',
+  -3,
+  function (_buf, _v, _i) {
+    throw new Error('generating xiaomi structs is not implemented');
+  },
+  function (buf, i, returnLength) {
+    i = i || 0;
+    const startByte = i;
+    const res = {};
+    res.id = ZCLDataTypes.uint8.fromBuffer(buf, i);
+    i += ZCLDataTypes.uint8.length;
 
-  const dataTypeId = ZCLDataTypes.uint8.fromBuffer(buf, i);
-  i += ZCLDataTypes.uint8.length;
+    const dataTypeId = ZCLDataTypes.uint8.fromBuffer(buf, i);
+    i += ZCLDataTypes.uint8.length;
 
-  // eslint-disable-next-line no-mixed-operators
-  const DataType = attributes[res.id] && attributes[res.id].type
-    // eslint-disable-next-line no-mixed-operators
-    || Object.values(ZCLDataTypes).find(type => type && type.id === dataTypeId);
-  if (!DataType) throw new TypeError(`Invalid Type for Attribute: ${res.id}`);
+    const DataType =
+      (attributes[res.id] && attributes[res.id].type) ||
+      Object.values(ZCLDataTypes).find((type) => type && type.id === dataTypeId);
+    if (!DataType) throw new TypeError(`Invalid Type for Attribute: ${res.id}`);
 
-  // eslint-disable-next-line no-mixed-operators
-  res.name = attributes[res.id] && attributes[res.id].name || `unknown_attr_${res.id}`;
+    res.name = (attributes[res.id] && attributes[res.id].name) || `unknown_attr_${res.id}`;
 
-  const entry = DataType.fromBuffer(buf, i, true);
-  if (DataType.length > 0) {
-    i += DataType.length;
-    res.value = entry;
-  } else {
-    res.value = entry.result;
-    i += entry.length;
-  }
-  if (returnLength) {
-    return { result: res, length: i - startByte };
-  }
-  return res;
-});
+    const entry = DataType.fromBuffer(buf, i, true);
+    if (DataType.length > 0) {
+      i += DataType.length;
+      res.value = entry;
+    } else {
+      res.value = entry.result;
+      i += entry.length;
+    }
+    if (returnLength) {
+      return { result: res, length: i - startByte };
+    }
+    return res;
+  },
+);
 
-const XiaomiLifelineDataRecordArray = new ZCLDataType(NaN, 'XiaomiLifelineDataRecordArray', -1, function(buf, v, i) {
-  throw new Error('not_supported');
-}, function(buf, i, returnLength) {
-  // eslint-disable-next-line prefer-const
-  let { result, length } = ZCLDataTypes.buffer8.fromBuffer(buf, i, true);
-  result = ZCLDataTypes.Array0(XiaomiLifelineDataRecord).fromBuffer(result, 0);
-  result = result.reduce((r, { name, value }) => Object.assign(r, { [name]: value }), {});
-  if (returnLength) {
-    return { result, length };
-  }
-  return result;
-});
+const XiaomiLifelineDataRecordArray = new ZCLDataType(
+  NaN,
+  'XiaomiLifelineDataRecordArray',
+  -1,
+  function (_buf, _v, _i) {
+    throw new Error('not_supported');
+  },
+  function (buf, i, returnLength) {
+    let { result, length } = ZCLDataTypes.buffer8.fromBuffer(buf, i, true);
+    result = ZCLDataTypes.Array0(XiaomiLifelineDataRecord).fromBuffer(result, 0);
+    result = result.reduce((r, { name, value }) => Object.assign(r, { [name]: value }), {});
+    if (returnLength) {
+      return { result, length };
+    }
+    return result;
+  },
+);
 
 class XiaomiHackedBasicCluster extends BasicCluster {
-
   static get ATTRIBUTES() {
     return {
       ...super.ATTRIBUTES,
-      xiaomiLifeline: { id: 0xFF01, type: XiaomiLifelineDataRecordArray },
+      xiaomiLifeline: { id: 0xff01, type: XiaomiLifelineDataRecordArray },
     };
   }
-
 }
 
 // Replace basic cluster with our patched version

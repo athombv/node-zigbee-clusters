@@ -9,13 +9,13 @@
     "lib"
   ],
   "scripts": {
-    "test": "mocha --reporter list",
+    "test": "node --test --test-reporter=spec --test-timeout=5000 \"test/*.js\"",
     "lint": "eslint .",
-    "generate-types": "tsx scripts/generate-types.mts",
-    "serve": "concurrently \"serve build/\" \"npm run build:watch\"",
+    "generate-types": "node scripts/generate-types.mts",
     "build": "jsdoc --configure ./docs/jsdoc.json",
-    "build:clean": "rm -rf ./build",
-    "build:watch": "watch \"npm run build:clean && npm run build\" lib docs \"node_modules/@athombv/jsdoc-template\""
+    "docs": "npm run build && open build/index.html",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -37,19 +37,14 @@
   "homepage": "https://github.com/athombv/node-zigbee-clusters#readme",
   "devDependencies": {
     "@athombv/jsdoc-template": "^1.7.0",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^25.0.10",
-    "@types/sinon": "^17.0.3",
-    "concurrently": "^5.2.0",
-    "eslint": "^6.8.0",
-    "eslint-config-athom": "^2.1.0",
-    "jsdoc": "^3.6.7",
-    "jsdoc-ts-utils": "^2.0.0",
-    "mocha": "^10.1.0",
-    "serve": "^14.0.1",
-    "sinon": "^19.0.2",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "watch": "^1.0.2"
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
+    "jsdoc": "^4.0.5",
+    "jsdoc-ts-utils": "^6.0.0",
+    "prettier": "^3.9.10",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@athombv/data-types": "^1.3.0",

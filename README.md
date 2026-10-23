@@ -30,7 +30,7 @@ v2.0.0
 - Changed `Cluster.readAttributes` signature, attributes must now be specified as an array of strings.
 
 ```js
-zclNode.endpoints[1].clusters.basic.readAttributes(["modelId", "manufacturerName"]);
+zclNode.endpoints[1].clusters.basic.readAttributes(['modelId', 'manufacturerName']);
 ```
 
 ## Release
@@ -70,8 +70,8 @@ In order to communicate with a Zigbee node retrieve a `node` instance from `Mana
 `/drivers/my-driver/device.js`
 
 ```js
-const Homey = require("homey");
-const { ZCLNode, CLUSTER } = require("zigbee-clusters");
+const Homey = require('homey');
+const { ZCLNode, CLUSTER } = require('zigbee-clusters');
 
 class MyDevice extends Homey.Device {
   onInit() {
@@ -101,7 +101,7 @@ class MyDevice extends Homey.Device {
           // timeout (10000ms) before the command is considered rejected.
           // The timeout starts after sending the frame and receiving a low-level ack.
           timeout: 5000,
-        }
+        },
       );
     });
   }
@@ -113,8 +113,8 @@ class MyDevice extends Homey.Device {
 `/drivers/my-driver/device.js`
 
 ```js
-const Homey = require("homey");
-const { ZCLNode, CLUSTER } = require("zigbee-clusters");
+const Homey = require('homey');
+const { ZCLNode, CLUSTER } = require('zigbee-clusters');
 
 class MyDevice extends Homey.Device {
   onInit() {
@@ -134,10 +134,10 @@ class MyDevice extends Homey.Device {
 
       // And listen for incoming attribute reports by binding a listener on the cluster
       zclNode.endpoints[1].clusters[CLUSTER.COLOR_CONTROL.NAME].on(
-        "attr.currentSaturation",
+        'attr.currentSaturation',
         (currentSaturation) => {
           // handle reported attribute value
-        }
+        },
       );
     });
   }
@@ -181,7 +181,7 @@ class OnOffCluster extends Cluster {
   }
 
   static get NAME() {
-    return "onOff"; // The cluster name
+    return 'onOff'; // The cluster name
   }
 
   static get ATTRIBUTES() {
@@ -214,7 +214,7 @@ Zigbee nodes can send commands to Homey via bound clusters. This requires a bind
 `/lib/LevelControlBoundCluster.js`
 
 ```js
-const { BoundCluster } = require("zigbee-clusters");
+const { BoundCluster } = require('zigbee-clusters');
 
 class LevelControlBoundCluster extends BoundCluster {
   constructor({ onMove }) {
@@ -237,7 +237,7 @@ module.exports = LevelControlBoundCluster;
 `/drivers/my-driver/device.js`
 
 ```js
-const LevelControlBoundCluster = require("../../lib/LevelControlBoundCluster");
+const LevelControlBoundCluster = require('../../lib/LevelControlBoundCluster');
 
 // Register the `BoundCluster` implementation with the `ZCLNode`
 zclNode.endpoints[1].bind(
@@ -246,7 +246,7 @@ zclNode.endpoints[1].bind(
     onMove: (payload) => {
       // Do something with the received payload
     },
-  })
+  }),
 );
 ```
 
@@ -257,7 +257,7 @@ There are cases where it is required to implement a custom cluster, for example 
 `lib/IkeaSpecificSceneCluster.js`
 
 ```js
-const { ScenesCluster, ZCLDataTypes } = require("zigbee-clusters");
+const { ScenesCluster, ZCLDataTypes } = require('zigbee-clusters');
 
 class IkeaSpecificSceneCluster extends ScenesCluster {
   // Here we override the `COMMANDS` getter from the `ScenesClusters` by
@@ -299,14 +299,14 @@ module.exports = IkeaSpecificSceneCluster;
 `/drivers/my-driver/device.js`
 
 ```js
-const IkeaSpecificSceneCluster = require("../../lib/IkeaSpecificSceneCluster");
+const IkeaSpecificSceneCluster = require('../../lib/IkeaSpecificSceneCluster');
 
 // Important: we have created a new `Cluster` instance which needs to be added before
 // it becomes available on any `ZCLNode` instance.
 Cluster.addCluster(IkeaSpecificSceneCluster);
 
 // Example invocation of custom cluster command
-zclNode.endpoints[1].clusters["scenes"].ikeaSceneMove({ mode: 0, transitionTime: 10 });
+zclNode.endpoints[1].clusters['scenes'].ikeaSceneMove({ mode: 0, transitionTime: 10 });
 ```
 
 This also works for `BoundClusters`, if a node sends commands to Homey using a custom cluster it is necessary to implement a custom `BoundCluster` and bind it to the `ZCLNode` instance. For an example check the implementation in the `com.ikea.tradfri` driver [remote_control](https://github.com/athombv/com.ikea.tradfri-example/tree/master/drivers/remote_control/device.js).
@@ -328,6 +328,7 @@ This runs `scripts/generate-types.js` which loads all cluster modules and genera
 ### Automatic Generation (GitHub Actions)
 
 TypeScript types are automatically regenerated when changes are pushed to the `develop` branch that affect:
+
 - `lib/clusters/**/*.js` - cluster definitions
 - `scripts/generate-types.js` - the generator script
 
@@ -338,5 +339,5 @@ The workflow commits updated types back to `develop` if changes are detected.
 Great if you'd like to contribute to this project, a few things to take note of before submitting a PR:
 
 - This project enforces ESLint, validate by running `npm run lint`.
-- This project implements a basic test framework based on mocha, see [test](https://github.com/athombv/node-zigbee-clusters/blob/production/test) directory.
+- This project implements a basic test framework based on node:test, see [test](https://github.com/athombv/node-zigbee-clusters/blob/production/test) directory.
 - This project uses several [GitHub Action workflows](https://github.com/athombv/node-zigbee-clusters/blob/production/.github/workflows) (e.g. ESLint, running test and versioning/publishing).

@@ -9,10 +9,7 @@
     "readme": "./README.md",
     "destination": "./build"
   },
-  "plugins": [
-    "jsdoc-ts-utils",
-    "plugins/markdown"
-  ],
+  "plugins": ["jsdoc-ts-utils", "plugins/markdown"],
   "templates": {
     "default": {
       "outputSourceFiles": false
