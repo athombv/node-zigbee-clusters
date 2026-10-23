@@ -40,7 +40,7 @@
     "@types/node": "^25.0.10",
     "@types/sinon": "^17.0.3",
     "concurrently": "^5.2.0",
-    "eslint": "^6.8.0",
+    "eslint": "^10.13.0",
     "eslint-config-athom": "^2.1.0",
     "jsdoc": "^4.0.5",
     "jsdoc-ts-utils": "^6.0.0",
