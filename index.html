@@ -107,7 +107,7 @@
              </header><div class="navigation__content" data-navigation-target><div class="navigation__search search">
             <input title="filter" placeholder="Filter..." data-navigation-search class="search__input" type="search">
             <button data-navigation-search-reset class="search__reset --mask" type="button" title="Reset"></button>
-           </div><div data-navigation-scroll class="navigation__scroll scroll trim"><div data-navigation class="navigation__menu trim"><nav class="nav-group"><h3 class="nav-group__title">Classes</h3><ul class="nav-group__list"><li data-lvl="0" data-search-key="boundcluster" class="nav-group__item"><a href="BoundCluster.html"> BoundCluster</a></li><li data-lvl="0" data-search-key="cluster" class="nav-group__item"><a href="Cluster.html"> Cluster</a></li><li data-lvl="0" data-search-key="endpoint" class="nav-group__item"><a href="Endpoint.html"> Endpoint</a></li><li data-lvl="0" data-search-key="zclnode" class="nav-group__item"><a href="ZCLNode.html"> ZCLNode</a></li></ul></nav><h3 class="nav-group__title">Global</h3><ul class="nav-group__list"><li class="nav-group__item"><a href="global.html#debug">debug</a></li><li class="nav-group__item"><a href="global.html#IAS_ZONE_TYPE">IAS_ZONE_TYPE</a></li><li class="nav-group__item"><a href="global.html#ZIGBEE_DEVICE_ID">ZIGBEE_DEVICE_ID</a></li><li class="nav-group__item"><a href="global.html#ZIGBEE_PROFILE_ID">ZIGBEE_PROFILE_ID</a></li></ul></div></div></div>
+           </div><div data-navigation-scroll class="navigation__scroll scroll trim"><div data-navigation class="navigation__menu trim"><nav class="nav-group"><h3 class="nav-group__title">Classes</h3><ul class="nav-group__list"><li data-lvl="0" data-search-key="boundcluster" class="nav-group__item"><a href="BoundCluster.html"> BoundCluster</a></li><li data-lvl="0" data-search-key="cluster" class="nav-group__item"><a href="Cluster.html"> Cluster</a></li><li data-lvl="0" data-search-key="endpoint" class="nav-group__item"><a href="Endpoint.html"> Endpoint</a></li><li data-lvl="0" data-search-key="zclnode" class="nav-group__item"><a href="ZCLNode.html"> ZCLNode</a></li></ul></nav><h3 class="nav-group__title">Global</h3><ul class="nav-group__list"><li class="nav-group__item"><a href="global.html#IAS_ZONE_TYPE">IAS_ZONE_TYPE</a></li><li class="nav-group__item"><a href="global.html#ZIGBEE_DEVICE_ID">ZIGBEE_DEVICE_ID</a></li><li class="nav-group__item"><a href="global.html#ZIGBEE_PROFILE_ID">ZIGBEE_PROFILE_ID</a></li><li class="nav-group__item"><a href="global.html#debug">debug</a></li></ul></div></div></div>
   </nav>
 
   <main id="main" class="main container__main">
@@ -152,10 +152,10 @@ Specification (<a href="https://etc.athom.com/zigbee_cluster_specification.pdf">
 <ul>
 <li>Changed <code>Cluster.readAttributes</code> signature, attributes must now be specified as an array of strings.</li>
 </ul>
-<pre class="prettyprint source lang-js"><code>zclNode.endpoints[1].clusters.basic.readAttributes([&quot;modelId&quot;, &quot;manufacturerName&quot;]);
+<pre class="prettyprint source lang-js"><code>zclNode.endpoints[1].clusters.basic.readAttributes(['modelId', 'manufacturerName']);
 </code></pre>
-<h2>Release</h2>
-<p>Merge to production and include <code>#patch</code>, <code>#minor</code> or <code>#major</code> in the PR/commit message. Or merge to production and run the &quot;Deploy&quot; workflow and provide a version bump parameter.</p>
+<h2>Changelog</h2>
+<p>What changed in each version is listed in the <a href="https://github.com/athombv/node-zigbee-clusters/releases">GitHub releases</a>. How those notes are put together is described under <a href="#releasing">Releasing</a>.</p>
 <h2>About Zigbee Clusters</h2>
 <p>A Zigbee cluster is an abstraction on top of the Zigbee protocol which allows implementing functionality for many types of devices. A list of all available clusters can be found in the Zigbee Cluster Library Specification <a href="https://etc.athom.com/zigbee_cluster_specification.pdf">section 2.2.</a>. If you are familiar with Z-Wave Command Classes, Zigbee clusters are very similar.</p>
 <h3>Cluster hierarchy</h3>
@@ -175,8 +175,8 @@ Specification (<a href="https://etc.athom.com/zigbee_cluster_specification.pdf">
 <h3>Basic communication with node</h3>
 <h2>Sending a command</h2>
 <p><code>/drivers/my-driver/device.js</code></p>
-<pre class="prettyprint source lang-js"><code>const Homey = require(&quot;homey&quot;);
-const { ZCLNode, CLUSTER } = require(&quot;zigbee-clusters&quot;);
+<pre class="prettyprint source lang-js"><code>const Homey = require('homey');
+const { ZCLNode, CLUSTER } = require('zigbee-clusters');
 
 class MyDevice extends Homey.Device {
   onInit() {
@@ -206,7 +206,7 @@ class MyDevice extends Homey.Device {
           // timeout (10000ms) before the command is considered rejected.
           // The timeout starts after sending the frame and receiving a low-level ack.
           timeout: 5000,
-        }
+        },
       );
     });
   }
@@ -214,8 +214,8 @@ class MyDevice extends Homey.Device {
 </code></pre>
 <h2>Receiving an attribute report</h2>
 <p><code>/drivers/my-driver/device.js</code></p>
-<pre class="prettyprint source lang-js"><code>const Homey = require(&quot;homey&quot;);
-const { ZCLNode, CLUSTER } = require(&quot;zigbee-clusters&quot;);
+<pre class="prettyprint source lang-js"><code>const Homey = require('homey');
+const { ZCLNode, CLUSTER } = require('zigbee-clusters');
 
 class MyDevice extends Homey.Device {
   onInit() {
@@ -235,10 +235,10 @@ class MyDevice extends Homey.Device {
 
       // And listen for incoming attribute reports by binding a listener on the cluster
       zclNode.endpoints[1].clusters[CLUSTER.COLOR_CONTROL.NAME].on(
-        &quot;attr.currentSaturation&quot;,
+        'attr.currentSaturation',
         (currentSaturation) => {
           // handle reported attribute value
-        }
+        },
       );
     });
   }
@@ -276,7 +276,7 @@ class OnOffCluster extends Cluster {
   }
 
   static get NAME() {
-    return &quot;onOff&quot;; // The cluster name
+    return 'onOff'; // The cluster name
   }
 
   static get ATTRIBUTES() {
@@ -300,7 +300,7 @@ module.exports = OnOffCluster;
 <h3>Implementing a bound cluster</h3>
 <p>Zigbee nodes can send commands to Homey via bound clusters. This requires a binding to be created on a specific endpoint and cluster. Next, a <code>BoundCluster</code> implementation must be registered with the <code>ZCLNode</code> which implements handlers for the incomming commands:</p>
 <p><code>/lib/LevelControlBoundCluster.js</code></p>
-<pre class="prettyprint source lang-js"><code>const { BoundCluster } = require(&quot;zigbee-clusters&quot;);
+<pre class="prettyprint source lang-js"><code>const { BoundCluster } = require('zigbee-clusters');
 
 class LevelControlBoundCluster extends BoundCluster {
   constructor({ onMove }) {
@@ -320,7 +320,7 @@ class LevelControlBoundCluster extends BoundCluster {
 module.exports = LevelControlBoundCluster;
 </code></pre>
 <p><code>/drivers/my-driver/device.js</code></p>
-<pre class="prettyprint source lang-js"><code>const LevelControlBoundCluster = require(&quot;../../lib/LevelControlBoundCluster&quot;);
+<pre class="prettyprint source lang-js"><code>const LevelControlBoundCluster = require('../../lib/LevelControlBoundCluster');
 
 // Register the `BoundCluster` implementation with the `ZCLNode`
 zclNode.endpoints[1].bind(
@@ -329,13 +329,13 @@ zclNode.endpoints[1].bind(
     onMove: (payload) => {
       // Do something with the received payload
     },
-  })
+  }),
 );
 </code></pre>
 <h3>Implementing a custom cluster</h3>
 <p>There are cases where it is required to implement a custom cluster, for example to handle manufacturer specific cluster implementations. Often these manufacturer specific cluster implementations are extensions of existing clusters. An example is the <code>IkeaSpecificSceneCluster</code> (<a href="https://github.com/athombv/com.ikea.tradfri-example/tree/master/lib/IkeaSpecificSceneCluster.js">complete implementation</a>):</p>
 <p><code>lib/IkeaSpecificSceneCluster.js</code></p>
-<pre class="prettyprint source lang-js"><code>const { ScenesCluster, ZCLDataTypes } = require(&quot;zigbee-clusters&quot;);
+<pre class="prettyprint source lang-js"><code>const { ScenesCluster, ZCLDataTypes } = require('zigbee-clusters');
 
 class IkeaSpecificSceneCluster extends ScenesCluster {
   // Here we override the `COMMANDS` getter from the `ScenesClusters` by
@@ -374,14 +374,14 @@ class IkeaSpecificSceneCluster extends ScenesCluster {
 module.exports = IkeaSpecificSceneCluster;
 </code></pre>
 <p><code>/drivers/my-driver/device.js</code></p>
-<pre class="prettyprint source lang-js"><code>const IkeaSpecificSceneCluster = require(&quot;../../lib/IkeaSpecificSceneCluster&quot;);
+<pre class="prettyprint source lang-js"><code>const IkeaSpecificSceneCluster = require('../../lib/IkeaSpecificSceneCluster');
 
 // Important: we have created a new `Cluster` instance which needs to be added before
 // it becomes available on any `ZCLNode` instance.
 Cluster.addCluster(IkeaSpecificSceneCluster);
 
 // Example invocation of custom cluster command
-zclNode.endpoints[1].clusters[&quot;scenes&quot;].ikeaSceneMove({ mode: 0, transitionTime: 10 });
+zclNode.endpoints[1].clusters['scenes'].ikeaSceneMove({ mode: 0, transitionTime: 10 });
 </code></pre>
 <p>This also works for <code>BoundClusters</code>, if a node sends commands to Homey using a custom cluster it is necessary to implement a custom <code>BoundCluster</code> and bind it to the <code>ZCLNode</code> instance. For an example check the implementation in the <code>com.ikea.tradfri</code> driver <a href="https://github.com/athombv/com.ikea.tradfri-example/tree/master/drivers/remote_control/device.js">remote_control</a>.</p>
 <h2>TypeScript Types</h2>
@@ -390,21 +390,67 @@ zclNode.endpoints[1].clusters[&quot;scenes&quot;].ikeaSceneMove({ mode: 0, trans
 <p>To regenerate TypeScript types after modifying cluster definitions:</p>
 <pre class="prettyprint source lang-bash"><code>npm run generate-types
 </code></pre>
-<p>This runs <code>scripts/generate-types.js</code> which loads all cluster modules and generates typed interfaces.</p>
+<p>This runs <code>scripts/generate-types.mts</code> which loads all cluster modules and generates typed interfaces.</p>
 <h3>Automatic Generation (GitHub Actions)</h3>
-<p>TypeScript types are automatically regenerated when changes are pushed to the <code>develop</code> branch that affect:</p>
+<p>TypeScript types are automatically regenerated when a push to any branch other than <code>production</code> changes:</p>
 <ul>
 <li><code>lib/clusters/**/*.js</code> - cluster definitions</li>
-<li><code>scripts/generate-types.js</code> - the generator script</li>
+<li><code>lib/Cluster.js</code>, <code>lib/constants.js</code> and <code>index.js</code></li>
+<li><code>scripts/generate-types.mts</code> and <code>scripts/template.d.ts.txt</code> - the generator and its template</li>
 </ul>
-<p>The workflow commits updated types back to <code>develop</code> if changes are detected.</p>
+<p>The workflow commits updated types back to that branch if changes are detected.</p>
 <h2>Contributing</h2>
 <p>Great if you'd like to contribute to this project, a few things to take note of before submitting a PR:</p>
 <ul>
-<li>This project enforces ESLint, validate by running <code>npm run lint</code>.</li>
-<li>This project implements a basic test framework based on mocha, see <a href="https://github.com/athombv/node-zigbee-clusters/blob/production/test">test</a> directory.</li>
-<li>This project uses several <a href="https://github.com/athombv/node-zigbee-clusters/blob/production/.github/workflows">GitHub Action workflows</a> (e.g. ESLint, running test and versioning/publishing).</li>
-</ul></article>
+<li>This project enforces ESLint and Prettier: check with <code>npm run lint</code> and <code>npm run format:check</code>, and fix formatting with <code>npm run format:write</code>.</li>
+<li>Tests use the built-in node:test runner, see the <a href="https://github.com/athombv/node-zigbee-clusters/blob/production/test">test</a> directory.</li>
+<li>Pull request titles follow <a href="https://www.conventionalcommits.org/">Conventional Commits</a>, for example <code>fix(onOff): Handle a missing attribute</code>. The title becomes a line in the release notes, so write it for someone using the library. See <a href="#release-notes">Release notes</a>.</li>
+<li><a href="https://github.com/athombv/node-zigbee-clusters/blob/production/.github/workflows">GitHub Action workflows</a> run ESLint, Prettier and the tests, and publish releases.</li>
+</ul>
+<h2>Releasing</h2>
+<p>Releases are published from the <code>production</code> branch by the Deploy workflow (<code>.github/workflows/deploy.yml</code>).</p>
+<ol>
+<li>Open a pull request from <code>master</code> into <code>production</code> with <code>#patch</code>, <code>#minor</code> or <code>#major</code> in its title, for example <code>Merge master into production (#minor)</code>.</li>
+<li>Merge it with a merge commit or a squash merge, not a rebase merge. The workflow reads the marker from the commit message that lands on <code>production</code>, and only those two carry the pull request title into it.</li>
+</ol>
+<p>The workflow then lints, checks formatting and runs the tests, builds, bumps the version and pushes the version commit and tag, publishes to npm with <a href="https://docs.npmjs.com/trusted-publishers">trusted publishing</a>, and creates a GitHub release.</p>
+<p>Instead of using a marker, you can also start the Deploy workflow by hand on <code>production</code> and pass the version bump as input.</p>
+<p>If creating the GitHub release fails after the npm publish, create it by hand. Running the workflow again would bump the version a second time.</p>
+<h3>Release notes</h3>
+<p>GitHub generates the notes from the titles of the pull requests merged since the previous release, grouped by label. A workflow sets that label from the title's prefix, so a pull request lands in the right section on its own:</p>
+<table>
+<thead>
+<tr>
+<th>Title prefix</th>
+<th>Section</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>feat</code></td>
+<td>New features</td>
+</tr>
+<tr>
+<td><code>fix</code>, <code>perf</code></td>
+<td>Fixes</td>
+</tr>
+<tr>
+<td><code>!</code> before the colon, as in <code>feat!:</code></td>
+<td>Breaking changes</td>
+</tr>
+<tr>
+<td><code>build</code>, <code>chore</code>, <code>ci</code>, <code>docs</code>, <code>refactor</code>, <code>style</code>, <code>test</code></td>
+<td>Left out</td>
+</tr>
+<tr>
+<td>No prefix</td>
+<td>Other changes</td>
+</tr>
+</tbody>
+</table>
+<p>The prefix itself is stripped from each line, and release pull requests into <code>production</code> are left out.</p>
+<p>To move a pull request to another section, change its title, also after it was merged: the label follows. To reword a line, edit the release on GitHub after it is published.</p>
+<p>The grouping is configured in <code>.github/release.yml</code>, the labeling in <code>.github/workflows/label-pr.yml</code>.</p></article>
     </section>
 
 
