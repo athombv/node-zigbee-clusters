@@ -4,7 +4,6 @@ on:
   push:
     branches-ignore:
       - production
-      - testing
     paths:
       - 'lib/clusters/**/*.js'
       - 'scripts/generate-types.mts'
