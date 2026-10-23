@@ -22,6 +22,10 @@ Run single test file:
 node --test test/onOff.js
 ```
 
+## Pull Requests and Releases
+
+Pull request titles use Conventional Commits, `type(scope): Description` with a capital letter after the prefix. The prefix decides where the change lands in the release notes: `feat` under New features, `fix` and `perf` under Fixes, a `!` before the colon under Breaking changes, and `build`, `chore`, `ci`, `docs`, `refactor`, `style` and `test` are left out. Use `feat` or `fix` for anything someone using the library would notice. How a release is cut is described under [Releasing](README.md#releasing).
+
 ## Architecture
 
 Zigbee Cluster Library (ZCL) implementation for Node.js, designed for Homey's Zigbee stack.

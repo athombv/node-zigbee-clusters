@@ -33,9 +33,9 @@ v2.0.0
 zclNode.endpoints[1].clusters.basic.readAttributes(['modelId', 'manufacturerName']);
 ```
 
-## Release
+## Changelog
 
-Merge to production and include `#patch`, `#minor` or `#major` in the PR/commit message. Or merge to production and run the "Deploy" workflow and provide a version bump parameter.
+What changed in each version is listed in the [GitHub releases](https://github.com/athombv/node-zigbee-clusters/releases). How those notes are put together is described under [Releasing](#releasing).
 
 ## About Zigbee Clusters
 
@@ -323,21 +323,54 @@ To regenerate TypeScript types after modifying cluster definitions:
 npm run generate-types
 ```
 
-This runs `scripts/generate-types.js` which loads all cluster modules and generates typed interfaces.
+This runs `scripts/generate-types.mts` which loads all cluster modules and generates typed interfaces.
 
 ### Automatic Generation (GitHub Actions)
 
-TypeScript types are automatically regenerated when changes are pushed to the `develop` branch that affect:
+TypeScript types are automatically regenerated when a push to any branch other than `production` changes:
 
 - `lib/clusters/**/*.js` - cluster definitions
-- `scripts/generate-types.js` - the generator script
+- `lib/Cluster.js`, `lib/constants.js` and `index.js`
+- `scripts/generate-types.mts` and `scripts/template.d.ts.txt` - the generator and its template
 
-The workflow commits updated types back to `develop` if changes are detected.
+The workflow commits updated types back to that branch if changes are detected.
 
 ## Contributing
 
 Great if you'd like to contribute to this project, a few things to take note of before submitting a PR:
 
-- This project enforces ESLint, validate by running `npm run lint`.
-- This project implements a basic test framework based on node:test, see [test](https://github.com/athombv/node-zigbee-clusters/blob/production/test) directory.
-- This project uses several [GitHub Action workflows](https://github.com/athombv/node-zigbee-clusters/blob/production/.github/workflows) (e.g. ESLint, running test and versioning/publishing).
+- This project enforces ESLint and Prettier: check with `npm run lint` and `npm run format:check`, and fix formatting with `npm run format:write`.
+- Tests use the built-in node:test runner, see the [test](https://github.com/athombv/node-zigbee-clusters/blob/production/test) directory.
+- Pull request titles follow [Conventional Commits](https://www.conventionalcommits.org/), for example `fix(onOff): Handle a missing attribute`. The title becomes a line in the release notes, so write it for someone using the library. See [Release notes](#release-notes).
+- [GitHub Action workflows](https://github.com/athombv/node-zigbee-clusters/blob/production/.github/workflows) run ESLint, Prettier and the tests, and publish releases.
+
+## Releasing
+
+Releases are published from the `production` branch by the Deploy workflow (`.github/workflows/deploy.yml`).
+
+1. Open a pull request from `master` into `production` with `#patch`, `#minor` or `#major` in its title, for example `Merge master into production (#minor)`.
+2. Merge it with a merge commit or a squash merge, not a rebase merge. The workflow reads the marker from the commit message that lands on `production`, and only those two carry the pull request title into it.
+
+The workflow then lints, checks formatting and runs the tests, builds, bumps the version and pushes the version commit and tag, publishes to npm with [trusted publishing](https://docs.npmjs.com/trusted-publishers), and creates a GitHub release.
+
+Instead of using a marker, you can also start the Deploy workflow by hand on `production` and pass the version bump as input.
+
+If creating the GitHub release fails after the npm publish, create it by hand. Running the workflow again would bump the version a second time.
+
+### Release notes
+
+GitHub generates the notes from the titles of the pull requests merged since the previous release, grouped by label. A workflow sets that label from the title's prefix, so a pull request lands in the right section on its own:
+
+| Title prefix                                                | Section          |
+| ----------------------------------------------------------- | ---------------- |
+| `feat`                                                      | New features     |
+| `fix`, `perf`                                               | Fixes            |
+| `!` before the colon, as in `feat!:`                        | Breaking changes |
+| `build`, `chore`, `ci`, `docs`, `refactor`, `style`, `test` | Left out         |
+| No prefix                                                   | Other changes    |
+
+The prefix itself is stripped from each line, and release pull requests into `production` are left out.
+
+To move a pull request to another section, change its title, also after it was merged: the label follows. To reword a line, edit the release on GitHub after it is published.
+
+The grouping is configured in `.github/release.yml`, the labeling in `.github/workflows/label-pr.yml`.

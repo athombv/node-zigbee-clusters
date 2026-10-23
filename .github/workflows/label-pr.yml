@@ -1,0 +1,67 @@
+name: Label pull request
+
+# Labels each pull request from the conventional-commit prefix of its title, so the release
+# notes can sort it (see .github/release.yml). Re-runs when the title or base branch is edited.
+# The five labels below follow the title alone: to move a pull request, retitle it.
+#
+# pull_request_target so pull requests from forks get a token that can label. This is safe
+# because the job never checks out or runs code from the pull request.
+on:
+  pull_request_target:
+    types: [opened, edited, reopened]
+
+permissions:
+  pull-requests: write
+
+# One run at a time per pull request, so two quick edits cannot each add a label the other
+# should have removed.
+concurrency:
+  group: label-pr-${{ github.event.pull_request.number }}
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const MANAGED_LABELS = ['breaking', 'feature', 'fix', 'internal', 'release'];
+            const INTERNAL_TYPES = ['build', 'chore', 'ci', 'docs', 'refactor', 'style', 'test'];
+
+            function labelFor(title, baseRef) {
+              if (baseRef === 'production') return 'release';
+              const match = /^(\w+)(?:\([^)]*\))?(!)?:/.exec(title);
+              if (!match) return null;
+              const [, type, breaking] = match;
+              if (breaking) return 'breaking';
+              if (type === 'feat') return 'feature';
+              if (type === 'fix' || type === 'perf') return 'fix';
+              if (INTERNAL_TYPES.includes(type)) return 'internal';
+              return null;
+            }
+
+            const { action, changes = {} } = context.payload;
+            // The label depends on the title and the base branch; other edits change nothing.
+            if (action === 'edited' && !changes.title && !changes.base) return;
+
+            // The payload is a snapshot from when the event fired. Read the pull request as it is
+            // now, so labels an earlier run added are seen and the latest title wins.
+            const { data: pullRequest } = await github.rest.pulls.get({
+              ...context.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            // The managed labels are a function of the current title and base only, so whichever
+            // runs happen to execute, the last one leaves them right. No prefix means none of them.
+            const wanted = labelFor(pullRequest.title, pullRequest.base.ref);
+            const current = pullRequest.labels.map(label => label.name);
+            const issue = { ...context.repo, issue_number: pullRequest.number };
+
+            for (const name of current) {
+              if (MANAGED_LABELS.includes(name) && name !== wanted) {
+                await github.rest.issues.removeLabel({ ...issue, name });
+              }
+            }
+            if (wanted && !current.includes(wanted)) {
+              await github.rest.issues.addLabels({ ...issue, labels: [wanted] });
+            }
