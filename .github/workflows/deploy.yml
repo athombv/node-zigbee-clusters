@@ -122,6 +122,9 @@ jobs:
       # because a failed publish leaves an orphan tag (v2.7.0, v3.1.0). The fallback is for the
       # first run. If this step fails, create the release by hand: a rerun would bump again.
       - name: Create GitHub release
+        # Explicit, because only then does Actions add pipefail: without it a failing gh api still
+        # feeds the Node filter an empty input, and an empty release gets published.
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
         run: |
