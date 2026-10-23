@@ -21,17 +21,15 @@ const ElectricalMeasurementCluster = require('../../lib/clusters/electricalMeasu
  */
 function createBoundClusterWithAttributes(attributes) {
   const ClusterClass = class extends BoundCluster {
-
     constructor() {
       super();
       // Store mutable attributes
       this._attributes = { ...attributes };
     }
-
   };
 
   // Define getters/setters for each attribute
-  Object.keys(attributes).forEach(attrName => {
+  Object.keys(attributes).forEach((attrName) => {
     Object.defineProperty(ClusterClass.prototype, attrName, {
       get() {
         return this._attributes[attrName];
@@ -78,7 +76,7 @@ function createBoundClusterWithAttributes(attributes) {
  * @returns {Node} Configured mock Node
  */
 function createMockNode(config) {
-  const endpointDescriptors = config.endpoints.map(ep => ({
+  const endpointDescriptors = config.endpoints.map((ep) => ({
     endpointId: ep.endpointId,
     inputClusters: ep.inputClusters || [],
     outputClusters: ep.outputClusters || [],
@@ -87,16 +85,14 @@ function createMockNode(config) {
   // Create node reference first so sendFrame can reference it
   let node;
   const mockNode = {
-    sendFrame: config.loopback
-      ? (...args) => node.handleFrame(...args)
-      : () => Promise.resolve(),
+    sendFrame: config.loopback ? (...args) => node.handleFrame(...args) : () => Promise.resolve(),
     endpointDescriptors,
   };
 
   node = new Node(mockNode);
 
   // Bind clusters with preset attribute values
-  config.endpoints.forEach(ep => {
+  config.endpoints.forEach((ep) => {
     if (!ep.clusters) return;
 
     Object.entries(ep.clusters).forEach(([clusterName, attributes]) => {
@@ -116,13 +112,13 @@ function createMockNode(config) {
  * @returns {[Node, Node]} Tuple of connected nodes
  */
 function createConnectedNodePair(config1, config2) {
-  const endpointDescriptors1 = config1.endpoints.map(ep => ({
+  const endpointDescriptors1 = config1.endpoints.map((ep) => ({
     endpointId: ep.endpointId,
     inputClusters: ep.inputClusters || [],
     outputClusters: ep.outputClusters || [],
   }));
 
-  const endpointDescriptors2 = config2.endpoints.map(ep => ({
+  const endpointDescriptors2 = config2.endpoints.map((ep) => ({
     endpointId: ep.endpointId,
     inputClusters: ep.inputClusters || [],
     outputClusters: ep.outputClusters || [],
@@ -145,7 +141,7 @@ function createConnectedNodePair(config1, config2) {
   node2 = new Node(mockNode2);
 
   // Bind clusters for node1
-  config1.endpoints.forEach(ep => {
+  config1.endpoints.forEach((ep) => {
     if (!ep.clusters) return;
     Object.entries(ep.clusters).forEach(([clusterName, attributes]) => {
       const boundCluster = createBoundClusterWithAttributes(attributes);
@@ -154,7 +150,7 @@ function createConnectedNodePair(config1, config2) {
   });
 
   // Bind clusters for node2
-  config2.endpoints.forEach(ep => {
+  config2.endpoints.forEach((ep) => {
     if (!ep.clusters) return;
     Object.entries(ep.clusters).forEach(([clusterName, attributes]) => {
       const boundCluster = createBoundClusterWithAttributes(attributes);
@@ -172,140 +168,152 @@ const MOCK_DEVICES = {
   /**
    * IAS Zone Motion Sensor
    */
-  motionSensor: (overrides = {}) => createMockNode({
-    endpoints: [{
-      endpointId: 1,
-      inputClusters: [BasicCluster.ID, PowerConfigurationCluster.ID, IASZoneCluster.ID],
-      clusters: {
-        basic: {
-          zclVersion: 3,
-          manufacturerName: 'MockDevice',
-          modelId: 'MockMotionSensor',
-          ...overrides.basic,
+  motionSensor: (overrides = {}) =>
+    createMockNode({
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [BasicCluster.ID, PowerConfigurationCluster.ID, IASZoneCluster.ID],
+          clusters: {
+            basic: {
+              zclVersion: 3,
+              manufacturerName: 'MockDevice',
+              modelId: 'MockMotionSensor',
+              ...overrides.basic,
+            },
+            powerConfiguration: {
+              batteryPercentageRemaining: 200, // 100%
+              ...overrides.powerConfiguration,
+            },
+            iasZone: {
+              zoneState: 1, // Enrolled
+              zoneType: 0x000d, // Motion sensor
+              zoneStatus: 0,
+              iasCIEAddress: '0x0000000000000000',
+              zoneId: 1,
+              ...overrides.iasZone,
+            },
+          },
         },
-        powerConfiguration: {
-          batteryPercentageRemaining: 200, // 100%
-          ...overrides.powerConfiguration,
-        },
-        iasZone: {
-          zoneState: 1, // Enrolled
-          zoneType: 0x000D, // Motion sensor
-          zoneStatus: 0,
-          iasCIEAddress: '0x0000000000000000',
-          zoneId: 1,
-          ...overrides.iasZone,
-        },
-      },
-    }],
-  }),
+      ],
+    }),
 
   /**
    * IAS Zone Contact Sensor (door/window)
    */
-  contactSensor: (overrides = {}) => createMockNode({
-    endpoints: [{
-      endpointId: 1,
-      inputClusters: [BasicCluster.ID, PowerConfigurationCluster.ID, IASZoneCluster.ID],
-      clusters: {
-        basic: {
-          zclVersion: 3,
-          manufacturerName: 'MockDevice',
-          modelId: 'MockContactSensor',
-          ...overrides.basic,
+  contactSensor: (overrides = {}) =>
+    createMockNode({
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [BasicCluster.ID, PowerConfigurationCluster.ID, IASZoneCluster.ID],
+          clusters: {
+            basic: {
+              zclVersion: 3,
+              manufacturerName: 'MockDevice',
+              modelId: 'MockContactSensor',
+              ...overrides.basic,
+            },
+            powerConfiguration: {
+              batteryPercentageRemaining: 200,
+              ...overrides.powerConfiguration,
+            },
+            iasZone: {
+              zoneState: 1,
+              zoneType: 0x0015, // Contact switch
+              zoneStatus: 0,
+              iasCIEAddress: '0x0000000000000000',
+              zoneId: 1,
+              ...overrides.iasZone,
+            },
+          },
         },
-        powerConfiguration: {
-          batteryPercentageRemaining: 200,
-          ...overrides.powerConfiguration,
-        },
-        iasZone: {
-          zoneState: 1,
-          zoneType: 0x0015, // Contact switch
-          zoneStatus: 0,
-          iasCIEAddress: '0x0000000000000000',
-          zoneId: 1,
-          ...overrides.iasZone,
-        },
-      },
-    }],
-  }),
+      ],
+    }),
 
   /**
    * Temperature + Humidity Sensor
    */
-  tempHumiditySensor: (overrides = {}) => createMockNode({
-    endpoints: [{
-      endpointId: 1,
-      inputClusters: [
-        BasicCluster.ID,
-        PowerConfigurationCluster.ID,
-        TemperatureMeasurementCluster.ID,
-        RelativeHumidityCluster.ID,
+  tempHumiditySensor: (overrides = {}) =>
+    createMockNode({
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [
+            BasicCluster.ID,
+            PowerConfigurationCluster.ID,
+            TemperatureMeasurementCluster.ID,
+            RelativeHumidityCluster.ID,
+          ],
+          clusters: {
+            basic: {
+              zclVersion: 3,
+              manufacturerName: 'MockDevice',
+              modelId: 'MockTempHumidity',
+              ...overrides.basic,
+            },
+            powerConfiguration: {
+              batteryPercentageRemaining: 200,
+              ...overrides.powerConfiguration,
+            },
+            temperatureMeasurement: {
+              measuredValue: 2150, // 21.50°C
+              minMeasuredValue: -4000,
+              maxMeasuredValue: 8500,
+              ...overrides.temperatureMeasurement,
+            },
+            relativeHumidity: {
+              measuredValue: 6500, // 65.00%
+              minMeasuredValue: 0,
+              maxMeasuredValue: 10000,
+              ...overrides.relativeHumidity,
+            },
+          },
+        },
       ],
-      clusters: {
-        basic: {
-          zclVersion: 3,
-          manufacturerName: 'MockDevice',
-          modelId: 'MockTempHumidity',
-          ...overrides.basic,
-        },
-        powerConfiguration: {
-          batteryPercentageRemaining: 200,
-          ...overrides.powerConfiguration,
-        },
-        temperatureMeasurement: {
-          measuredValue: 2150, // 21.50°C
-          minMeasuredValue: -4000,
-          maxMeasuredValue: 8500,
-          ...overrides.temperatureMeasurement,
-        },
-        relativeHumidity: {
-          measuredValue: 6500, // 65.00%
-          minMeasuredValue: 0,
-          maxMeasuredValue: 10000,
-          ...overrides.relativeHumidity,
-        },
-      },
-    }],
-  }),
+    }),
 
   /**
    * Smart Plug with Power Metering
    */
-  smartPlug: (overrides = {}) => createMockNode({
-    endpoints: [{
-      endpointId: 1,
-      inputClusters: [
-        BasicCluster.ID,
-        OnOffCluster.ID,
-        MeteringCluster.ID,
-        ElectricalMeasurementCluster.ID,
+  smartPlug: (overrides = {}) =>
+    createMockNode({
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [
+            BasicCluster.ID,
+            OnOffCluster.ID,
+            MeteringCluster.ID,
+            ElectricalMeasurementCluster.ID,
+          ],
+          clusters: {
+            basic: {
+              zclVersion: 3,
+              manufacturerName: 'MockDevice',
+              modelId: 'MockSmartPlug',
+              ...overrides.basic,
+            },
+            onOff: {
+              onOff: false,
+              ...overrides.onOff,
+            },
+            metering: {
+              currentSummationDelivered: 12345678,
+              multiplier: 1,
+              divisor: 1000,
+              ...overrides.metering,
+            },
+            electricalMeasurement: {
+              activePower: 1500, // 150.0W
+              rmsVoltage: 2300, // 230.0V
+              rmsCurrent: 652, // 0.652A
+              ...overrides.electricalMeasurement,
+            },
+          },
+        },
       ],
-      clusters: {
-        basic: {
-          zclVersion: 3,
-          manufacturerName: 'MockDevice',
-          modelId: 'MockSmartPlug',
-          ...overrides.basic,
-        },
-        onOff: {
-          onOff: false,
-          ...overrides.onOff,
-        },
-        metering: {
-          currentSummationDelivered: 12345678,
-          multiplier: 1,
-          divisor: 1000,
-          ...overrides.metering,
-        },
-        electricalMeasurement: {
-          activePower: 1500, // 150.0W
-          rmsVoltage: 2300, // 230.0V
-          rmsCurrent: 652, // 0.652A
-          ...overrides.electricalMeasurement,
-        },
-      },
-    }],
-  }),
+    }),
 };
 
 module.exports = {

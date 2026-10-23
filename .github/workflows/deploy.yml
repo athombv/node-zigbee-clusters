@@ -35,8 +35,8 @@ jobs:
 
     # Only run this job if initiator is not the Homey Github Actions Bot to prevent loops and check if if a version bump is provided and current branch is production or testing
     if: github.actor != 'homey-bot'
-        && (github.ref == 'refs/heads/production' || github.ref == 'refs/heads/testing')
-        && (github.event.inputs.versionBumpType == 'patch' || github.event.inputs.versionBumpType == 'minor' || github.event.inputs.versionBumpType == 'major' || contains(github.event.head_commit.message, '#patch') || contains(github.event.head_commit.message, '#minor') || contains(github.event.head_commit.message, '#major'))
+      && (github.ref == 'refs/heads/production' || github.ref == 'refs/heads/testing')
+      && (github.event.inputs.versionBumpType == 'patch' || github.event.inputs.versionBumpType == 'minor' || github.event.inputs.versionBumpType == 'major' || contains(github.event.head_commit.message, '#patch') || contains(github.event.head_commit.message, '#minor') || contains(github.event.head_commit.message, '#major'))
 
     runs-on: ubuntu-latest
 
@@ -47,7 +47,6 @@ jobs:
       id-token: write
 
     steps:
-
       # Checks out the current repository.
       - name: Checkout git repository
         uses: actions/checkout@v4

@@ -2,9 +2,7 @@
 
 const assert = require('assert');
 
-const {
-  ZCLConfigureReportingRecords,
-} = require('../lib/zclFrames');
+const { ZCLConfigureReportingRecords } = require('../lib/zclFrames');
 
 const CONFIGURE_REPORTING_RECORDS_MOCK = [
   {
@@ -80,8 +78,8 @@ const CONFIGURE_REPORTING_RECORDS_WITH_STATUS_BUFFER_MOCK = Buffer.from(
   'hex',
 );
 
-describe('command configure reporting', function() {
-  it('should parse multiple records to buffer', function() {
+describe('command configure reporting', function () {
+  it('should parse multiple records to buffer', function () {
     // Create type instance
     const ZCLConfigureReportingRecordsType = ZCLConfigureReportingRecords();
 
@@ -95,13 +93,15 @@ describe('command configure reporting', function() {
     assert(buf.equals(CONFIGURE_REPORTING_RECORDS_BUFFER_MOCK));
   });
 
-  it('should parse buffer to multiple records', function() {
+  it('should parse buffer to multiple records', function () {
     // Create type instance
     const ZCLConfigureReportingRecordsType = ZCLConfigureReportingRecords();
 
     // Allocate buffer to be filled with configure reporting records
-    const parsedRecords = ZCLConfigureReportingRecordsType
-      .fromBuffer(CONFIGURE_REPORTING_RECORDS_BUFFER_MOCK, 0);
+    const parsedRecords = ZCLConfigureReportingRecordsType.fromBuffer(
+      CONFIGURE_REPORTING_RECORDS_BUFFER_MOCK,
+      0,
+    );
 
     // Compare the parsed records against the initial records `configureReportingRecordsBuffer`
     for (let i = 0; i < CONFIGURE_REPORTING_RECORDS_MOCK.length; i++) {
@@ -110,8 +110,8 @@ describe('command configure reporting', function() {
   });
 });
 
-describe('command read configure reporting', function() {
-  it('should parse multiple records to buffer', function() {
+describe('command read configure reporting', function () {
+  it('should parse multiple records to buffer', function () {
     // Create type instance
     const ZCLConfigureReportingRecordsWithStatusType = ZCLConfigureReportingRecords({
       withStatus: true,
@@ -129,15 +129,17 @@ describe('command read configure reporting', function() {
     assert(buf.equals(CONFIGURE_REPORTING_RECORDS_WITH_STATUS_BUFFER_MOCK));
   });
 
-  it('should parse buffer to multiple records', function() {
+  it('should parse buffer to multiple records', function () {
     // Create type instance
     const ZCLConfigureReportingRecordsWithStatusType = ZCLConfigureReportingRecords({
       withStatus: true,
     });
 
     // Allocate buffer to be filled with configure reporting records
-    const parsedRecords = ZCLConfigureReportingRecordsWithStatusType
-      .fromBuffer(CONFIGURE_REPORTING_RECORDS_WITH_STATUS_BUFFER_MOCK, 0);
+    const parsedRecords = ZCLConfigureReportingRecordsWithStatusType.fromBuffer(
+      CONFIGURE_REPORTING_RECORDS_WITH_STATUS_BUFFER_MOCK,
+      0,
+    );
 
     // Compare the parsed records against the initial records `configureReportingRecordsBuffer`
     for (let i = 0; i < CONFIGURE_REPORTING_RECORDS_WITH_STATUS_MOCK.length; i++) {

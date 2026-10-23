@@ -16,31 +16,37 @@ debug = debug.extend('test-node');
 
 const sandbox = sinon.createSandbox();
 
-describe('Node', function() {
+describe('Node', function () {
   let mockNode;
   let receivingNode;
   let sendingNode;
-  before(function() {
+  before(function () {
     mockNode = createMockNode({
       loopback: true,
-      endpoints: [{
-        endpointId: 1,
-        inputClusters: [BasicCluster.ID],
-      }],
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [BasicCluster.ID],
+        },
+      ],
     });
 
     [sendingNode, receivingNode] = createConnectedNodePair(
       {
-        endpoints: [{
-          endpointId: 1,
-          inputClusters: [BasicCluster.ID, OnOffCluster.ID],
-        }],
+        endpoints: [
+          {
+            endpointId: 1,
+            inputClusters: [BasicCluster.ID, OnOffCluster.ID],
+          },
+        ],
       },
       {
-        endpoints: [{
-          endpointId: 1,
-          inputClusters: [BasicCluster.ID, OnOffCluster.ID],
-        }],
+        endpoints: [
+          {
+            endpointId: 1,
+            inputClusters: [BasicCluster.ID, OnOffCluster.ID],
+          },
+        ],
       },
     );
     // Override log id for sending node
@@ -52,10 +58,10 @@ describe('Node', function() {
     receivingNode.getLogId = receivingNodeLog;
     receivingNode.endpoints[1].getLogId = receivingNodeLog;
   });
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore();
   });
-  it('should fail for unbound cluster', async function() {
+  it('should fail for unbound cluster', async function () {
     try {
       await mockNode.endpoints[1].clusters['basic'].configureReporting({
         zclVersion: {
@@ -66,10 +72,10 @@ describe('Node', function() {
     } catch {
       return;
     }
-    throw new Error('didn\'t throw');
+    throw new Error("didn't throw");
   });
 
-  it('should fail for unimplemented command', async function() {
+  it('should fail for unimplemented command', async function () {
     mockNode.endpoints[1].bind('basic', new BoundCluster());
 
     try {
@@ -77,29 +83,31 @@ describe('Node', function() {
     } catch {
       return;
     }
-    throw new Error('didn\'t throw');
+    throw new Error("didn't throw");
   });
 
-  it('should invoke command', async function() {
-    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
-
-      async factoryReset() {
-        debug('factory reset');
-      }
-
-    }());
+  it('should invoke command', async function () {
+    mockNode.endpoints[1].bind(
+      'basic',
+      new (class extends BoundCluster {
+        async factoryReset() {
+          debug('factory reset');
+        }
+      })(),
+    );
 
     await mockNode.endpoints[1].clusters['basic'].factoryReset();
   });
 
-  it('should configure reporting', async function() {
-    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
-
-      async configureReporting({ reports }) {
-        assert.equal(reports.length, 1, 'exactly 1 report');
-      }
-
-    }());
+  it('should configure reporting', async function () {
+    mockNode.endpoints[1].bind(
+      'basic',
+      new (class extends BoundCluster {
+        async configureReporting({ reports }) {
+          assert.equal(reports.length, 1, 'exactly 1 report');
+        }
+      })(),
+    );
 
     await mockNode.endpoints[1].clusters['basic'].configureReporting({
       zclVersion: {
@@ -109,25 +117,32 @@ describe('Node', function() {
     });
   });
 
-  it('should read attributes', async function() {
-    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
+  it('should read attributes', async function () {
+    mockNode.endpoints[1].bind(
+      'basic',
+      new (class extends BoundCluster {
+        constructor() {
+          super();
+          this.dateCode = '1234';
+        }
 
-      constructor() {
-        super();
-        this.dateCode = '1234';
-      }
+        get modelId() {
+          return 'test';
+        }
 
-      get modelId() {
-        return 'test';
-      }
+        get manufacturerName() {
+          return 'Athom';
+        }
+      })(),
+    );
 
-      get manufacturerName() {
-        return 'Athom';
-      }
-
-    }());
-
-    const res = await mockNode.endpoints[1].clusters['basic'].readAttributes(['modelId', 'manufacturerName', 'clusterRevision', 'zclVersion', 'dateCode']);
+    const res = await mockNode.endpoints[1].clusters['basic'].readAttributes([
+      'modelId',
+      'manufacturerName',
+      'clusterRevision',
+      'zclVersion',
+      'dateCode',
+    ]);
     assert.equal(res.modelId, 'test', 'modelId should be test');
     assert.equal(res.manufacturerName, 'Athom', 'manufacturerName should be test');
     assert.equal(res.clusterRevision, 1, 'clusterRevision should be test');
@@ -135,108 +150,117 @@ describe('Node', function() {
     assert.equal(res.dateCode, '1234', 'dateCode should not be present');
   });
 
-  it('should read attributes by numeric ID', async function() {
-    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
-
-      get modelId() {
-        return 'numericTest';
-      }
-
-    }());
+  it('should read attributes by numeric ID', async function () {
+    mockNode.endpoints[1].bind(
+      'basic',
+      new (class extends BoundCluster {
+        get modelId() {
+          return 'numericTest';
+        }
+      })(),
+    );
 
     // modelId has attribute ID 5
     const res = await mockNode.endpoints[1].clusters['basic'].readAttributes([5]);
     assert.equal(res[5], 'numericTest', 'numeric ID 5 should return modelId value');
   });
 
-  it('should read attributes with mixed strings and numeric IDs', async function() {
-    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
+  it('should read attributes with mixed strings and numeric IDs', async function () {
+    mockNode.endpoints[1].bind(
+      'basic',
+      new (class extends BoundCluster {
+        get modelId() {
+          return 'mixedTest';
+        }
 
-      get modelId() {
-        return 'mixedTest';
-      }
-
-      get manufacturerName() {
-        return 'Athom';
-      }
-
-    }());
+        get manufacturerName() {
+          return 'Athom';
+        }
+      })(),
+    );
 
     // manufacturerName by name, modelId (ID 5) by numeric ID
-    const res = await mockNode.endpoints[1].clusters['basic'].readAttributes(['manufacturerName', 5]);
+    const res = await mockNode.endpoints[1].clusters['basic'].readAttributes([
+      'manufacturerName',
+      5,
+    ]);
     assert.equal(res.manufacturerName, 'Athom', 'manufacturerName should resolve by name');
     assert.equal(res[5], 'mixedTest', 'numeric ID 5 should return modelId value');
   });
 
-  it('should return both name and numeric key when same attribute requested both ways', async function() {
-    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
-
-      get modelId() {
-        return 'both';
-      }
-
-    }());
+  it('should return both name and numeric key when same attribute requested both ways', async function () {
+    mockNode.endpoints[1].bind(
+      'basic',
+      new (class extends BoundCluster {
+        get modelId() {
+          return 'both';
+        }
+      })(),
+    );
 
     const res = await mockNode.endpoints[1].clusters['basic'].readAttributes(['modelId', 5]);
     assert.equal(res.modelId, 'both', 'modelId key should exist');
     assert.equal(res[5], 'both', 'numeric key 5 should also exist');
   });
 
-  it('should read an unregistered attribute by numeric ID', async function() {
-    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {}());
+  it('should read an unregistered attribute by numeric ID', async function () {
+    mockNode.endpoints[1].bind('basic', new (class extends BoundCluster {})());
 
     // 0x1234 is not registered in the basic cluster, expect no error and empty/missing result
     const res = await mockNode.endpoints[1].clusters['basic'].readAttributes([0x1234]);
     assert.equal(res[0x1234], undefined, 'unregistered attribute should not have a value');
   });
 
-  it('should throw for invalid numeric attribute IDs', async function() {
-    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {}());
+  it('should throw for invalid numeric attribute IDs', async function () {
+    mockNode.endpoints[1].bind('basic', new (class extends BoundCluster {})());
 
-    await assert.rejects(
-      () => mockNode.endpoints[1].clusters['basic'].readAttributes([-1]),
-      { name: 'TypeError' },
-    );
-    await assert.rejects(
-      () => mockNode.endpoints[1].clusters['basic'].readAttributes([0x10000]),
-      { name: 'TypeError' },
-    );
-    await assert.rejects(
-      () => mockNode.endpoints[1].clusters['basic'].readAttributes([1.5]),
-      { name: 'TypeError' },
-    );
-    await assert.rejects(
-      () => mockNode.endpoints[1].clusters['basic'].readAttributes([NaN]),
-      { name: 'TypeError' },
-    );
+    await assert.rejects(() => mockNode.endpoints[1].clusters['basic'].readAttributes([-1]), {
+      name: 'TypeError',
+    });
+    await assert.rejects(() => mockNode.endpoints[1].clusters['basic'].readAttributes([0x10000]), {
+      name: 'TypeError',
+    });
+    await assert.rejects(() => mockNode.endpoints[1].clusters['basic'].readAttributes([1.5]), {
+      name: 'TypeError',
+    });
+    await assert.rejects(() => mockNode.endpoints[1].clusters['basic'].readAttributes([NaN]), {
+      name: 'TypeError',
+    });
   });
 
-  it('should respond with read attribute response when disableDefaultResponse is true', async function() {
-    receivingNode.endpoints[1].bind('basic', new class extends BoundCluster {
+  it('should respond with read attribute response when disableDefaultResponse is true', async function () {
+    receivingNode.endpoints[1].bind(
+      'basic',
+      new (class extends BoundCluster {
+        get modelId() {
+          return 'test';
+        }
+      })(),
+    );
 
-      get modelId() {
-        return 'test';
-      }
-
-    }());
-
-    const readAttributesResponse = await sendingNode.endpoints[1].clusters['basic'].readAttributes(['modelId'], { disableDefaultResponse: true });
+    const readAttributesResponse = await sendingNode.endpoints[1].clusters['basic'].readAttributes(
+      ['modelId'],
+      { disableDefaultResponse: true },
+    );
     assert.equal(readAttributesResponse.modelId, 'test');
   });
 
-  it('should not respond with a default response when disableDefaultResponse is true', async function() {
-    receivingNode.endpoints[1].bind('basic', new class extends BoundCluster {
-
-      get modelId() {
-        return 'test';
-      }
-
-    }());
+  it('should not respond with a default response when disableDefaultResponse is true', async function () {
+    receivingNode.endpoints[1].bind(
+      'basic',
+      new (class extends BoundCluster {
+        get modelId() {
+          return 'test';
+        }
+      })(),
+    );
 
     const sendingNodeSendFrameSpy = sandbox.spy(sendingNode, 'sendFrame');
     const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
 
-    await sendingNode.endpoints[1].clusters['basic'].readAttributes(['modelId'], { disableDefaultResponse: true });
+    await sendingNode.endpoints[1].clusters['basic'].readAttributes(['modelId'], {
+      disableDefaultResponse: true,
+    });
 
     // 1 frame sent by sending node, the read attributes command
     assert.equal(sendingNodeSendFrameSpy.callCount, 1);
@@ -250,14 +274,15 @@ describe('Node', function() {
     assert.equal(frame.cmdId, 1);
   });
 
-  it('should not respond to a default response frame', async function() {
-    receivingNode.endpoints[1].bind('onOff', new class extends BoundCluster {
-
-      toggle() {
-        debug('toggled');
-      }
-
-    }());
+  it('should not respond to a default response frame', async function () {
+    receivingNode.endpoints[1].bind(
+      'onOff',
+      new (class extends BoundCluster {
+        toggle() {
+          debug('toggled');
+        }
+      })(),
+    );
 
     const sendingNodeSendFrameSpy = sandbox.spy(sendingNode, 'sendFrame');
     const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
@@ -275,32 +300,35 @@ describe('Node', function() {
     assert.equal(frame.cmdId, 11);
   });
 
-  it('should respond with default response error when frame could not be handled', async function() {
-    receivingNode.endpoints[1].bind('onOff', new class extends BoundCluster {}());
+  it('should respond with default response error when frame could not be handled', async function () {
+    receivingNode.endpoints[1].bind('onOff', new (class extends BoundCluster {})());
 
     const sendingNodeHandleFrameSpy = sandbox.spy(sendingNode, 'handleFrame');
 
     // Execute toggle and expect UNSUP_COMMAND as the command is not implemented (ZCL R8 2.5.12.2)
-    await assert.rejects(sendingNode.endpoints[1].clusters['onOff'].toggle(), { message: 'UNSUP_CLUSTER_COMMAND' });
+    await assert.rejects(sendingNode.endpoints[1].clusters['onOff'].toggle(), {
+      message: 'UNSUP_CLUSTER_COMMAND',
+    });
 
     // 1 frame received by sending node, the default response error
     assert.equal(sendingNodeHandleFrameSpy.callCount, 1);
 
     // Parse the received frame
     const frame = Endpoint.parseFrame(sendingNodeHandleFrameSpy.getCall(0).args[2]);
-    assert.equal(frame.cmdId, 0x0B);
+    assert.equal(frame.cmdId, 0x0b);
     assert.equal(frame.data[1], 0x81); // UNSUP_COMMAND
   });
 
-  it('should not respond to a group cast frame', async function() {
+  it('should not respond to a group cast frame', async function () {
     const toggledSpy = sandbox.spy();
-    receivingNode.endpoints[1].bind('onOff', new class extends BoundCluster {
-
-      toggle() {
-        toggledSpy();
-      }
-
-    }());
+    receivingNode.endpoints[1].bind(
+      'onOff',
+      new (class extends BoundCluster {
+        toggle() {
+          toggledSpy();
+        }
+      })(),
+    );
 
     const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
 
@@ -311,15 +339,16 @@ describe('Node', function() {
     assert.equal(receivingNodeSendFrameSpy.callCount, 0);
   });
 
-  it('should not send a default response to a broadcast frame', async function() {
+  it('should not send a default response to a broadcast frame', async function () {
     const toggledSpy = sandbox.spy();
-    receivingNode.endpoints[1].bind('onOff', new class extends BoundCluster {
-
-      toggle() {
-        toggledSpy();
-      }
-
-    }());
+    receivingNode.endpoints[1].bind(
+      'onOff',
+      new (class extends BoundCluster {
+        toggle() {
+          toggledSpy();
+        }
+      })(),
+    );
 
     const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
 
@@ -329,8 +358,8 @@ describe('Node', function() {
     assert.equal(receivingNodeSendFrameSpy.callCount, 0);
   });
 
-  it('should not send a default response error to a broadcast frame', async function() {
-    receivingNode.endpoints[1].bind('onOff', new class extends BoundCluster {}());
+  it('should not send a default response error to a broadcast frame', async function () {
+    receivingNode.endpoints[1].bind('onOff', new (class extends BoundCluster {})());
 
     const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
 
@@ -339,79 +368,82 @@ describe('Node', function() {
     assert.equal(receivingNodeSendFrameSpy.callCount, 0);
   });
 
-  it('should send a default response to a unicast frame for the broadcast endpoint', async function() {
-    receivingNode.endpoints[1].bind('onOff', new class extends BoundCluster {
-
-      toggle() {}
-
-    }());
+  it('should send a default response to a unicast frame for the broadcast endpoint', async function () {
+    receivingNode.endpoints[1].bind(
+      'onOff',
+      new (class extends BoundCluster {
+        toggle() {}
+      })(),
+    );
 
     const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
 
-    await receivingNode.handleFrame(1, 6, Buffer.from([0x01, 0x01, 0x02]), { dstEndpoint: 0xFF });
+    await receivingNode.handleFrame(1, 6, Buffer.from([0x01, 0x01, 0x02]), { dstEndpoint: 0xff });
     assert.equal(receivingNodeSendFrameSpy.callCount, 1);
   });
 
-  it('should write attributes', async function() {
-    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
+  it('should write attributes', async function () {
+    mockNode.endpoints[1].bind(
+      'basic',
+      new (class extends BoundCluster {
+        get modelId() {
+          return 'test';
+        }
 
-      get modelId() {
-        return 'test';
-      }
+        get manufacturerName() {
+          return 'Athom';
+        }
 
-      get manufacturerName() {
-        return 'Athom';
-      }
-
-      set modelId(val) {
-        assert.equal(val, 'test1');
-      }
-
-    }());
+        set modelId(val) {
+          assert.equal(val, 'test1');
+        }
+      })(),
+    );
 
     await mockNode.endpoints[1].clusters['basic'].writeAttributes({
       modelId: 'test1',
     });
   });
 
-  it('should discover attributes', async function() {
-    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
+  it('should discover attributes', async function () {
+    mockNode.endpoints[1].bind(
+      'basic',
+      new (class extends BoundCluster {
+        get modelId() {
+          return 'test';
+        }
 
-      get modelId() {
-        return 'test';
-      }
+        get manufacturerName() {
+          return 'Athom';
+        }
 
-      get manufacturerName() {
-        return 'Athom';
-      }
-
-      set modelId(val) {
-        assert.equal(val, 'test1');
-      }
-
-    }());
+        set modelId(val) {
+          assert.equal(val, 'test1');
+        }
+      })(),
+    );
 
     const attrs = await mockNode.endpoints[1].clusters['basic'].discoverAttributes();
-    ['modelId', 'manufacturerName'].forEach(a => {
+    ['modelId', 'manufacturerName'].forEach((a) => {
       assert(attrs.includes(a), `${a} is missing`);
     });
   });
 
-  it('should discover received commands', async function() {
-    mockNode.endpoints[1].bind('basic', new class extends BoundCluster {
-
-      async factoryReset() {
-        debug('factory reset');
-      }
-
-    }());
+  it('should discover received commands', async function () {
+    mockNode.endpoints[1].bind(
+      'basic',
+      new (class extends BoundCluster {
+        async factoryReset() {
+          debug('factory reset');
+        }
+      })(),
+    );
     const cmds = await mockNode.endpoints[1].clusters['basic'].discoverCommandsReceived();
     assert(cmds.includes('factoryReset'));
   });
 
-  it('should support adding a Cluster with string attribute with 0x0000 ID', async function() {
+  it('should support adding a Cluster with string attribute with 0x0000 ID', async function () {
     class MyCluster extends Cluster {
-
       static get ID() {
         return 0x1234;
       }
@@ -421,7 +453,6 @@ describe('Node', function() {
           priceOption: { id: 0x0000, type: ZCLDataTypes.string },
         };
       }
-
     }
 
     Cluster.addCluster(MyCluster);

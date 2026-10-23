@@ -10,12 +10,12 @@ const OnOffCluster = require('../lib/clusters/onOff');
 
 const sandbox = sinon.createSandbox();
 
-describe('Transaction sequence number', function() {
+describe('Transaction sequence number', function () {
   let receivingNode;
   let sendingNode;
   let sentTrxSequenceNumbers;
 
-  beforeEach(function() {
+  beforeEach(function () {
     sentTrxSequenceNumbers = [];
     sendingNode = new Node({
       sendFrame: (endpointId, clusterId, frame) => {
@@ -37,18 +37,19 @@ describe('Transaction sequence number', function() {
         { endpointId: 2, inputClusters: [BasicCluster.ID] },
       ],
     });
-    receivingNode.endpoints[1].bind('onOff', new class extends BoundCluster {
-
-      toggle() {}
-
-    }());
+    receivingNode.endpoints[1].bind(
+      'onOff',
+      new (class extends BoundCluster {
+        toggle() {}
+      })(),
+    );
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  it('should share one counter across endpoints and clusters', async function() {
+  it('should share one counter across endpoints and clusters', async function () {
     await sendingNode.endpoints[1].clusters.onOff.toggle();
     const { basic } = sendingNode.endpoints[2].clusters;
     await basic.factoryReset(undefined, { waitForResponse: false });
@@ -58,7 +59,7 @@ describe('Transaction sequence number', function() {
     assert.deepStrictEqual(sentTrxSequenceNumbers, [first, (first + 1) % 256, (first + 2) % 256]);
   });
 
-  it('should start at a random value and wrap around', function() {
+  it('should start at a random value and wrap around', function () {
     sandbox.stub(Math, 'random').returns(0.999);
     const node = new Node({ sendFrame: () => {}, endpointDescriptors: [] });
 

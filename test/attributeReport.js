@@ -5,13 +5,15 @@ const OnOffCluster = require('../lib/clusters/onOff');
 const { createMockNode } = require('./util');
 const { ZCLStandardHeader } = require('../lib/zclFrames');
 
-describe('Attribute report', function() {
-  it('should emit the transaction sequence number with the attribute value', function(done) {
+describe('Attribute report', function () {
+  it('should emit the transaction sequence number with the attribute value', function (done) {
     const node = createMockNode({
-      endpoints: [{
-        endpointId: 1,
-        inputClusters: [OnOffCluster.ID],
-      }],
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [OnOffCluster.ID],
+        },
+      ],
     });
 
     node.endpoints[1].clusters.onOff.on('attr.onOff', (value, meta) => {
@@ -22,7 +24,7 @@ describe('Attribute report', function() {
     });
 
     const frame = new ZCLStandardHeader();
-    frame.cmdId = 0x0A; // reportAttributes
+    frame.cmdId = 0x0a; // reportAttributes
     frame.trxSequenceNumber = 42;
     frame.frameControl.directionToClient = true;
     // attributeId 0x0000 (onOff), dataType 0x10 (bool), value true
