@@ -119,8 +119,10 @@ jobs:
         run: npm publish --provenance
 
       # After the publish, and starting from the previous release rather than the previous tag,
-      # because a failed publish leaves an orphan tag (v2.7.0, v3.1.0). The fallback is for the
-      # first run. If this step fails, create the release by hand: a rerun would bump again.
+      # because a publish that fails after the version bump leaves a tag without an npm version
+      # behind (v2.7.0, v3.1.0). Until the first release exists, the start is the last version npm
+      # actually has, for the same reason. If this step fails, create the release by hand: a rerun
+      # would bump again.
       - name: Create GitHub release
         # Explicit, because only then does Actions add pipefail: without it a failing gh api still
         # feeds the Node filter an empty input, and an empty release gets published.
@@ -128,8 +130,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
         run: |
-          TAG="v$(node -p "require('./package.json').version")"
-          PREVIOUS_TAG="$(gh release view --json tagName -q .tagName || git describe --tags --abbrev=0 "$TAG^")"
+          VERSION="$(node -p "require('./package.json').version")"
+          TAG="v$VERSION"
+          if ! PREVIOUS_TAG="$(gh release view --json tagName -q .tagName)"; then
+            PREVIOUS_TAG="v$(npm view "zigbee-clusters@<$VERSION" version --json \
+              | node -p "[].concat(JSON.parse(require('node:fs').readFileSync(0, 'utf8'))).at(-1)")"
+          fi
           # The notes list each pull request title as is. Drop its conventional-commit prefix, which the
           # category heading above it already says.
           gh api "repos/$GITHUB_REPOSITORY/releases/generate-notes" \
