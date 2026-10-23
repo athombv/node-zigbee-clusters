@@ -34,14 +34,26 @@ jobs:
               return null;
             }
 
-            if (context.payload.action === 'edited' && !context.payload.changes.title) return;
+            const { action, changes = {}, pull_request: pullRequest } = context.payload;
+            // The label depends on the title and the base branch; other edits change nothing.
+            if (action === 'edited' && !changes.title && !changes.base) return;
 
-            const pullRequest = context.payload.pull_request;
             const wanted = labelFor(pullRequest.title, pullRequest.base.ref);
-            // No conventional prefix: leave any label a maintainer set by hand.
-            if (!wanted) return;
             const current = pullRequest.labels.map(label => label.name);
             const issue = { ...context.repo, issue_number: pullRequest.number };
+
+            if (!wanted) {
+              // No conventional prefix: keep a label a maintainer set by hand, but drop the one
+              // the previous title or base implied, so the change is not left misfiled.
+              const previous = labelFor(
+                changes.title?.from ?? pullRequest.title,
+                changes.base?.ref?.from ?? pullRequest.base.ref,
+              );
+              if (previous && current.includes(previous)) {
+                await github.rest.issues.removeLabel({ ...issue, name: previous });
+              }
+              return;
+            }
 
             for (const name of current) {
               if (MANAGED_LABELS.includes(name) && name !== wanted) {
