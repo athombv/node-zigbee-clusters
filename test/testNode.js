@@ -1,7 +1,7 @@
 'use strict';
 
 const { describe, it, before, afterEach, mock } = require('node:test');
-const assert = require('assert');
+const assert = require('node:assert');
 
 const { createMockNode, createConnectedNodePair } = require('./util');
 let { debug } = require('./util');

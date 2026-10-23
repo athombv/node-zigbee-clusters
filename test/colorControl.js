@@ -1,7 +1,7 @@
 'use strict';
 
 const { describe, it, afterEach, mock } = require('node:test');
-const assert = require('assert');
+const assert = require('node:assert');
 
 const BoundCluster = require('../lib/BoundCluster');
 const ColorControlCluster = require('../lib/clusters/colorControl');

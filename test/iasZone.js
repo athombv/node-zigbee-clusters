@@ -1,7 +1,7 @@
 'use strict';
 
 const { describe, it } = require('node:test');
-const assert = require('assert');
+const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const IASZoneCluster = require('../lib/clusters/iasZone');
 const { createMockNode, MOCK_DEVICES } = require('./util');

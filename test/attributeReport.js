@@ -1,7 +1,7 @@
 'use strict';
 
 const { describe, it } = require('node:test');
-const assert = require('assert');
+const assert = require('node:assert');
 const OnOffCluster = require('../lib/clusters/onOff');
 const { createMockNode } = require('./util');
 const { ZCLStandardHeader } = require('../lib/zclFrames');

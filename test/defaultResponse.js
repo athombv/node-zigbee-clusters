@@ -1,7 +1,7 @@
 'use strict';
 
 const { describe, it } = require('node:test');
-const assert = require('assert');
+const assert = require('node:assert');
 
 const { Endpoint, BoundCluster } = require('..');
 const DoorLockCluster = require('../lib/clusters/doorLock');
