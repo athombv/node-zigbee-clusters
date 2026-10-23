@@ -69,11 +69,24 @@ jobs:
           cache: 'npm'
           registry-url: https://registry.npmjs.org
 
+      # OIDC trusted publishing needs npm 11.5.1 or newer. Node 22 bundles npm 10,
+      # and setup-node installs whatever npm ships with the Node version.
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@^11.5.1
+
       # Run `npm ci && npm run build` to re-create your local environment (make sure to commit your - package-lock.json!).
       - name: Build
         run: |
           npm ci
           npm run build
+
+      # Nothing below this point runs if the package does not lint, format or test
+      # cleanly, so a push to testing cannot publish a beta that was never checked.
+      - name: Validate
+        run: |
+          npm run lint
+          npm run format:check
+          npm test
 
       - name: Version bump patch
         if: github.event.inputs.versionBumpType == 'patch' || contains(github.event.head_commit.message, '#patch') && !contains(github.event.head_commit.message, '#minor') && !contains(github.event.head_commit.message, '#major')
