@@ -6,9 +6,13 @@ This file provides guidance to AI agents when working with code in this reposito
 
 ```bash
 npm test              # Run all tests (mocha)
-npm run lint          # ESLint (extends athom config)
-npm run build         # Generate JSDoc documentation
+npm run lint          # ESLint (flat config in eslint.config.js)
+npm run build         # Generate JSDoc documentation into build/
+npm run docs          # Build the docs and open them in the browser (macOS `open`)
 ```
+
+The docs are a static site that works straight from disk, no server needed. Off macOS, run
+`npm run build` and open `build/index.html` in a browser.
 
 Run single test file:
 ```bash
