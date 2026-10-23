@@ -12,6 +12,11 @@ on:
 permissions:
   pull-requests: write
 
+# One run at a time per pull request, so two quick edits cannot each add a label the other
+# should have removed.
+concurrency:
+  group: label-pr-${{ github.event.pull_request.number }}
+
 jobs:
   label:
     runs-on: ubuntu-latest
@@ -34,9 +39,16 @@ jobs:
               return null;
             }
 
-            const { action, changes = {}, pull_request: pullRequest } = context.payload;
+            const { action, changes = {} } = context.payload;
             // The label depends on the title and the base branch; other edits change nothing.
             if (action === 'edited' && !changes.title && !changes.base) return;
+
+            // The payload is a snapshot from when the event fired. Read the pull request as it is
+            // now, so labels an earlier run added are seen and the latest title wins.
+            const { data: pullRequest } = await github.rest.pulls.get({
+              ...context.repo,
+              pull_number: context.payload.pull_request.number,
+            });
 
             const wanted = labelFor(pullRequest.title, pullRequest.base.ref);
             const current = pullRequest.labels.map(label => label.name);
