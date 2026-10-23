@@ -1,7 +1,8 @@
 name: Label pull request
 
 # Labels each pull request from the conventional-commit prefix of its title, so the release
-# notes can sort it (see .github/release.yml). Re-runs when the title is edited.
+# notes can sort it (see .github/release.yml). Re-runs when the title or base branch is edited.
+# The five labels below follow the title alone: to move a pull request, retitle it.
 #
 # pull_request_target so pull requests from forks get a token that can label. This is safe
 # because the job never checks out or runs code from the pull request.
@@ -50,28 +51,17 @@ jobs:
               pull_number: context.payload.pull_request.number,
             });
 
+            // The managed labels are a function of the current title and base only, so whichever
+            // runs happen to execute, the last one leaves them right. No prefix means none of them.
             const wanted = labelFor(pullRequest.title, pullRequest.base.ref);
             const current = pullRequest.labels.map(label => label.name);
             const issue = { ...context.repo, issue_number: pullRequest.number };
-
-            if (!wanted) {
-              // No conventional prefix: keep a label a maintainer set by hand, but drop the one
-              // the previous title or base implied, so the change is not left misfiled.
-              const previous = labelFor(
-                changes.title?.from ?? pullRequest.title,
-                changes.base?.ref?.from ?? pullRequest.base.ref,
-              );
-              if (previous && current.includes(previous)) {
-                await github.rest.issues.removeLabel({ ...issue, name: previous });
-              }
-              return;
-            }
 
             for (const name of current) {
               if (MANAGED_LABELS.includes(name) && name !== wanted) {
                 await github.rest.issues.removeLabel({ ...issue, name });
               }
             }
-            if (!current.includes(wanted)) {
+            if (wanted && !current.includes(wanted)) {
               await github.rest.issues.addLabels({ ...issue, labels: [wanted] });
             }

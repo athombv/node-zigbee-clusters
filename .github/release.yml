@@ -16,8 +16,8 @@ changelog:
     - title: Fixes
       labels:
         - fix
-    # Titles without a conventional prefix, typically outside contributions. Relabel or
-    # retitle the pull request before releasing to move it.
+    # Titles without a conventional prefix, typically outside contributions. Retitle the pull
+    # request to move it.
     - title: Other changes
       labels:
         - '*'
