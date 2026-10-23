@@ -1,5 +1,6 @@
 'use strict';
 
+const { describe, it } = require('node:test');
 const assert = require('assert');
 const BoundCluster = require('../lib/BoundCluster');
 const DoorLockCluster = require('../lib/clusters/doorLock');
@@ -127,7 +128,7 @@ describe('Door Lock', function () {
 
   // Server-to-client notifications require manual frame construction
   // since they are sent BY the device TO the controller
-  it('should receive operationEventNotification', function (done) {
+  it('should receive operationEventNotification', function (t, done) {
     const node = createMockNode({
       loopback: true,
       endpoints: [
@@ -159,7 +160,7 @@ describe('Door Lock', function () {
     node.handleFrame(1, DoorLockCluster.ID, frame.toBuffer(), {});
   });
 
-  it('should receive programmingEventNotification', function (done) {
+  it('should receive programmingEventNotification', function (t, done) {
     const node = createMockNode({
       loopback: true,
       endpoints: [

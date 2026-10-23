@@ -339,5 +339,5 @@ The workflow commits updated types back to `develop` if changes are detected.
 Great if you'd like to contribute to this project, a few things to take note of before submitting a PR:
 
 - This project enforces ESLint, validate by running `npm run lint`.
-- This project implements a basic test framework based on mocha, see [test](https://github.com/athombv/node-zigbee-clusters/blob/production/test) directory.
+- This project implements a basic test framework based on node:test, see [test](https://github.com/athombv/node-zigbee-clusters/blob/production/test) directory.
 - This project uses several [GitHub Action workflows](https://github.com/athombv/node-zigbee-clusters/blob/production/.github/workflows) (e.g. ESLint, running test and versioning/publishing).

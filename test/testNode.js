@@ -1,7 +1,7 @@
 'use strict';
 
+const { describe, it, before, afterEach, mock } = require('node:test');
 const assert = require('assert');
-const sinon = require('sinon');
 
 const { createMockNode, createConnectedNodePair } = require('./util');
 let { debug } = require('./util');
@@ -13,8 +13,6 @@ const BasicCluster = require('../lib/clusters/basic');
 const OnOffCluster = require('../lib/clusters/onOff');
 
 debug = debug.extend('test-node');
-
-const sandbox = sinon.createSandbox();
 
 describe('Node', function () {
   let mockNode;
@@ -59,7 +57,7 @@ describe('Node', function () {
     receivingNode.endpoints[1].getLogId = receivingNodeLog;
   });
   afterEach(function () {
-    sandbox.restore();
+    mock.restoreAll();
   });
   it('should fail for unbound cluster', async function () {
     try {
@@ -255,20 +253,20 @@ describe('Node', function () {
       })(),
     );
 
-    const sendingNodeSendFrameSpy = sandbox.spy(sendingNode, 'sendFrame');
-    const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
+    const sendingNodeSendFrameSpy = mock.method(sendingNode, 'sendFrame');
+    const receivingNodeSendFrameSpy = mock.method(receivingNode, 'sendFrame');
 
     await sendingNode.endpoints[1].clusters['basic'].readAttributes(['modelId'], {
       disableDefaultResponse: true,
     });
 
     // 1 frame sent by sending node, the read attributes command
-    assert.equal(sendingNodeSendFrameSpy.callCount, 1);
+    assert.equal(sendingNodeSendFrameSpy.mock.callCount(), 1);
     // 1 frame sent by receiving node, the read attributes response
-    assert.equal(receivingNodeSendFrameSpy.callCount, 1);
+    assert.equal(receivingNodeSendFrameSpy.mock.callCount(), 1);
 
     // Parse the received frame
-    const frame = Endpoint.parseFrame(receivingNodeSendFrameSpy.getCall(0).args[2]);
+    const frame = Endpoint.parseFrame(receivingNodeSendFrameSpy.mock.calls[0].arguments[2]);
 
     // 0x01 is read attributes response
     assert.equal(frame.cmdId, 1);
@@ -284,17 +282,17 @@ describe('Node', function () {
       })(),
     );
 
-    const sendingNodeSendFrameSpy = sandbox.spy(sendingNode, 'sendFrame');
-    const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
+    const sendingNodeSendFrameSpy = mock.method(sendingNode, 'sendFrame');
+    const receivingNodeSendFrameSpy = mock.method(receivingNode, 'sendFrame');
 
     await sendingNode.endpoints[1].clusters['onOff'].toggle();
     // 1 frame sent by sending node, the toggle command
-    assert.equal(sendingNodeSendFrameSpy.callCount, 1);
+    assert.equal(sendingNodeSendFrameSpy.mock.callCount(), 1);
     // 1 frame sent by receiving node, the toggle command default response
-    assert.equal(receivingNodeSendFrameSpy.callCount, 1);
+    assert.equal(receivingNodeSendFrameSpy.mock.callCount(), 1);
 
     // Parse the received frame
-    const frame = Endpoint.parseFrame(receivingNodeSendFrameSpy.getCall(0).args[2]);
+    const frame = Endpoint.parseFrame(receivingNodeSendFrameSpy.mock.calls[0].arguments[2]);
 
     // 0x01 is read attributes response
     assert.equal(frame.cmdId, 11);
@@ -303,7 +301,7 @@ describe('Node', function () {
   it('should respond with default response error when frame could not be handled', async function () {
     receivingNode.endpoints[1].bind('onOff', new (class extends BoundCluster {})());
 
-    const sendingNodeHandleFrameSpy = sandbox.spy(sendingNode, 'handleFrame');
+    const sendingNodeHandleFrameSpy = mock.method(sendingNode, 'handleFrame');
 
     // Execute toggle and expect UNSUP_COMMAND as the command is not implemented (ZCL R8 2.5.12.2)
     await assert.rejects(sendingNode.endpoints[1].clusters['onOff'].toggle(), {
@@ -311,16 +309,16 @@ describe('Node', function () {
     });
 
     // 1 frame received by sending node, the default response error
-    assert.equal(sendingNodeHandleFrameSpy.callCount, 1);
+    assert.equal(sendingNodeHandleFrameSpy.mock.callCount(), 1);
 
     // Parse the received frame
-    const frame = Endpoint.parseFrame(sendingNodeHandleFrameSpy.getCall(0).args[2]);
+    const frame = Endpoint.parseFrame(sendingNodeHandleFrameSpy.mock.calls[0].arguments[2]);
     assert.equal(frame.cmdId, 0x0b);
     assert.equal(frame.data[1], 0x81); // UNSUP_COMMAND
   });
 
   it('should not respond to a group cast frame', async function () {
-    const toggledSpy = sandbox.spy();
+    const toggledSpy = mock.fn();
     receivingNode.endpoints[1].bind(
       'onOff',
       new (class extends BoundCluster {
@@ -330,17 +328,17 @@ describe('Node', function () {
       })(),
     );
 
-    const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
+    const receivingNodeSendFrameSpy = mock.method(receivingNode, 'sendFrame');
 
     // Send toggle command to onOff cluster with group id
     await receivingNode.handleFrame(1, 6, Buffer.from([0x01, 0x01, 0x02]), { groupId: 0x01 });
-    assert.equal(toggledSpy.callCount, 1);
+    assert.equal(toggledSpy.mock.callCount(), 1);
     // 0 frames sent by receiving node, no response to group commands
-    assert.equal(receivingNodeSendFrameSpy.callCount, 0);
+    assert.equal(receivingNodeSendFrameSpy.mock.callCount(), 0);
   });
 
   it('should not send a default response to a broadcast frame', async function () {
-    const toggledSpy = sandbox.spy();
+    const toggledSpy = mock.fn();
     receivingNode.endpoints[1].bind(
       'onOff',
       new (class extends BoundCluster {
@@ -350,22 +348,22 @@ describe('Node', function () {
       })(),
     );
 
-    const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
+    const receivingNodeSendFrameSpy = mock.method(receivingNode, 'sendFrame');
 
     const meta = { broadcast: true, dstEndpoint: 1 };
     await receivingNode.handleFrame(1, 6, Buffer.from([0x01, 0x01, 0x02]), meta);
-    assert.equal(toggledSpy.callCount, 1);
-    assert.equal(receivingNodeSendFrameSpy.callCount, 0);
+    assert.equal(toggledSpy.mock.callCount(), 1);
+    assert.equal(receivingNodeSendFrameSpy.mock.callCount(), 0);
   });
 
   it('should not send a default response error to a broadcast frame', async function () {
     receivingNode.endpoints[1].bind('onOff', new (class extends BoundCluster {})());
 
-    const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
+    const receivingNodeSendFrameSpy = mock.method(receivingNode, 'sendFrame');
 
     // toggle is not implemented, so this would otherwise get a default response error
     await receivingNode.handleFrame(1, 6, Buffer.from([0x01, 0x01, 0x02]), { broadcast: true });
-    assert.equal(receivingNodeSendFrameSpy.callCount, 0);
+    assert.equal(receivingNodeSendFrameSpy.mock.callCount(), 0);
   });
 
   it('should send a default response to a unicast frame for the broadcast endpoint', async function () {
@@ -376,10 +374,10 @@ describe('Node', function () {
       })(),
     );
 
-    const receivingNodeSendFrameSpy = sandbox.spy(receivingNode, 'sendFrame');
+    const receivingNodeSendFrameSpy = mock.method(receivingNode, 'sendFrame');
 
     await receivingNode.handleFrame(1, 6, Buffer.from([0x01, 0x01, 0x02]), { dstEndpoint: 0xff });
-    assert.equal(receivingNodeSendFrameSpy.callCount, 1);
+    assert.equal(receivingNodeSendFrameSpy.mock.callCount(), 1);
   });
 
   it('should write attributes', async function () {

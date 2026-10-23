@@ -1,14 +1,12 @@
 'use strict';
 
+const { describe, it, beforeEach, afterEach, mock } = require('node:test');
 const assert = require('assert');
-const sinon = require('sinon');
 
 const Node = require('../lib/Node');
 const BoundCluster = require('../lib/BoundCluster');
 const BasicCluster = require('../lib/clusters/basic');
 const OnOffCluster = require('../lib/clusters/onOff');
-
-const sandbox = sinon.createSandbox();
 
 describe('Transaction sequence number', function () {
   let receivingNode;
@@ -46,7 +44,7 @@ describe('Transaction sequence number', function () {
   });
 
   afterEach(function () {
-    sandbox.restore();
+    mock.restoreAll();
   });
 
   it('should share one counter across endpoints and clusters', async function () {
@@ -60,7 +58,7 @@ describe('Transaction sequence number', function () {
   });
 
   it('should start at a random value and wrap around', function () {
-    sandbox.stub(Math, 'random').returns(0.999);
+    mock.method(Math, 'random', () => 0.999);
     const node = new Node({ sendFrame: () => {}, endpointDescriptors: [] });
 
     assert.strictEqual(node.nextSeqNr(), 0);

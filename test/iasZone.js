@@ -1,5 +1,6 @@
 'use strict';
 
+const { describe, it } = require('node:test');
 const assert = require('assert');
 const BoundCluster = require('../lib/BoundCluster');
 const IASZoneCluster = require('../lib/clusters/iasZone');
@@ -8,7 +9,7 @@ const { ZCLStandardHeader } = require('../lib/zclFrames');
 
 describe('IAS Zone', function () {
   // Server-to-client notification - requires manual frame
-  it('should receive onZoneEnrollRequest', function (done) {
+  it('should receive onZoneEnrollRequest', function (t, done) {
     const node = createMockNode({
       loopback: true,
       endpoints: [
@@ -66,7 +67,7 @@ describe('IAS Zone', function () {
   });
 
   // Server-to-client notification - requires manual frame
-  it('should receive zoneStatusChangeNotification', function (done) {
+  it('should receive zoneStatusChangeNotification', function (t, done) {
     const node = createMockNode({
       loopback: true,
       endpoints: [

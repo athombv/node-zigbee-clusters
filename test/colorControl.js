@@ -1,14 +1,12 @@
 'use strict';
 
+const { describe, it, afterEach, mock } = require('node:test');
 const assert = require('assert');
-const sinon = require('sinon');
 
 const BoundCluster = require('../lib/BoundCluster');
 const ColorControlCluster = require('../lib/clusters/colorControl');
 const Endpoint = require('../lib/Endpoint');
 const { createMockNode } = require('./util');
-
-const sandbox = sinon.createSandbox();
 
 // Sends colorLoopSet on a fresh node and returns the parsed outgoing frame, so tests can assert
 // the payload bytes against the ZCL spec instead of round-tripping through our own definition
@@ -32,15 +30,15 @@ async function sendColorLoopSet(args) {
     })(),
   );
 
-  const sendFrameSpy = sandbox.spy(node, 'sendFrame');
+  const sendFrameSpy = mock.method(node, 'sendFrame');
   await node.endpoints[1].clusters.colorControl.colorLoopSet(args);
 
-  return Endpoint.parseFrame(sendFrameSpy.getCall(0).args[2]);
+  return Endpoint.parseFrame(sendFrameSpy.mock.calls[0].arguments[2]);
 }
 
 describe('Color Control', function () {
   afterEach(function () {
-    sandbox.restore();
+    mock.restoreAll();
   });
 
   it('should receive moveToColor', async function () {
