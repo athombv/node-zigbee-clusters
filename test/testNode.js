@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file,lines-around-directive
 'use strict';
 
 const assert = require('assert');
@@ -64,7 +63,7 @@ describe('Node', function() {
           maxInterval: 4321,
         },
       });
-    } catch (e) {
+    } catch {
       return;
     }
     throw new Error('didn\'t throw');
@@ -75,7 +74,7 @@ describe('Node', function() {
 
     try {
       await mockNode.endpoints[1].clusters['basic'].factoryReset();
-    } catch (e) {
+    } catch {
       return;
     }
     throw new Error('didn\'t throw');

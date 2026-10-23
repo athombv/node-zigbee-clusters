@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file,lines-around-directive
 'use strict';
 
 const assert = require('assert');

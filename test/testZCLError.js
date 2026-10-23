@@ -1,5 +1,3 @@
-/* eslint-disable max-classes-per-file */
-
 'use strict';
 
 const assert = require('assert');
@@ -244,7 +242,6 @@ describe('ZCLError handling', function() {
 
       })());
 
-      // eslint-disable-next-line no-await-in-loop
       await assert.rejects(
         () => node.endpoints[1].clusters.onOff.setOn(),
         err => {

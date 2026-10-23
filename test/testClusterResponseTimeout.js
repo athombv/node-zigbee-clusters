@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file,lines-around-directive
 'use strict';
 
 const assert = require('assert');
@@ -135,7 +134,6 @@ describe('Cluster Response Timeout', function() {
   it('should resolve getAlarm with a Get Alarm Response alone', async function() {
     const pair = [AlarmsCluster.ID];
     const sender = new Node({
-      // eslint-disable-next-line no-use-before-define
       sendFrame: (...args) => receiver.handleFrame(...args),
       endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
     });
@@ -188,7 +186,6 @@ describe('Cluster Response Timeout', function() {
     try {
       const pair = [TuyaLikeCluster.ID];
       const sender = new Node({
-        // eslint-disable-next-line no-use-before-define
         sendFrame: (...args) => receiver.handleFrame(...args),
         endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
       });
@@ -250,7 +247,6 @@ describe('Cluster Response Timeout', function() {
     try {
       const pair = [EchoCluster.ID];
       const sender = new Node({
-        // eslint-disable-next-line no-use-before-define
         sendFrame: (...args) => receiver.handleFrame(...args),
         endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
       });
@@ -285,7 +281,6 @@ describe('Cluster Response Timeout', function() {
     function createCollidingPair(clusterId, colliding) {
       const descriptors = [{ endpointId: 1, inputClusters: [clusterId] }];
       const sender = new Node({
-        // eslint-disable-next-line no-use-before-define
         sendFrame: (...args) => receiver.handleFrame(...args),
         endpointDescriptors: descriptors,
       });

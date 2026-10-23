@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file,lines-around-directive
 'use strict';
 
 const assert = require('assert');
@@ -188,7 +187,6 @@ describe('Color Control', function() {
     ];
 
     for (const [flag, expectedByte] of flagBits) {
-      // eslint-disable-next-line no-await-in-loop
       const frame = await sendColorLoopSet({
         updateFlags: [flag],
         action: 'deactivate',
