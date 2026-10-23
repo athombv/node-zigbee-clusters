@@ -323,16 +323,17 @@ To regenerate TypeScript types after modifying cluster definitions:
 npm run generate-types
 ```
 
-This runs `scripts/generate-types.js` which loads all cluster modules and generates typed interfaces.
+This runs `scripts/generate-types.mts` which loads all cluster modules and generates typed interfaces.
 
 ### Automatic Generation (GitHub Actions)
 
-TypeScript types are automatically regenerated when changes are pushed to the `develop` branch that affect:
+TypeScript types are automatically regenerated when a push to any branch other than `production` changes:
 
 - `lib/clusters/**/*.js` - cluster definitions
-- `scripts/generate-types.js` - the generator script
+- `lib/Cluster.js`, `lib/constants.js` and `index.js`
+- `scripts/generate-types.mts` and `scripts/template.d.ts.txt` - the generator and its template
 
-The workflow commits updated types back to `develop` if changes are detected.
+The workflow commits updated types back to that branch if changes are detected.
 
 ## Contributing
 
