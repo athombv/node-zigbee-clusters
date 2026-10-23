@@ -15,8 +15,6 @@ name: Deploy Documentation To GitHub Pages
 
 # Note: make sure to commit package-lock.json, this is needed for `npm ci`.
 
-# Note: add `.github` to .npmignore
-
 on:
   push:
     branches: [production]

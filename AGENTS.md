@@ -5,10 +5,13 @@ This file provides guidance to AI agents when working with code in this reposito
 ## Commands
 
 ```bash
-npm test              # Run all tests (node:test)
-npm run lint          # ESLint (flat config in eslint.config.js)
-npm run build         # Generate JSDoc documentation into build/
-npm run docs          # Build the docs and open them in the browser (macOS `open`)
+npm test                # Run all tests (node:test)
+npm run lint            # ESLint (flat config in eslint.config.js)
+npm run format:check    # Prettier check, run in CI next to lint
+npm run format:write    # Apply Prettier; run before committing
+npm run generate-types  # Regenerate index.d.ts from the cluster definitions
+npm run build           # Generate JSDoc documentation into build/
+npm run docs            # Build the docs and open them in the browser (macOS `open`)
 ```
 
 The docs are a static site that works straight from disk, no server needed. Off macOS, run
