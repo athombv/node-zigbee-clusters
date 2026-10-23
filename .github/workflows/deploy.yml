@@ -1,13 +1,14 @@
 name: Deploy
 
 # About this workflow:
-# It is triggered on push events to branches production and testing. Then it performs a checkout of the current repo
-# and sets up a node environment (v12). Following, it will run `npm ci` to build the package. Next, it will look at your
+# It is triggered on push events to the production branch. Then it performs a checkout of the current repo
+# and sets up a node environment (see .nvmrc). Following, it will run `npm ci` to build the package. Next, it will look at your
 # commit message, if it includes '#patch', '#minor', or '#major' it will bump the package version accordingly.
-# Finally, the `npm publish` command will be run, when on branch testing it will run `npm publish --tag beta` to publish
-# it under the beta flag on npm. Note: if no '#patch', '#minor', or '#major' flag is present in the latest commit
-# AND the package version is not bumped manually the publish step will fail because we can not publish to an existing
-# version.
+# Finally, the `npm publish` command will be run. Note: if no '#patch', '#minor', or '#major' flag is present in the latest
+# commit AND the package version is not bumped manually the publish step will fail because we can not publish to an
+# existing version.
+# Once npm has accepted the version, a GitHub release with generated notes is created.
+# See .github/release.yml for how the notes are grouped.
 
 # GitHub repo configuration:
 # 1. Go to Manage access and add 'Github Actions' team with role: admin.
@@ -16,13 +17,12 @@ name: Deploy
 
 # Note: make sure to commit package-lock.json, this is needed for `npm ci`.
 
-# Defines the trigger for this action, in general you want it to run when pushing to production | testing. For more
+# Defines the trigger for this action, in general you want it to run when pushing to production. For more
 # information see: https://help.github.com/en/actions/automating-your-workflow-with-github-actions/events-that-trigger-workflows#about-workflow-events)
 on:
   push:
     branches:
       - production
-      - testing
   workflow_dispatch:
     inputs:
       versionBumpType:
@@ -33,10 +33,10 @@ jobs:
   deploy_to_npm:
     name: Version Bump & Deploy to NPM
 
-    # Only run this job if initiator is not the Homey Github Actions Bot to prevent loops and check if if a version bump is provided and current branch is production or testing
+    # Only run this job if initiator is not the Homey Github Actions Bot to prevent loops and check if a version bump is provided and current branch is production
     if: github.actor != 'homey-bot'
-        && (github.ref == 'refs/heads/production' || github.ref == 'refs/heads/testing')
-        && (github.event.inputs.versionBumpType == 'patch' || github.event.inputs.versionBumpType == 'minor' || github.event.inputs.versionBumpType == 'major' || contains(github.event.head_commit.message, '#patch') || contains(github.event.head_commit.message, '#minor') || contains(github.event.head_commit.message, '#major'))
+      && github.ref == 'refs/heads/production'
+      && (github.event.inputs.versionBumpType == 'patch' || github.event.inputs.versionBumpType == 'minor' || github.event.inputs.versionBumpType == 'major' || contains(github.event.head_commit.message, '#patch') || contains(github.event.head_commit.message, '#minor') || contains(github.event.head_commit.message, '#major'))
 
     runs-on: ubuntu-latest
 
@@ -47,13 +47,14 @@ jobs:
       id-token: write
 
     steps:
-
       # Checks out the current repository.
       - name: Checkout git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # The token below is only necessary if you want to push the version bump to a protected branch
           token: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
+          # Full history and tags, so the release step can find the previous tag.
+          fetch-depth: 0
 
       # Set git config to reflect Homey Github Actions Bot user
       - name: Set up HomeyGithubActionsBot git user
@@ -64,16 +65,32 @@ jobs:
       # Configures a Node.js environment pointed at the public npm registry so
       # `npm publish` uses OIDC against npmjs.org.
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
+          cache: 'npm'
           registry-url: https://registry.npmjs.org
 
-      # Run `npm ci && npm run build` to re-create your local environment (make sure to commit your - package-lock.json!).
-      - name: Build
+      # OIDC trusted publishing needs npm 11.5.1 or newer. Node 22 bundles npm 10,
+      # and setup-node installs whatever npm ships with the Node version.
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@^11.5.1
+
+      # Run `npm ci` to re-create your local environment (make sure to commit your - package-lock.json!).
+      - name: Install
+        run: npm ci
+
+      # Nothing below this point runs if the package does not lint, format or test
+      # cleanly, so nothing reaches npm that was never checked. Ahead of the docs build,
+      # which is the slowest step here.
+      - name: Validate
         run: |
-          npm ci
-          npm run build
+          npm run lint
+          npm run format:check
+          npm test
+
+      - name: Build
+        run: npm run build
 
       - name: Version bump patch
         if: github.event.inputs.versionBumpType == 'patch' || contains(github.event.head_commit.message, '#patch') && !contains(github.event.head_commit.message, '#minor') && !contains(github.event.head_commit.message, '#major')
@@ -96,20 +113,33 @@ jobs:
           git pull
           git push --follow-tags
 
-      # Publish when this action is running on branch production.
       # No NPM_AUTH_TOKEN: auth is brokered via OIDC against the npm
       # Trusted Publisher configured on the package on npmjs.com.
       - name: Publish
-        if: github.ref == 'refs/heads/production'
-        run: |
-          npm publish --provenance
-          VERSION="$(node -p "require('./package.json').version")"
-          echo package_version=${VERSION} >> $GITHUB_ENV
+        run: npm publish --provenance
 
-      # Publish to beta when this action is running on branch testing.
-      - name: Publish to beta
-        if: github.ref == 'refs/heads/testing'
+      # After the publish, and starting from the previous release rather than the previous tag,
+      # because a publish that fails after the version bump leaves a tag without an npm version
+      # behind (v2.7.0, v3.1.0). Until the first release exists, the start is the last version npm
+      # actually has, for the same reason. If this step fails, create the release by hand: a rerun
+      # would bump again.
+      - name: Create GitHub release
+        # Explicit, because only then does Actions add pipefail: without it a failing gh api still
+        # feeds the Node filter an empty input, and an empty release gets published.
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
         run: |
-          npm publish --provenance --tag beta
-          VERSION="$(node -p "require('./package.json').version")@beta"
-          echo package_version=${VERSION} >> $GITHUB_ENV
+          VERSION="$(node -p "require('./package.json').version")"
+          TAG="v$VERSION"
+          if ! PREVIOUS_TAG="$(gh release view --json tagName -q .tagName)"; then
+            PREVIOUS_TAG="v$(npm view "zigbee-clusters@<$VERSION" version --json \
+              | node -p "[].concat(JSON.parse(require('node:fs').readFileSync(0, 'utf8'))).at(-1)")"
+          fi
+          # The notes list each pull request title as is. Drop its conventional-commit prefix, which the
+          # category heading above it already says.
+          gh api "repos/$GITHUB_REPOSITORY/releases/generate-notes" \
+            -f tag_name="$TAG" -f previous_tag_name="$PREVIOUS_TAG" --jq .body \
+            | node -e "process.stdout.write(require('node:fs').readFileSync(0, 'utf8').replace(/^\* \w+(\([^)]*\))?!?: (.)/gm, (_, _scope, first) => '* ' + first.toUpperCase()))" \
+            > release-notes.md
+          gh release create "$TAG" --verify-tag --title "$TAG" --notes-file release-notes.md

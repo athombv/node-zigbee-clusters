@@ -1,63 +1,66 @@
-// eslint-disable-next-line max-classes-per-file,lines-around-directive
 'use strict';
 
-const assert = require('assert');
-const sinon = require('sinon');
+const { describe, it, afterEach, mock } = require('node:test');
+const assert = require('node:assert');
 
 const BoundCluster = require('../lib/BoundCluster');
 const ColorControlCluster = require('../lib/clusters/colorControl');
 const Endpoint = require('../lib/Endpoint');
 const { createMockNode } = require('./util');
 
-const sandbox = sinon.createSandbox();
-
 // Sends colorLoopSet on a fresh node and returns the parsed outgoing frame, so tests can assert
 // the payload bytes against the ZCL spec instead of round-tripping through our own definition
 async function sendColorLoopSet(args) {
   const node = createMockNode({
     loopback: true,
-    endpoints: [{
-      endpointId: 1,
-      inputClusters: [ColorControlCluster.ID],
-    }],
-  });
-
-  node.endpoints[1].bind('colorControl', new (class extends BoundCluster {
-
-    async colorLoopSet() {
-      // Accept the command so no error response is generated
-    }
-
-  })());
-
-  const sendFrameSpy = sandbox.spy(node, 'sendFrame');
-  await node.endpoints[1].clusters.colorControl.colorLoopSet(args);
-
-  return Endpoint.parseFrame(sendFrameSpy.getCall(0).args[2]);
-}
-
-describe('Color Control', function() {
-  afterEach(function() {
-    sandbox.restore();
-  });
-
-  it('should receive moveToColor', async function() {
-    const node = createMockNode({
-      loopback: true,
-      endpoints: [{
+    endpoints: [
+      {
         endpointId: 1,
         inputClusters: [ColorControlCluster.ID],
-      }],
+      },
+    ],
+  });
+
+  node.endpoints[1].bind(
+    'colorControl',
+    new (class extends BoundCluster {
+      async colorLoopSet() {
+        // Accept the command so no error response is generated
+      }
+    })(),
+  );
+
+  const sendFrameSpy = mock.method(node, 'sendFrame');
+  await node.endpoints[1].clusters.colorControl.colorLoopSet(args);
+
+  return Endpoint.parseFrame(sendFrameSpy.mock.calls[0].arguments[2]);
+}
+
+describe('Color Control', function () {
+  afterEach(function () {
+    mock.restoreAll();
+  });
+
+  it('should receive moveToColor', async function () {
+    const node = createMockNode({
+      loopback: true,
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [ColorControlCluster.ID],
+        },
+      ],
     });
 
     let receivedData = null;
-    node.endpoints[1].bind('colorControl', new (class extends BoundCluster {
-
-      async moveToColor(data) {
-        receivedData = data;
-      }
-
-    })());
+    node.endpoints[1].bind(
+      'colorControl',
+      new (class extends BoundCluster {
+        async moveToColor(data) {
+          receivedData = data;
+        }
+      })(),
+    );
 
     await node.endpoints[1].clusters.colorControl.moveToColor({
       colorX: 0x5000,
@@ -70,23 +73,26 @@ describe('Color Control', function() {
     assert.strictEqual(receivedData.transitionTime, 20);
   });
 
-  it('should receive moveToColorTemperature', async function() {
+  it('should receive moveToColorTemperature', async function () {
     const node = createMockNode({
       loopback: true,
-      endpoints: [{
-        endpointId: 1,
-        inputClusters: [ColorControlCluster.ID],
-      }],
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [ColorControlCluster.ID],
+        },
+      ],
     });
 
     let receivedData = null;
-    node.endpoints[1].bind('colorControl', new (class extends BoundCluster {
-
-      async moveToColorTemperature(data) {
-        receivedData = data;
-      }
-
-    })());
+    node.endpoints[1].bind(
+      'colorControl',
+      new (class extends BoundCluster {
+        async moveToColorTemperature(data) {
+          receivedData = data;
+        }
+      })(),
+    );
 
     await node.endpoints[1].clusters.colorControl.moveToColorTemperature({
       colorTemperature: 370,
@@ -97,23 +103,26 @@ describe('Color Control', function() {
     assert.strictEqual(receivedData.transitionTime, 15);
   });
 
-  it('should receive moveToHueAndSaturation', async function() {
+  it('should receive moveToHueAndSaturation', async function () {
     const node = createMockNode({
       loopback: true,
-      endpoints: [{
-        endpointId: 1,
-        inputClusters: [ColorControlCluster.ID],
-      }],
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [ColorControlCluster.ID],
+        },
+      ],
     });
 
     let receivedData = null;
-    node.endpoints[1].bind('colorControl', new (class extends BoundCluster {
-
-      async moveToHueAndSaturation(data) {
-        receivedData = data;
-      }
-
-    })());
+    node.endpoints[1].bind(
+      'colorControl',
+      new (class extends BoundCluster {
+        async moveToHueAndSaturation(data) {
+          receivedData = data;
+        }
+      })(),
+    );
 
     await node.endpoints[1].clusters.colorControl.moveToHueAndSaturation({
       hue: 180,
@@ -126,23 +135,26 @@ describe('Color Control', function() {
     assert.strictEqual(receivedData.transitionTime, 10);
   });
 
-  it('should receive colorLoopSet', async function() {
+  it('should receive colorLoopSet', async function () {
     const node = createMockNode({
       loopback: true,
-      endpoints: [{
-        endpointId: 1,
-        inputClusters: [ColorControlCluster.ID],
-      }],
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [ColorControlCluster.ID],
+        },
+      ],
     });
 
     let receivedData = null;
-    node.endpoints[1].bind('colorControl', new (class extends BoundCluster {
-
-      async colorLoopSet(data) {
-        receivedData = data;
-      }
-
-    })());
+    node.endpoints[1].bind(
+      'colorControl',
+      new (class extends BoundCluster {
+        async colorLoopSet(data) {
+          receivedData = data;
+        }
+      })(),
+    );
 
     await node.endpoints[1].clusters.colorControl.colorLoopSet({
       updateFlags: ['updateAction', 'updateDirection', 'updateTime', 'updateStartHue'],
@@ -153,7 +165,10 @@ describe('Color Control', function() {
     });
 
     assert.deepStrictEqual(receivedData.updateFlags.getBits(), [
-      'updateAction', 'updateDirection', 'updateTime', 'updateStartHue',
+      'updateAction',
+      'updateDirection',
+      'updateTime',
+      'updateStartHue',
     ]);
     assert.strictEqual(receivedData.action, 'activateFromColorLoopStartEnhancedHue');
     assert.strictEqual(receivedData.direction, 'incrementHue');
@@ -165,7 +180,7 @@ describe('Color Control', function() {
   // that definition is wrong on the wire. These bytes come from the spec, not from our types:
   // ZCL r8 Figure 5-17 (payload layout), Figure 5-18 (updateFlags bits), Table 5.25 (action
   // values), Table 5.26 (direction values), Table 5.13 (command id).
-  it('should encode colorLoopSet as specified by the ZCL', async function() {
+  it('should encode colorLoopSet as specified by the ZCL', async function () {
     const frame = await sendColorLoopSet({
       updateFlags: ['updateAction', 'updateStartHue'], // Bits 0 and 3, so 0x09
       action: 'activateFromEnhancedCurrentHue', // 0x02
@@ -179,7 +194,7 @@ describe('Color Control', function() {
   });
 
   // Setting every flag at once cannot tell the bit positions apart, so pin each one separately
-  it('should encode each colorLoopSet update flag on its own bit', async function() {
+  it('should encode each colorLoopSet update flag on its own bit', async function () {
     const flagBits = [
       ['updateAction', 0x01],
       ['updateDirection', 0x02],
@@ -188,7 +203,6 @@ describe('Color Control', function() {
     ];
 
     for (const [flag, expectedByte] of flagBits) {
-      // eslint-disable-next-line no-await-in-loop
       const frame = await sendColorLoopSet({
         updateFlags: [flag],
         action: 'deactivate',

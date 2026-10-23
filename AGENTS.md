@@ -5,15 +5,26 @@ This file provides guidance to AI agents when working with code in this reposito
 ## Commands
 
 ```bash
-npm test              # Run all tests (mocha)
-npm run lint          # ESLint (extends athom config)
-npm run build         # Generate JSDoc documentation
+npm test                # Run all tests (node:test)
+npm run lint            # ESLint (flat config in eslint.config.js)
+npm run format:check    # Prettier check, run in CI next to lint
+npm run format:write    # Apply Prettier; run before committing
+npm run generate-types  # Regenerate index.d.ts from the cluster definitions
+npm run build           # Generate JSDoc documentation into build/
+npm run docs            # Build the docs and open them in the browser (macOS `open`)
 ```
+
+The docs are a static site that works straight from disk, no server needed. Off macOS, run
+`npm run build` and open `build/index.html` in a browser.
 
 Run single test file:
 ```bash
-npx mocha test/onOff.js
+node --test test/onOff.js
 ```
+
+## Pull Requests and Releases
+
+Pull request titles use Conventional Commits, `type(scope): Description` with a capital letter after the prefix. The prefix decides where the change lands in the release notes: `feat` under New features, `fix` and `perf` under Fixes, a `!` before the colon under Breaking changes, and `build`, `chore`, `ci`, `docs`, `refactor`, `style` and `test` are left out. Use `feat` or `fix` for anything someone using the library would notice. How a release is cut is described under [Releasing](README.md#releasing).
 
 ## Architecture
 
@@ -64,10 +75,16 @@ inputClusters: [0x0006]
 
 ### Test Pattern
 
+Tests run on `node:test`, so `describe`, `it` and `mock` are imported, not globals. A
+callback-style test takes the test context first: `it('...', function(t, done) { ... })`.
+With `function(done)` node:test sees a synchronous test, passes it immediately and never
+runs the assertions.
+
 Tests use mock nodes from `test/util/mockNode.js`:
 
 **Single node with loopback** (command → same node's BoundCluster):
 ```javascript
+const { describe, it } = require('node:test');
 const { createMockNode } = require('./util');
 const OnOffCluster = require('../lib/clusters/onOff');
 
@@ -172,7 +189,8 @@ const COMMANDS = {
   // --- Client to Server Commands ---
 
   // Description from spec.
-  commandName: { // Mandatory
+  // Mandatory
+  commandName: {
     id: 0x0000,
     args: {
       argName: ZCLDataTypes.uint8,
@@ -186,7 +204,8 @@ const COMMANDS = {
   // --- Server to Client Commands ---
 
   // Description from spec.
-  notificationName: { // Optional
+  // Optional
+  notificationName: {
     id: 0x0020, // 32
     direction: Cluster.DIRECTION_SERVER_TO_CLIENT,
     args: {
@@ -224,11 +243,13 @@ module.exports = ExampleCluster;
 1. **Description placement**: ABOVE the attribute/command
 2. **M/O marker placement**:
    - Single-line: at END of line (`attrName: { ... }, // Mandatory`)
-   - Multi-line: on OPENING brace (`attrName: { // Mandatory`)
+   - Multi-line: on its own line ABOVE the key (`// Mandatory` then `attrName: {`),
+     below the description if there is one. Not on the opening brace: Prettier pulls a
+     comment there inside the braces, where it reads as if it belongs to `id`.
    - NEVER on closing brace
 3. **Copy exactly**: Text from spec, 1-on-1
 4. **Skip if >5 sentences**: Skip and only refer to section in spec
-5. **Line wrap**: Respect 100 char limit (ESLint)
+5. **Line wrap**: Respect 100 char limit (Prettier `printWidth`); run `npm run format:write`
 6. **M/O source for attrs**: Server-side column in spec table
 7. **M/O source for cmds**:
    - Server "receives" → server-side M/O
@@ -252,7 +273,7 @@ pirUnoccupiedToOccupiedDelay: { id: 0x0011, type: ZCLDataTypes.uint16 }, // 17, 
 
 | Field | Format | Notes |
 |-------|--------|-------|
-| `id` | Hex (`0x0000`) | Always 4-digit format (0x0000); add decimal comment if > 9 |
+| `id` | Hex (`0x0000`) | Always 4-digit format (0x0000), lowercase digits; add decimal comment if > 9 |
 | `type` | `ZCLDataTypes.*` | See type reference below |
 | M/O | Inline comment | `// Mandatory`, `// Optional`, or `// Conditional` |
 
@@ -260,7 +281,7 @@ pirUnoccupiedToOccupiedDelay: { id: 0x0011, type: ZCLDataTypes.uint16 }, // 17, 
 
 For hex values > 9 (where hex differs from decimal), add decimal in comment:
 ```javascript
-id: 0x000A, // 10
+id: 0x000a, // 10
 id: 0x0010, // 16
 id: 0x0100, // 256
 ```
@@ -271,9 +292,10 @@ id: 0x0000,
 id: 0x0009,
 ```
 
-For multi-line definitions, decimal goes on the `id:` line, M/O on opening brace:
+For multi-line definitions, decimal goes on the `id:` line, M/O above the key:
 ```javascript
-operatingMode: { // Optional
+// Optional
+operatingMode: {
   id: 0x0025, // 37
   type: ZCLDataTypes.enum8({
     normal: 0,
@@ -300,7 +322,7 @@ attr3: { ... },
 
 | Field | Required | Notes |
 |-------|----------|-------|
-| `id` | Yes | Always 4-digit hex format (0x0000); add decimal comment if > 9 |
+| `id` | Yes | Always 4-digit hex format (0x0000), lowercase digits; add decimal comment if > 9 |
 | `args` | If has params | Object with typed fields |
 | `response` | If expects response | Has own `id` and `args` |
 | `encodeMissingFieldsBehavior` | Controls the behavior of missing fields when encoding the struct | Set to `skip` if some fields are optional, omit if all fields are mandatory |
@@ -313,7 +335,8 @@ attr3: { ... },
 lockDoor: { id: 0x0000, ... }, // Mandatory
 
 // --- Server to Client Commands ---
-operationEventNotification: { // Optional
+// Optional
+operationEventNotification: {
   id: 0x0020, // 32
   direction: Cluster.DIRECTION_SERVER_TO_CLIENT,
   ...

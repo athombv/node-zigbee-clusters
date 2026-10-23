@@ -4,14 +4,13 @@ on:
   push:
     branches-ignore:
       - production
-      - testing
     paths:
-      - "lib/clusters/**/*.js"
-      - "scripts/generate-types.mts"
-      - "scripts/template.d.ts.txt"
-      - "index.js"
-      - "lib/Cluster.js"
-      - "lib/constants.js"
+      - 'lib/clusters/**/*.js'
+      - 'scripts/generate-types.mts'
+      - 'scripts/template.d.ts.txt'
+      - 'index.js'
+      - 'lib/Cluster.js'
+      - 'lib/constants.js'
   workflow_dispatch:
 
 jobs:
@@ -23,16 +22,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.ref_name }}
           token: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: "npm"
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci

@@ -30,12 +30,12 @@ v2.0.0
 - Changed `Cluster.readAttributes` signature, attributes must now be specified as an array of strings.
 
 ```js
-zclNode.endpoints[1].clusters.basic.readAttributes(["modelId", "manufacturerName"]);
+zclNode.endpoints[1].clusters.basic.readAttributes(['modelId', 'manufacturerName']);
 ```
 
-## Release
+## Changelog
 
-Merge to production and include `#patch`, `#minor` or `#major` in the PR/commit message. Or merge to production and run the "Deploy" workflow and provide a version bump parameter.
+What changed in each version is listed in the [GitHub releases](https://github.com/athombv/node-zigbee-clusters/releases). How those notes are put together is described under [Releasing](#releasing).
 
 ## About Zigbee Clusters
 
@@ -70,8 +70,8 @@ In order to communicate with a Zigbee node retrieve a `node` instance from `Mana
 `/drivers/my-driver/device.js`
 
 ```js
-const Homey = require("homey");
-const { ZCLNode, CLUSTER } = require("zigbee-clusters");
+const Homey = require('homey');
+const { ZCLNode, CLUSTER } = require('zigbee-clusters');
 
 class MyDevice extends Homey.Device {
   onInit() {
@@ -101,7 +101,7 @@ class MyDevice extends Homey.Device {
           // timeout (10000ms) before the command is considered rejected.
           // The timeout starts after sending the frame and receiving a low-level ack.
           timeout: 5000,
-        }
+        },
       );
     });
   }
@@ -113,8 +113,8 @@ class MyDevice extends Homey.Device {
 `/drivers/my-driver/device.js`
 
 ```js
-const Homey = require("homey");
-const { ZCLNode, CLUSTER } = require("zigbee-clusters");
+const Homey = require('homey');
+const { ZCLNode, CLUSTER } = require('zigbee-clusters');
 
 class MyDevice extends Homey.Device {
   onInit() {
@@ -134,10 +134,10 @@ class MyDevice extends Homey.Device {
 
       // And listen for incoming attribute reports by binding a listener on the cluster
       zclNode.endpoints[1].clusters[CLUSTER.COLOR_CONTROL.NAME].on(
-        "attr.currentSaturation",
+        'attr.currentSaturation',
         (currentSaturation) => {
           // handle reported attribute value
-        }
+        },
       );
     });
   }
@@ -181,7 +181,7 @@ class OnOffCluster extends Cluster {
   }
 
   static get NAME() {
-    return "onOff"; // The cluster name
+    return 'onOff'; // The cluster name
   }
 
   static get ATTRIBUTES() {
@@ -214,7 +214,7 @@ Zigbee nodes can send commands to Homey via bound clusters. This requires a bind
 `/lib/LevelControlBoundCluster.js`
 
 ```js
-const { BoundCluster } = require("zigbee-clusters");
+const { BoundCluster } = require('zigbee-clusters');
 
 class LevelControlBoundCluster extends BoundCluster {
   constructor({ onMove }) {
@@ -237,7 +237,7 @@ module.exports = LevelControlBoundCluster;
 `/drivers/my-driver/device.js`
 
 ```js
-const LevelControlBoundCluster = require("../../lib/LevelControlBoundCluster");
+const LevelControlBoundCluster = require('../../lib/LevelControlBoundCluster');
 
 // Register the `BoundCluster` implementation with the `ZCLNode`
 zclNode.endpoints[1].bind(
@@ -246,7 +246,7 @@ zclNode.endpoints[1].bind(
     onMove: (payload) => {
       // Do something with the received payload
     },
-  })
+  }),
 );
 ```
 
@@ -257,7 +257,7 @@ There are cases where it is required to implement a custom cluster, for example 
 `lib/IkeaSpecificSceneCluster.js`
 
 ```js
-const { ScenesCluster, ZCLDataTypes } = require("zigbee-clusters");
+const { ScenesCluster, ZCLDataTypes } = require('zigbee-clusters');
 
 class IkeaSpecificSceneCluster extends ScenesCluster {
   // Here we override the `COMMANDS` getter from the `ScenesClusters` by
@@ -299,14 +299,14 @@ module.exports = IkeaSpecificSceneCluster;
 `/drivers/my-driver/device.js`
 
 ```js
-const IkeaSpecificSceneCluster = require("../../lib/IkeaSpecificSceneCluster");
+const IkeaSpecificSceneCluster = require('../../lib/IkeaSpecificSceneCluster');
 
 // Important: we have created a new `Cluster` instance which needs to be added before
 // it becomes available on any `ZCLNode` instance.
 Cluster.addCluster(IkeaSpecificSceneCluster);
 
 // Example invocation of custom cluster command
-zclNode.endpoints[1].clusters["scenes"].ikeaSceneMove({ mode: 0, transitionTime: 10 });
+zclNode.endpoints[1].clusters['scenes'].ikeaSceneMove({ mode: 0, transitionTime: 10 });
 ```
 
 This also works for `BoundClusters`, if a node sends commands to Homey using a custom cluster it is necessary to implement a custom `BoundCluster` and bind it to the `ZCLNode` instance. For an example check the implementation in the `com.ikea.tradfri` driver [remote_control](https://github.com/athombv/com.ikea.tradfri-example/tree/master/drivers/remote_control/device.js).
@@ -323,20 +323,54 @@ To regenerate TypeScript types after modifying cluster definitions:
 npm run generate-types
 ```
 
-This runs `scripts/generate-types.js` which loads all cluster modules and generates typed interfaces.
+This runs `scripts/generate-types.mts` which loads all cluster modules and generates typed interfaces.
 
 ### Automatic Generation (GitHub Actions)
 
-TypeScript types are automatically regenerated when changes are pushed to the `develop` branch that affect:
-- `lib/clusters/**/*.js` - cluster definitions
-- `scripts/generate-types.js` - the generator script
+TypeScript types are automatically regenerated when a push to any branch other than `production` changes:
 
-The workflow commits updated types back to `develop` if changes are detected.
+- `lib/clusters/**/*.js` - cluster definitions
+- `lib/Cluster.js`, `lib/constants.js` and `index.js`
+- `scripts/generate-types.mts` and `scripts/template.d.ts.txt` - the generator and its template
+
+The workflow commits updated types back to that branch if changes are detected.
 
 ## Contributing
 
 Great if you'd like to contribute to this project, a few things to take note of before submitting a PR:
 
-- This project enforces ESLint, validate by running `npm run lint`.
-- This project implements a basic test framework based on mocha, see [test](https://github.com/athombv/node-zigbee-clusters/blob/production/test) directory.
-- This project uses several [GitHub Action workflows](https://github.com/athombv/node-zigbee-clusters/blob/production/.github/workflows) (e.g. ESLint, running test and versioning/publishing).
+- This project enforces ESLint and Prettier: check with `npm run lint` and `npm run format:check`, and fix formatting with `npm run format:write`.
+- Tests use the built-in node:test runner, see the [test](https://github.com/athombv/node-zigbee-clusters/blob/production/test) directory.
+- Pull request titles follow [Conventional Commits](https://www.conventionalcommits.org/), for example `fix(onOff): Handle a missing attribute`. The title becomes a line in the release notes, so write it for someone using the library. See [Release notes](#release-notes).
+- [GitHub Action workflows](https://github.com/athombv/node-zigbee-clusters/blob/production/.github/workflows) run ESLint, Prettier and the tests, and publish releases.
+
+## Releasing
+
+Releases are published from the `production` branch by the Deploy workflow (`.github/workflows/deploy.yml`).
+
+1. Open a pull request from `master` into `production` with `#patch`, `#minor` or `#major` in its title, for example `Merge master into production (#minor)`.
+2. Merge it with a merge commit or a squash merge, not a rebase merge. The workflow reads the marker from the commit message that lands on `production`, and only those two carry the pull request title into it.
+
+The workflow then lints, checks formatting and runs the tests, builds, bumps the version and pushes the version commit and tag, publishes to npm with [trusted publishing](https://docs.npmjs.com/trusted-publishers), and creates a GitHub release.
+
+Instead of using a marker, you can also start the Deploy workflow by hand on `production` and pass the version bump as input.
+
+If creating the GitHub release fails after the npm publish, create it by hand. Running the workflow again would bump the version a second time.
+
+### Release notes
+
+GitHub generates the notes from the titles of the pull requests merged since the previous release, grouped by label. A workflow sets that label from the title's prefix, so a pull request lands in the right section on its own:
+
+| Title prefix                                                | Section          |
+| ----------------------------------------------------------- | ---------------- |
+| `feat`                                                      | New features     |
+| `fix`, `perf`                                               | Fixes            |
+| `!` before the colon, as in `feat!:`                        | Breaking changes |
+| `build`, `chore`, `ci`, `docs`, `refactor`, `style`, `test` | Left out         |
+| No prefix                                                   | Other changes    |
+
+The prefix itself is stripped from each line, and release pull requests into `production` are left out.
+
+To move a pull request to another section, change its title, also after it was merged: the label follows. To reword a line, edit the release on GitHub after it is published.
+
+The grouping is configured in `.github/release.yml`, the labeling in `.github/workflows/label-pr.yml`.

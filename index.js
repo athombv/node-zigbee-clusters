@@ -39,11 +39,7 @@ function debug(flag = true, namespaces = '*') {
   _debug.disable();
 }
 
-const {
-  ZCLDataTypes,
-  ZCLDataType,
-  ZCLStruct,
-} = zclTypes;
+const { ZCLDataTypes, ZCLDataType, ZCLStruct } = zclTypes;
 
 const { ZIGBEE_PROFILE_ID, ZIGBEE_DEVICE_ID, IAS_ZONE_TYPE } = require('./lib/constants');
 
