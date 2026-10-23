@@ -8,15 +8,13 @@ const BASIC_CLUSTER_ID = 0x0000;
 const MODEL_ID = 0x0005;
 
 class Basic extends BoundCluster {
-
   get modelId() {
     return 'Homey Bridge';
   }
-
 }
 
-describe('Endpoint standalone', function() {
-  it('serves bound clusters with nothing but a sendFrame owner', async function() {
+describe('Endpoint standalone', function () {
+  it('serves bound clusters with nothing but a sendFrame owner', async function () {
     // The whole point of the export: a device answering incoming commands is not a peer, so it
     // should not have to construct a ZCLNode - which models one remote node and bakes that node's
     // address into its own sendFrame. Endpoint only needs sendFrame from its owner (nextSeqNr is
@@ -38,7 +36,7 @@ describe('Endpoint standalone', function() {
     assert.equal(sent.toString('hex'), '180701050000420c486f6d657920427269646765');
   });
 
-  it('allocates transaction sequence numbers without a node counter', function() {
+  it('allocates transaction sequence numbers without a node counter', function () {
     const endpoint = new Endpoint(
       { sendFrame: async () => {} },
       { endpointId: 1, inputClusters: [BASIC_CLUSTER_ID], outputClusters: [] },

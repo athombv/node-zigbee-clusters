@@ -20,7 +20,6 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-
       # Checks out the current repository.
       - uses: actions/checkout@v4
 
@@ -34,3 +33,5 @@ jobs:
       - run: npm ci
 
       - run: npm run lint
+
+      - run: npm run format:check

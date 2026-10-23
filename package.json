@@ -15,7 +15,9 @@
     "serve": "concurrently \"serve build/\" \"npm run build:watch\"",
     "build": "jsdoc --configure ./docs/jsdoc.json",
     "build:clean": "rm -rf ./build",
-    "build:watch": "watch \"npm run build:clean && npm run build\" lib docs \"node_modules/@athombv/jsdoc-template\""
+    "build:watch": "watch \"npm run build:clean && npm run build\" lib docs \"node_modules/@athombv/jsdoc-template\"",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -46,6 +48,7 @@
     "jsdoc": "^4.0.5",
     "jsdoc-ts-utils": "^6.0.0",
     "mocha": "^12.0.3",
+    "prettier": "^3.9.10",
     "serve": "^14.0.1",
     "sinon": "^19.0.2",
     "typescript": "^5.9.3",
