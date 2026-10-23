@@ -5,7 +5,7 @@ This file provides guidance to AI agents when working with code in this reposito
 ## Commands
 
 ```bash
-npm test              # Run all tests (mocha)
+npm test              # Run all tests (node:test)
 npm run lint          # ESLint (flat config in eslint.config.js)
 npm run build         # Generate JSDoc documentation into build/
 npm run docs          # Build the docs and open them in the browser (macOS `open`)
@@ -16,7 +16,7 @@ The docs are a static site that works straight from disk, no server needed. Off 
 
 Run single test file:
 ```bash
-npx mocha test/onOff.js
+node --test test/onOff.js
 ```
 
 ## Architecture
@@ -68,10 +68,16 @@ inputClusters: [0x0006]
 
 ### Test Pattern
 
+Tests run on `node:test`, so `describe`, `it` and `mock` are imported, not globals. A
+callback-style test takes the test context first: `it('...', function(t, done) { ... })`.
+With `function(done)` node:test sees a synchronous test, passes it immediately and never
+runs the assertions.
+
 Tests use mock nodes from `test/util/mockNode.js`:
 
 **Single node with loopback** (command → same node's BoundCluster):
 ```javascript
+const { describe, it } = require('node:test');
 const { createMockNode } = require('./util');
 const OnOffCluster = require('../lib/clusters/onOff');
 

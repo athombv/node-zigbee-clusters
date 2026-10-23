@@ -9,7 +9,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "mocha --reporter list",
+    "test": "node --test --test-reporter=spec --test-timeout=5000 \"test/*.js\"",
     "lint": "eslint .",
     "generate-types": "node scripts/generate-types.mts",
     "build": "jsdoc --configure ./docs/jsdoc.json",
@@ -39,14 +39,11 @@
     "@athombv/jsdoc-template": "^1.7.0",
     "@eslint/js": "^10.0.1",
     "@types/node": "^25.0.10",
-    "@types/sinon": "^17.0.3",
     "eslint": "^10.13.0",
     "globals": "^17.13.0",
     "jsdoc": "^4.0.5",
     "jsdoc-ts-utils": "^6.0.0",
-    "mocha": "^12.0.3",
     "prettier": "^3.9.10",
-    "sinon": "^19.0.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {

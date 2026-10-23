@@ -1,7 +1,7 @@
 'use strict';
 
-const assert = require('assert');
-const sinon = require('sinon');
+const { describe, it, beforeEach, afterEach, mock } = require('node:test');
+const assert = require('node:assert');
 
 const Cluster = require('../lib/Cluster');
 const Node = require('../lib/Node');
@@ -10,8 +10,6 @@ const BoundCluster = require('../lib/BoundCluster');
 const OnOffCluster = require('../lib/clusters/onOff');
 const AlarmsCluster = require('../lib/clusters/alarms');
 const IasZoneCluster = require('../lib/clusters/iasZone');
-
-const sandbox = sinon.createSandbox();
 
 describe('Cluster Response Timeout', function () {
   let receivingNode;
@@ -46,12 +44,14 @@ describe('Cluster Response Timeout', function () {
   });
 
   afterEach(function () {
-    sandbox.restore();
+    mock.restoreAll();
+    mock.timers.reset();
   });
 
   it('should only start timeout after frame is sent', async function () {
+    mock.timers.enable({ apis: ['setTimeout'] });
     const originalSendFrame = sendingNode.endpoints[1].sendFrame.bind(sendingNode.endpoints[1]);
-    sandbox.stub(sendingNode.endpoints[1], 'sendFrame').callsFake(async (...args) => {
+    mock.method(sendingNode.endpoints[1], 'sendFrame', async (...args) => {
       // Delay sendFrame by 150ms (longer than timeout)
       await new Promise((resolve) => setTimeout(resolve, 150));
       return originalSendFrame(...args);
@@ -68,11 +68,15 @@ describe('Cluster Response Timeout', function () {
 
     // Start the command with 100ms timeout, if timeout starts immediately it will fire before
     // sendFrame completes and cause the command to fail
-    await sendingNode.endpoints[1].clusters.onOff.toggle(undefined, { timeout: 100 });
+    const toggled = sendingNode.endpoints[1].clusters.onOff.toggle(undefined, { timeout: 100 });
+    // Let the stubbed sendFrame reach its fake timer before advancing past the 100ms timeout.
+    await Promise.resolve();
+    mock.timers.tick(150);
+    await toggled;
   });
 
   it('should clear timeout when response is received', async function () {
-    const clearTimeoutSpy = sandbox.spy(global, 'clearTimeout');
+    const clearTimeoutSpy = mock.method(global, 'clearTimeout');
 
     receivingNode.endpoints[1].bind(
       'onOff',
@@ -87,11 +91,14 @@ describe('Cluster Response Timeout', function () {
     await sendingNode.endpoints[1].clusters.onOff.toggle(undefined, { timeout: 5000 });
 
     // Should have called clearTimeout to prevent timeout firing
-    assert(clearTimeoutSpy.called, 'clearTimeout should be called when response received');
+    assert(
+      clearTimeoutSpy.mock.callCount() > 0,
+      'clearTimeout should be called when response received',
+    );
   });
 
   it('should not wait for response when waitForResponse is false', async function () {
-    const sendingNodeSendFrameSpy = sandbox.spy(sendingNode, 'sendFrame');
+    const sendingNodeSendFrameSpy = mock.method(sendingNode, 'sendFrame');
 
     receivingNode.endpoints[1].bind(
       'onOff',
@@ -109,7 +116,7 @@ describe('Cluster Response Timeout', function () {
     assert.strictEqual(result, undefined);
 
     // Only one frame should be sent (the command itself)
-    assert.strictEqual(sendingNodeSendFrameSpy.callCount, 1);
+    assert.strictEqual(sendingNodeSendFrameSpy.mock.callCount(), 1);
   });
 
   it('should not resolve with a device-initiated frame that reuses the pending TSN', async function () {

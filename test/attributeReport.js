@@ -1,12 +1,13 @@
 'use strict';
 
-const assert = require('assert');
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 const OnOffCluster = require('../lib/clusters/onOff');
 const { createMockNode } = require('./util');
 const { ZCLStandardHeader } = require('../lib/zclFrames');
 
 describe('Attribute report', function () {
-  it('should emit the transaction sequence number with the attribute value', function (done) {
+  it('should emit the transaction sequence number with the attribute value', function (t, done) {
     const node = createMockNode({
       endpoints: [
         {
