@@ -1,176 +1,100 @@
 'use strict';
 
-const { describe, it } = require('node:test');
+const { describe, it, mock } = require('node:test');
 const assert = require('node:assert');
-const Node = require('../lib/Node');
 const BoundCluster = require('../lib/BoundCluster');
 const IASZoneCluster = require('../lib/clusters/iasZone');
-const { ZCLStandardHeader } = require('../lib/zclFrames');
-const { ZCLDataTypes } = require('../lib/zclTypes');
+const OTACluster = require('../lib/clusters/ota');
+const { createVirtualDevice, frameToClient } = require('./util/virtualDevice');
 
-/**
- * Helper: build a mock Node that captures every frame sent back via sendFrame.
- * Unlike `createMockNode({loopback:true})`, this lets the test inspect the
- * default-response frames that handleFrame produces (e.g. MALFORMED_COMMAND).
- */
-function createCapturingNode(endpointId, inputClusterId) {
-  const sentFrames = [];
-  const mockNode = {
-    sendFrame: async (epId, clId, data) => {
-      sentFrames.push({
-        endpointId: epId,
-        clusterId: clId,
-        raw: data,
-      });
-    },
-    endpointDescriptors: [
-      {
-        endpointId,
-        inputClusters: [inputClusterId],
-        outputClusters: [],
-      },
-    ],
-  };
-  const node = new Node(mockNode);
-  return { node, sentFrames };
+const DEFAULT_RESPONSE = 0x0b;
+const REPORT_ATTRIBUTES = 0x0a;
+const MALFORMED_COMMAND = 0x80;
+const MAP16 = 0x19;
+const ZCL_HEADER_SIZE = 3;
+
+/** The payload, [cmdId, status], of the Default Response `from` sent for `cmdId`. */
+function defaultResponse(frames, from, cmdId) {
+  const record = frames.find(
+    ({ from: sender, frame }) =>
+      sender === from &&
+      frame.cmdId === DEFAULT_RESPONSE &&
+      !frame.frameControl.clusterSpecific &&
+      frame.data[0] === cmdId,
+  );
+  return record && record.frame.data;
 }
 
-/** Parse a captured ZCL default-response frame back to {cmdId, status}. */
-function parseDefaultResponse(rawFrame) {
-  const frame = ZCLStandardHeader.fromBuffer(rawFrame);
-  // ZCL default response cmdId is 0x0B
-  if (frame.cmdId !== 0x0b) return null;
-  return {
-    forCmdId: frame.data.readUInt8(0),
-    status: ZCLDataTypes.enum8Status.fromBuffer(frame.data, 1),
-  };
+function createIasZoneSensor() {
+  return createVirtualDevice({
+    endpoints: [{ endpointId: 1, inputClusters: [IASZoneCluster.ID] }],
+  });
 }
 
-describe('Malformed frame hardening', function () {
-  describe('Cluster.handleFrame (server-to-client direction)', function () {
-    it('should not invoke handler on truncated zoneStatusChangeNotification', function (t, done) {
-      const { node } = createCapturingNode(1, IASZoneCluster.ID);
+describe('Malformed frames', function () {
+  it('rejects a truncated command to a Cluster', async function () {
+    const { zclNode, virtualDevice, frames, settle } = createIasZoneSensor();
+    const handler = mock.fn();
+    zclNode.endpoints[1].clusters.iasZone.onZoneStatusChangeNotification = handler;
+    const { id } = IASZoneCluster.COMMANDS.zoneStatusChangeNotification;
 
-      node.endpoints[1].clusters.iasZone.onZoneStatusChangeNotification = (data) => {
-        done(new Error(`handler invoked on malformed frame: ${JSON.stringify(data)}`));
-      };
+    // zoneStatus only, the other 4 of 6 bytes are missing
+    const frame = frameToClient({ cmdId: id, clusterSpecific: true, data: Buffer.from([1, 0]) });
+    await virtualDevice.sendFrame(1, IASZoneCluster.ID, frame);
+    await settle();
 
-      const frame = new ZCLStandardHeader();
-      frame.cmdId = IASZoneCluster.COMMANDS.zoneStatusChangeNotification.id;
-      frame.frameControl.directionToClient = true;
-      frame.frameControl.clusterSpecific = true;
-      // Empty payload: the fixed-size args (6 bytes) cannot be parsed.
-      // Pre-fix behavior: silently parses as zoneStatus.alarm1=false, extendedStatus=0,
-      // zoneId=0, delay=0 - a fail-open read for alarm-routing drivers.
-      frame.data = Buffer.alloc(0);
-
-      node
-        .handleFrame(1, IASZoneCluster.ID, frame.toBuffer(), {})
-        .then(() => done())
-        .catch(done);
-    });
-
-    it('should respond with MALFORMED_COMMAND on truncated zoneStatusChangeNotification', async function () {
-      const { node, sentFrames } = createCapturingNode(1, IASZoneCluster.ID);
-
-      const frame = new ZCLStandardHeader();
-      frame.cmdId = IASZoneCluster.COMMANDS.zoneStatusChangeNotification.id;
-      frame.frameControl.directionToClient = true;
-      frame.frameControl.clusterSpecific = true;
-      frame.data = Buffer.from([0x10, 0x00]); // 2 bytes, needs 6
-
-      await node.handleFrame(1, IASZoneCluster.ID, frame.toBuffer(), {});
-
-      // Find the default-response frame the receiver sent back.
-      const response = sentFrames
-        .map((f) => parseDefaultResponse(f.raw))
-        .find((r) => r && r.forCmdId === IASZoneCluster.COMMANDS.zoneStatusChangeNotification.id);
-
-      assert.ok(response, 'expected a default-response frame to be sent back');
-      assert.strictEqual(
-        response.status,
-        'MALFORMED_COMMAND',
-        `expected MALFORMED_COMMAND, got ${response.status}`,
-      );
-    });
-
-    it('should still invoke handler on well-formed zoneStatusChangeNotification (regression)', function (t, done) {
-      const { node } = createCapturingNode(1, IASZoneCluster.ID);
-
-      node.endpoints[1].clusters.iasZone.onZoneStatusChangeNotification = (data) => {
-        try {
-          assert.strictEqual(data.zoneStatus.alarm1, true);
-          assert.strictEqual(data.extendedStatus, 0);
-          assert.strictEqual(data.zoneId, 10);
-          assert.strictEqual(data.delay, 108);
-          done();
-        } catch (err) {
-          done(err);
-        }
-      };
-
-      const frame = new ZCLStandardHeader();
-      frame.cmdId = IASZoneCluster.COMMANDS.zoneStatusChangeNotification.id;
-      frame.frameControl.directionToClient = true;
-      frame.frameControl.clusterSpecific = true;
-      // alarm1 bit set in zoneStatus (map16=0x0001), extendedStatus=0, zoneId=10, delay=108
-      frame.data = Buffer.from([0x01, 0x00, 0x00, 0x0a, 0x6c, 0x00]);
-
-      node.handleFrame(1, IASZoneCluster.ID, frame.toBuffer(), {}).catch(done);
-    });
+    assert.strictEqual(handler.mock.callCount(), 0);
+    assert.deepStrictEqual(
+      defaultResponse(frames, 'zclNode', id),
+      Buffer.from([id, MALFORMED_COMMAND]),
+    );
   });
 
-  describe('BoundCluster.handleFrame (client-to-server direction)', function () {
-    it('should not invoke handler on truncated zoneEnrollResponse', async function () {
-      const { node } = createCapturingNode(1, IASZoneCluster.ID);
+  it('rejects an attribute report with a truncated value', async function () {
+    const { zclNode, virtualDevice, frames, settle } = createIasZoneSensor();
+    const onZoneStatus = mock.fn();
+    zclNode.endpoints[1].clusters.iasZone.on('attr.zoneStatus', onZoneStatus);
 
-      let handlerCalled = false;
-      node.endpoints[1].bind(
-        'iasZone',
-        new (class extends BoundCluster {
-          async zoneEnrollResponse(data) {
-            handlerCalled = true;
-            throw new Error(`handler invoked on malformed frame: ${JSON.stringify(data)}`);
-          }
-        })(),
-      );
+    // zoneStatus is map16, only 1 of its 2 value bytes is sent
+    const { id } = IASZoneCluster.ATTRIBUTES.zoneStatus;
+    const frame = frameToClient({ cmdId: REPORT_ATTRIBUTES, data: Buffer.from([id, 0, MAP16, 1]) });
+    await virtualDevice.sendFrame(1, IASZoneCluster.ID, frame);
+    await settle();
 
-      const frame = new ZCLStandardHeader();
-      frame.cmdId = IASZoneCluster.COMMANDS.zoneEnrollResponse.id;
-      frame.frameControl.directionToClient = false;
-      frame.frameControl.clusterSpecific = true;
-      // Empty payload: enrollResponseCode (1 byte) and zoneId (1 byte) cannot be parsed.
-      // Pre-fix behavior: silently parses as enrollResponseCode='success', zoneId=0.
-      frame.data = Buffer.alloc(0);
+    assert.strictEqual(onZoneStatus.mock.callCount(), 0);
+    assert.deepStrictEqual(
+      defaultResponse(frames, 'zclNode', REPORT_ATTRIBUTES),
+      Buffer.from([REPORT_ATTRIBUTES, MALFORMED_COMMAND]),
+    );
+  });
 
-      await node.handleFrame(1, IASZoneCluster.ID, frame.toBuffer(), {});
-
-      assert.strictEqual(handlerCalled, false, 'handler must not be called on truncated frame');
+  it('rejects an empty command to a BoundCluster that may skip trailing fields', async function () {
+    const { zclNode, virtualDevice, intercept } = createVirtualDevice({
+      endpoints: [{ endpointId: 1, outputClusters: [OTACluster.ID] }],
     });
+    const handler = mock.fn(async () => ({ status: 'NO_IMAGE_AVAILABLE' }));
+    zclNode.endpoints[1].bind(
+      'ota',
+      new (class extends BoundCluster {
+        queryNextImageRequest(...args) {
+          return handler(...args);
+        }
+      })(),
+    );
+    // Keep the header, drop the payload
+    intercept(({ from, raw }) =>
+      from === 'virtualDevice' ? [raw.subarray(0, ZCL_HEADER_SIZE)] : undefined,
+    );
 
-    it('should respond with MALFORMED_COMMAND on truncated zoneEnrollResponse', async function () {
-      const { node, sentFrames } = createCapturingNode(1, IASZoneCluster.ID);
-
-      node.endpoints[1].bind('iasZone', new BoundCluster());
-
-      const frame = new ZCLStandardHeader();
-      frame.cmdId = IASZoneCluster.COMMANDS.zoneEnrollResponse.id;
-      frame.frameControl.directionToClient = false;
-      frame.frameControl.clusterSpecific = true;
-      frame.data = Buffer.from([0x00]); // 1 byte, needs 2
-
-      await node.handleFrame(1, IASZoneCluster.ID, frame.toBuffer(), {});
-
-      const response = sentFrames
-        .map((f) => parseDefaultResponse(f.raw))
-        .find((r) => r && r.forCmdId === IASZoneCluster.COMMANDS.zoneEnrollResponse.id);
-
-      assert.ok(response, 'expected a default-response frame to be sent back');
-      assert.strictEqual(
-        response.status,
-        'MALFORMED_COMMAND',
-        `expected MALFORMED_COMMAND, got ${response.status}`,
-      );
-    });
+    await assert.rejects(
+      virtualDevice.endpoints[1].clusters.ota.queryNextImageRequest({
+        fieldControl: 0,
+        manufacturerCode: 0x1234,
+        imageType: 1,
+        fileVersion: 1,
+      }),
+      /^Error: MALFORMED_COMMAND$/,
+    );
+    assert.strictEqual(handler.mock.callCount(), 0);
   });
 });
