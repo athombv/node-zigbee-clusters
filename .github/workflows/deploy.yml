@@ -8,6 +8,8 @@ name: Deploy
 # it under the beta flag on npm. Note: if no '#patch', '#minor', or '#major' flag is present in the latest commit
 # AND the package version is not bumped manually the publish step will fail because we can not publish to an existing
 # version.
+# On production, a GitHub release with generated notes is created once npm has accepted the version.
+# See .github/release.yml for how the notes are grouped.
 
 # GitHub repo configuration:
 # 1. Go to Manage access and add 'Github Actions' team with role: admin.
@@ -53,6 +55,8 @@ jobs:
         with:
           # The token below is only necessary if you want to push the version bump to a protected branch
           token: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
+          # Full history and tags, so the release step can find the previous tag.
+          fetch-depth: 0
 
       # Set git config to reflect Homey Github Actions Bot user
       - name: Set up HomeyGithubActionsBot git user
@@ -128,3 +132,21 @@ jobs:
           npm publish --provenance --tag beta
           VERSION="$(node -p "require('./package.json').version")@beta"
           echo package_version=${VERSION} >> $GITHUB_ENV
+
+      # After the publish, and starting from the previous release rather than the previous tag,
+      # because a failed publish leaves an orphan tag (v2.7.0, v3.1.0). The fallback is for the
+      # first run. If this step fails, create the release by hand: a rerun would bump again.
+      - name: Create GitHub release
+        if: github.ref == 'refs/heads/production'
+        env:
+          GH_TOKEN: ${{ secrets.HOMEY_GITHUB_ACTIONS_BOT_PERSONAL_ACCESS_TOKEN }}
+        run: |
+          TAG="v$(node -p "require('./package.json').version")"
+          PREVIOUS_TAG="$(gh release view --json tagName -q .tagName || git describe --tags --abbrev=0 "$TAG^")"
+          # The notes list each pull request title as is. Drop its conventional-commit prefix, which the
+          # category heading above it already says.
+          gh api "repos/$GITHUB_REPOSITORY/releases/generate-notes" \
+            -f tag_name="$TAG" -f previous_tag_name="$PREVIOUS_TAG" --jq .body \
+            | node -e "process.stdout.write(require('node:fs').readFileSync(0, 'utf8').replace(/^\* \w+(\([^)]*\))?!?: (.)/gm, (_, _scope, first) => '* ' + first.toUpperCase()))" \
+            > release-notes.md
+          gh release create "$TAG" --verify-tag --title "$TAG" --notes-file release-notes.md

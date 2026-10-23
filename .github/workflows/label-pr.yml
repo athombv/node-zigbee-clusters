@@ -1,0 +1,53 @@
+name: Label pull request
+
+# Labels each pull request from the conventional-commit prefix of its title, so the release
+# notes can sort it (see .github/release.yml). Re-runs when the title is edited.
+#
+# pull_request_target so pull requests from forks get a token that can label. This is safe
+# because the job never checks out or runs code from the pull request.
+on:
+  pull_request_target:
+    types: [opened, edited, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const MANAGED_LABELS = ['breaking', 'feature', 'fix', 'internal', 'release'];
+            const INTERNAL_TYPES = ['build', 'chore', 'ci', 'docs', 'refactor', 'style', 'test'];
+
+            function labelFor(title, baseRef) {
+              if (baseRef === 'production') return 'release';
+              const match = /^(\w+)(?:\([^)]*\))?(!)?:/.exec(title);
+              if (!match) return null;
+              const [, type, breaking] = match;
+              if (breaking) return 'breaking';
+              if (type === 'feat') return 'feature';
+              if (type === 'fix' || type === 'perf') return 'fix';
+              if (INTERNAL_TYPES.includes(type)) return 'internal';
+              return null;
+            }
+
+            if (context.payload.action === 'edited' && !context.payload.changes.title) return;
+
+            const pullRequest = context.payload.pull_request;
+            const wanted = labelFor(pullRequest.title, pullRequest.base.ref);
+            // No conventional prefix: leave any label a maintainer set by hand.
+            if (!wanted) return;
+            const current = pullRequest.labels.map(label => label.name);
+            const issue = { ...context.repo, issue_number: pullRequest.number };
+
+            for (const name of current) {
+              if (MANAGED_LABELS.includes(name) && name !== wanted) {
+                await github.rest.issues.removeLabel({ ...issue, name });
+              }
+            }
+            if (!current.includes(wanted)) {
+              await github.rest.issues.addLabels({ ...issue, labels: [wanted] });
+            }
