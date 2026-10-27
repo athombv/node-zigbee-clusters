@@ -105,24 +105,23 @@ notification such as `operationEventNotification`, or a response that doubles as
 `encodeMissingFieldsBehavior: 'skip'` belongs on any struct where some fields are optional, and is
 left off when every field is mandatory. This holds for a `response` struct as much as for the
 command itself. When the fields present depend on another field's value, list them all and comment
-each group, as `imageBlockResponse` in `lib/clusters/ota.js` does:
+each group:
 
 ```javascript
-response: {
-  id: 0x0005,
-  encodeMissingFieldsBehavior: 'skip',
-  args: {
-    status: ZCLDataTypes.enum8Status,
-    // When status is SUCCESS
-    manufacturerCode: ZCLDataTypes.uint16,
-    fileOffset: ZCLDataTypes.uint32,
-    imageData: ZCLDataTypes.buffer,
-    // When status is WAIT_FOR_DATA
-    currentTime: ZCLDataTypes.uint32,
-    requestTime: ZCLDataTypes.uint32,
-  },
+args: {
+  status: ZCLDataTypes.enum8Status,
+  // When status is SUCCESS
+  fileOffset: ZCLDataTypes.uint32,
+  imageData: ZCLDataTypes.buffer,
+  // When status is WAIT_FOR_DATA
+  currentTime: ZCLDataTypes.uint32,
+  requestTime: ZCLDataTypes.uint32,
 },
 ```
+
+`IMAGE_BLOCK_RESPONSE` in `lib/clusters/ota.js` is the worked version, with every field the spec
+lists. It sits at module level because `imageBlockRequest`, `imagePageRequest` and the standalone
+`imageBlockResponse` all share it, the same rule as for enums and bitmaps above.
 
 ## Testing the definition
 
