@@ -5,8 +5,8 @@ contributing and releasing; this file covers what is not already obvious from th
 
 ## Setup and commands
 
-`.nvmrc` pins Node 22, which is also what CI runs. Run `nvm use` before anything else; the machine
-default is likely newer.
+`.nvmrc` pins the Node version and every workflow reads that same file. Run `nvm use` before
+anything else; the machine default is likely newer.
 
 ```bash
 npm test

@@ -13,14 +13,9 @@ Three revisions are checked in as `docs/zigbee-cluster-specification-r{6,7,8}.pd
 definitions against r8. r6 and r7 are there to look up what an older revision said about a
 definition that devices in the field still implement.
 
-Extract the section you need, for example On/Off:
-
-```bash
-pdftotext docs/zigbee-cluster-specification-r8.pdf - | grep -A 500 "^3.8 On/Off"
-```
-
-From the spec tables you need the cluster id and name, every attribute (id, name, type, mandatory or
-optional) and every command (id, name, arguments, direction, mandatory or optional).
+Each cluster has its own numbered section. From its tables you need the cluster id and name, every
+attribute (id, name, type, mandatory or optional) and every command (id, name, arguments, direction,
+mandatory or optional).
 
 ## Writing the file
 
