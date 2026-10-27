@@ -7,9 +7,7 @@ const Node = require('../../lib/Node');
 const Endpoint = require('../../lib/Endpoint');
 const BoundCluster = require('../../lib/BoundCluster');
 const { ZCLStandardHeader } = require('../../lib/zclFrames');
-
-// Homey's Zigbee stack rejects a longer ZCL frame (MAX_ZCL_BYTES in @athombv/z3gateway).
-const HOMEY_MAX_ZCL_BYTES = 82;
+const { MAX_ZCL_FRAME_BYTES } = require('../../lib/constants');
 
 // ponytail: counts every frame of a device, raise it when a legit test (e.g. an OTA transfer)
 // sends more
@@ -47,7 +45,7 @@ function boundClusterWithAttributes(attributes) {
  *   `sendFrame`; `settle()`, which waits until no frame is in flight and rejects when a delivery
  *   failed.
  */
-function createVirtualDevice({ endpoints, maxFrameSize = HOMEY_MAX_ZCL_BYTES }) {
+function createVirtualDevice({ endpoints, maxFrameSize = MAX_ZCL_FRAME_BYTES }) {
   const frames = [];
   const interceptors = [];
   const inFlight = new Set();
