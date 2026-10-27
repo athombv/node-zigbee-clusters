@@ -3,7 +3,7 @@
 const { describe, it, mock } = require('node:test');
 const assert = require('node:assert');
 
-const { createVirtualDevice, createSingleClusterDevice } = require('./util');
+const { createVirtualDevice, createSingleClusterDevice } = require('./util/virtualDevice');
 const BoundCluster = require('../lib/BoundCluster');
 const Cluster = require('../lib/Cluster');
 const { ZCLDataTypes } = require('../lib/zclTypes');

@@ -9,7 +9,7 @@ const assert = require('node:assert');
 const { ZCLDataTypes, ZCLDataType } = require('../lib/zclTypes');
 const Cluster = require('../lib/Cluster');
 const BasicCluster = require('../lib/clusters/basic');
-const { createVirtualDevice } = require('./util');
+const { createVirtualDevice } = require('./util/virtualDevice');
 
 const LIFELINE_RECORDS = {
   1: 'batteryVoltage',

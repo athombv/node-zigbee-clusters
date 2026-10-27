@@ -4,7 +4,7 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const OnOffCluster = require('../lib/clusters/onOff');
-const { createVirtualDevice } = require('./util');
+const { createVirtualDevice } = require('./util/virtualDevice');
 
 describe('On/Off', function () {
   it('should receive setOn', async function () {

@@ -5,7 +5,7 @@ const assert = require('node:assert');
 
 const { BoundCluster } = require('..');
 const DoorLockCluster = require('../lib/clusters/doorLock');
-const { createVirtualDevice } = require('./util');
+const { createVirtualDevice } = require('./util/virtualDevice');
 
 // Door Lock setWeekDaySchedule is cluster-specific command 0x0B, same id as global Default Response
 const SET_WEEK_DAY_SCHEDULE_REQUEST = Buffer.from([

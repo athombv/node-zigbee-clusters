@@ -10,7 +10,7 @@ const OnOffCluster = require('../lib/clusters/onOff');
 const BasicCluster = require('../lib/clusters/basic');
 const AlarmsCluster = require('../lib/clusters/alarms');
 const IasZoneCluster = require('../lib/clusters/iasZone');
-const { createSingleClusterDevice } = require('./util');
+const { createSingleClusterDevice } = require('./util/virtualDevice');
 
 const togglingDevice = () =>
   createSingleClusterDevice(

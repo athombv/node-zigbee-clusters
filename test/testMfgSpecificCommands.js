@@ -73,7 +73,7 @@ class IkeaSceneCluster extends SceneCluster {
 }
 
 Cluster.addCluster(IkeaSceneCluster);
-const { createSingleClusterDevice } = require('./util');
+const { createSingleClusterDevice } = require('./util/virtualDevice');
 
 /**
  * Sends `command` from a scenes cluster to a virtual device that answers with BoundCluster's

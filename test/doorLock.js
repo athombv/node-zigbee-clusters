@@ -4,7 +4,7 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const DoorLockCluster = require('../lib/clusters/doorLock');
-const { createVirtualDevice, frameToClient } = require('./util');
+const { createVirtualDevice, frameToClient } = require('./util/virtualDevice');
 
 describe('Door Lock', function () {
   it('should receive lockDoor', async function () {

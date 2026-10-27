@@ -4,7 +4,7 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const IASZoneCluster = require('../lib/clusters/iasZone');
-const { createVirtualDevice, frameToClient } = require('./util');
+const { createVirtualDevice, frameToClient } = require('./util/virtualDevice');
 
 /** Has an IAS zone sensor send the cluster-specific `cmdId` with `data` to the node under test. */
 async function receiveFromSensor(cmdId, data, handlerName) {

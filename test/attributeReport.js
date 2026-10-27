@@ -3,7 +3,7 @@
 const { describe, it, mock } = require('node:test');
 const assert = require('node:assert');
 const OnOffCluster = require('../lib/clusters/onOff');
-const { createVirtualDevice, frameToClient } = require('./util');
+const { createVirtualDevice, frameToClient } = require('./util/virtualDevice');
 
 describe('Attribute report', function () {
   it('should emit the transaction sequence number with the attribute value', async function () {

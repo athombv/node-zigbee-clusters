@@ -4,7 +4,7 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const OTACluster = require('../lib/clusters/ota');
-const { createVirtualDevice } = require('./util');
+const { createVirtualDevice } = require('./util/virtualDevice');
 
 // ZCL Standard Header: frameControl(1), trxSequenceNumber(1), cmdId(1), data(rest)
 const ZCL_HEADER_SIZE = 3;

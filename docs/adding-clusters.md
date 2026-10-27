@@ -127,7 +127,7 @@ lists. It sits at module level because `imageBlockRequest`, `imagePageRequest` a
 
 A definition is worth a test when it encodes or decodes something a plain attribute list does not:
 command arguments, a variant payload, a notification. `test/onOff.js` is the smallest example,
-`test/ota.js` covers variant fields. The mock node helpers live in `test/util/index.js`.
+`test/ota.js` covers variant fields. [Writing tests](testing.md) explains the test harness.
 
 ## Before opening a pull request
 

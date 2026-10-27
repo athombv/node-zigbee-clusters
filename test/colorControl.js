@@ -5,7 +5,7 @@ const assert = require('node:assert');
 
 const BoundCluster = require('../lib/BoundCluster');
 const ColorControlCluster = require('../lib/clusters/colorControl');
-const { createVirtualDevice } = require('./util');
+const { createVirtualDevice } = require('./util/virtualDevice');
 
 // Sends colorLoopSet on a fresh node and returns the parsed outgoing frame, so tests can assert
 // the payload bytes against the ZCL spec instead of round-tripping through our own definition

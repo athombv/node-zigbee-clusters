@@ -1,10 +1,10 @@
 # Writing tests
 
-Every test that needs a node uses one harness, `createVirtualDevice()` from `test/util`. It puts the
-code under test and a scripted Zigbee device on two separate nodes, connected by an in-memory link
-that records every frame. No Homey and no radio are involved, so the whole suite runs in well under
-a second. See [Contributing](../README.md#contributing) for the checks every pull request has to
-pass.
+Every test that needs a node uses one harness, `createVirtualDevice()` from
+`test/util/virtualDevice.js`. It puts the code under test and a scripted Zigbee device on two
+separate nodes, connected by an in-memory link that records every frame. No Homey and no radio are
+involved, so the whole suite runs in well under a second. See
+[Contributing](../README.md#contributing) for the checks every pull request has to pass.
 
 ## The two sides
 
@@ -28,7 +28,7 @@ before the other side sees the frame, so a command's response timeout runs for e
 ## Quick start
 
 ```js
-const { createVirtualDevice } = require('./util');
+const { createVirtualDevice } = require('./util/virtualDevice');
 
 it('reads the on/off state', async function () {
   const { zclNode } = createVirtualDevice({

@@ -4,7 +4,7 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const LevelControlCluster = require('../lib/clusters/levelControl');
-const { createVirtualDevice } = require('./util');
+const { createVirtualDevice } = require('./util/virtualDevice');
 
 describe('Level Control', function () {
   it('should receive moveToLevel', async function () {

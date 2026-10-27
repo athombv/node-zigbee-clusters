@@ -6,7 +6,7 @@ const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const BasicCluster = require('../lib/clusters/basic');
 const OnOffCluster = require('../lib/clusters/onOff');
-const { createVirtualDevice } = require('./util');
+const { createVirtualDevice } = require('./util/virtualDevice');
 
 describe('Transaction sequence number', function () {
   it('should share one counter across endpoints and clusters', async function () {

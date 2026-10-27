@@ -7,7 +7,11 @@ const OnOffCluster = require('../lib/clusters/onOff');
 const LevelControlCluster = require('../lib/clusters/levelControl');
 const IasZoneCluster = require('../lib/clusters/iasZone');
 const { ZCLError } = require('../lib/util');
-const { createVirtualDevice, createSingleClusterDevice, frameToClient } = require('./util');
+const {
+  createVirtualDevice,
+  createSingleClusterDevice,
+  frameToClient,
+} = require('./util/virtualDevice');
 
 const SET_ON_CMD_ID = OnOffCluster.COMMANDS.setOn.id;
 const DEFAULT_RESPONSE_CMD_ID = 0x0b;

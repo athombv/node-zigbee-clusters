@@ -54,6 +54,6 @@ Refer to a cluster id as `OnOffCluster.ID`, never as `6` or `0x0006`.
 
 Tests run on `node:test`, so `describe`, `it` and `mock` are imported, not globals.
 
-Every test that needs a node uses `createVirtualDevice()` from `test/util`. Read
-[docs/testing.md](docs/testing.md) before writing a test, above all its rules: an assertion inside a
-`BoundCluster` or cluster handler becomes an error Default Response instead of a failure.
+Every test that needs a node uses `createVirtualDevice()` from `test/util/virtualDevice.js`.
+Read [docs/testing.md](docs/testing.md) before writing a test, above all its rules: an assertion
+inside a `BoundCluster` or cluster handler becomes an error Default Response instead of a failure.

@@ -6,7 +6,11 @@ const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const OnOffCluster = require('../lib/clusters/onOff');
 const MeteringCluster = require('../lib/clusters/metering');
-const { createVirtualDevice, createSingleClusterDevice, frameToClient } = require('./util');
+const {
+  createVirtualDevice,
+  createSingleClusterDevice,
+  frameToClient,
+} = require('./util/virtualDevice');
 
 const ON_OFF = OnOffCluster.ATTRIBUTES.onOff.id;
 const ON_TIME = OnOffCluster.ATTRIBUTES.onTime.id;
