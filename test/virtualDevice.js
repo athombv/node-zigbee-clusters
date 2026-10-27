@@ -97,34 +97,30 @@ describe('Virtual device', function () {
 });
 
 describe('Virtual device: known bugs on master', function () {
-  it(
-    'readAttributes stops when the device answers with unrequested ids',
-    { todo: 'fixed by #258' },
-    async function () {
-      // Whatever is asked, the plug answers with onTime only
-      const { zclNode, intercept } = createSingleClusterDevice(
-        OnOffCluster,
-        new (class extends BoundCluster {
-          async readAttributes() {
-            const buf = Buffer.alloc(255);
-            const records = [{ id: ON_TIME, status: 'SUCCESS', value: 5 }];
-            const len = OnOffCluster.attributeArrayStatusDataType.toBuffer(buf, records, 0);
-            return { attributes: buf.subarray(0, len) };
-          }
-        })(),
-      );
-      let reads = 0;
-      intercept((frame) => {
-        // Guard: on master the read loops forever.
-        if (frame.from === 'zclNode' && ++reads > 3) throw new Error('read loop');
-      });
+  it('readAttributes stops when the device answers with unrequested ids', async function () {
+    // Whatever is asked, the plug answers with onTime only
+    const { zclNode, intercept } = createSingleClusterDevice(
+      OnOffCluster,
+      new (class extends BoundCluster {
+        async readAttributes() {
+          const buf = Buffer.alloc(255);
+          const records = [{ id: ON_TIME, status: 'SUCCESS', value: 5 }];
+          const len = OnOffCluster.attributeArrayStatusDataType.toBuffer(buf, records, 0);
+          return { attributes: buf.subarray(0, len) };
+        }
+      })(),
+    );
+    let reads = 0;
+    intercept((frame) => {
+      // Guard: on master the read loops forever.
+      if (frame.from === 'zclNode' && ++reads > 3) throw new Error('read loop');
+    });
 
-      const result = await zclNode.endpoints[1].clusters.onOff.readAttributes(['onOff']);
+    const result = await zclNode.endpoints[1].clusters.onOff.readAttributes(['onOff']);
 
-      assert.strictEqual(reads, 1);
-      assert.deepStrictEqual(result, {});
-    },
-  );
+    assert.strictEqual(reads, 1);
+    assert.deepStrictEqual(result, {});
+  });
 
   it(
     'readAttributes([]) on metering splits the request to fit a frame',
