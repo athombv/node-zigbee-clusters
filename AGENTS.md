@@ -18,7 +18,8 @@ npm run generate-types  # regenerate index.d.ts after changing cluster definitio
 npm run build           # JSDoc site into build/, open build/index.html in a browser
 ```
 
-`npm test` globs `test/*.js` only, so nothing under `test/manual/` runs with it.
+`npm test` globs `test/*.js` only, so a test file must sit directly in `test/`; `test/util/` holds
+the harness.
 
 `index.d.ts` is generated from the cluster definitions and committed. Never edit it by hand; run
 `npm run generate-types`, which CI does too.
