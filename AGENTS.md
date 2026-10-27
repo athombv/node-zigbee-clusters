@@ -151,7 +151,9 @@ Reusable guide for adding new clusters or updating existing cluster definitions.
 
 ### Source Reference
 
-- **Spec PDF**: `docs/zigbee-cluster-specification-r8.pdf`
+- **Spec PDFs**: `docs/zigbee-cluster-specification-r{6,7,8}.pdf`. Write definitions against r8; r6 and
+  r7 are there to look up what an older revision said about a definition devices in the field still
+  implement.
 - **Extract text**: `pdftotext docs/zigbee-cluster-specification-r8.pdf -`
 - **Cluster files**: `lib/clusters/*.js`
 
