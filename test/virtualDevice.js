@@ -122,32 +122,28 @@ describe('Virtual device: known bugs on master', function () {
     assert.deepStrictEqual(result, {});
   });
 
-  it(
-    'readAttributes([]) on metering splits the request to fit a frame',
-    { todo: 'fixed by #259' },
-    async function () {
-      const { zclNode } = createVirtualDevice({
-        endpoints: [
-          {
-            endpointId: 1,
-            inputClusters: [MeteringCluster.ID],
-            clusters: {
-              metering: { currentSummationDelivered: 1234, multiplier: 1, divisor: 1000 },
-            },
+  it('readAttributes([]) on metering splits the request to fit a frame', async function () {
+    const { zclNode } = createVirtualDevice({
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [MeteringCluster.ID],
+          clusters: {
+            metering: { currentSummationDelivered: 1234, multiplier: 1, divisor: 1000 },
           },
-        ],
-      });
+        },
+      ],
+    });
 
-      // Every request must also fit the Homey stack, which the virtual link enforces.
-      const { currentSummationDelivered, multiplier, divisor } =
-        await zclNode.endpoints[1].clusters.metering.readAttributes([]);
+    // Every request must also fit the Homey stack, which the virtual link enforces.
+    const { currentSummationDelivered, multiplier, divisor } =
+      await zclNode.endpoints[1].clusters.metering.readAttributes([]);
 
-      assert.deepStrictEqual(
-        { currentSummationDelivered, multiplier, divisor },
-        { currentSummationDelivered: 1234, multiplier: 1, divisor: 1000 },
-      );
-    },
-  );
+    assert.deepStrictEqual(
+      { currentSummationDelivered, multiplier, divisor },
+      { currentSummationDelivered: 1234, multiplier: 1, divisor: 1000 },
+    );
+  });
 
   it(
     'Endpoint.unbind removes the binding, so the cluster is unsupported',
