@@ -145,22 +145,18 @@ describe('Virtual device: known bugs on master', function () {
     );
   });
 
-  it(
-    'Endpoint.unbind removes the binding, so the cluster is unsupported',
-    { todo: 'unbind leaves a Cluster in bindings' },
-    async function () {
-      const { zclNode, virtualDevice } = createVirtualDevice({
-        endpoints: [{ endpointId: 1, outputClusters: [OnOffCluster.ID] }],
-      });
-      zclNode.endpoints[1].bind('onOff', new BoundCluster());
-      zclNode.endpoints[1].unbind('onOff');
+  it('Endpoint.unbind removes the binding, so the cluster is unsupported', async function () {
+    const { zclNode, virtualDevice } = createVirtualDevice({
+      endpoints: [{ endpointId: 1, outputClusters: [OnOffCluster.ID] }],
+    });
+    zclNode.endpoints[1].bind('onOff', new BoundCluster());
+    zclNode.endpoints[1].unbind('onOff');
 
-      await assert.rejects(
-        virtualDevice.endpoints[1].clusters.onOff.toggle(),
-        /^Error: UNSUPPORTED_CLUSTER$/,
-      );
-    },
-  );
+    await assert.rejects(
+      virtualDevice.endpoints[1].clusters.onOff.toggle(),
+      /^Error: UNSUPPORTED_CLUSTER$/,
+    );
+  });
 
   it(
     'a report with an unknown attribute id does not emit attr.undefined',
