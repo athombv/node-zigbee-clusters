@@ -63,7 +63,8 @@ Build mock nodes with the helpers in `test/util/index.js` instead of by hand:
 - `createConnectedNodePair()` wires two nodes together when sender and receiver must differ. See
   `test/testNode.js`.
 - `MOCK_DEVICES` holds preset sensors. See `test/iasZone.js`.
-
-Server-to-client traffic such as attribute reports and notifications has no helper at the time of
-writing, so check `test/util/index.js` first and otherwise build a `ZCLStandardHeader` by hand and
-pass it to `node.handleFrame()`, as `test/attributeReport.js` does.
+- `createVirtualDevice()` for a misbehaving device: a separate device node behind a link that
+  records every frame, enforces Homey's 82-byte frame limit and lets an interceptor drop, rewrite
+  or duplicate frames. Device-initiated frames such as attribute reports go out with
+  `virtualDevice.sendFrame()`. See `test/virtualDevice.js`, which also keeps known bugs as `todo`
+  tests; a fix removes the `todo`.
