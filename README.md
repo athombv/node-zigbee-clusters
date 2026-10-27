@@ -341,6 +341,7 @@ Great if you'd like to contribute to this project, a few things to take note of 
 
 - This project enforces ESLint and Prettier: check with `npm run lint` and `npm run format:check`, and fix formatting with `npm run format:write`.
 - Tests use the built-in node:test runner, see the [test](https://github.com/athombv/node-zigbee-clusters/blob/production/test) directory.
+- Adding or updating a cluster definition follows its own conventions, see [Adding or updating a cluster definition](docs/adding-clusters.md).
 - Pull request titles follow [Conventional Commits](https://www.conventionalcommits.org/), for example `fix(onOff): Handle a missing attribute`. The title becomes a line in the release notes, so write it for someone using the library. See [Release notes](#release-notes).
 - [GitHub Action workflows](https://github.com/athombv/node-zigbee-clusters/blob/production/.github/workflows) run ESLint, Prettier and the tests, and publish releases.
 

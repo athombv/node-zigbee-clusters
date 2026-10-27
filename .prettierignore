@@ -2,6 +2,3 @@ build
 index.d.ts
 *.pdf
 .claude
-
-# Literal formatting is the content here, and Prettier mangles the M* emphasis markers.
-AGENTS.md
