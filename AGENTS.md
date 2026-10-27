@@ -51,20 +51,16 @@ Refer to a cluster id as `OnOffCluster.ID`, never as `6` or `0x0006`.
 
 ## Tests
 
-Tests run on `node:test`, so `describe`, `it` and `mock` are imported, not globals. A callback-style
-test takes the test context first: `it('...', function (t, done) { ... })`. Written as
-`function (done)` node:test sees a synchronous test, passes it immediately and never runs the
-assertions.
+Tests run on `node:test`, so `describe`, `it` and `mock` are imported, not globals.
 
-Build mock nodes with the helpers in `test/util/index.js` instead of by hand:
+Every test that needs a node uses `createVirtualDevice()` from `test/util`: the code under test
+(`zclNode`) and a scripted device (`virtualDevice`) on two nodes, with an in-memory link that logs
+every frame (`frames`), can drop or rewrite them (`intercept`) and waits for them (`settle`). Read
+[docs/testing.md](docs/testing.md) before writing a test. The rules that matter most:
 
-- `createMockNode({ loopback: true, ... })` sends a command straight back into the same node's
-  `BoundCluster`, which covers most cases. See `test/onOff.js`.
-- `createConnectedNodePair()` wires two nodes together when sender and receiver must differ. See
-  `test/testNode.js`.
-- `MOCK_DEVICES` holds preset sensors. See `test/iasZone.js`.
-- `createVirtualDevice()` for a misbehaving device: a separate device node behind a link that
-  records every frame, enforces Homey's 82-byte frame limit and lets an interceptor drop, rewrite
-  or duplicate frames. Device-initiated frames such as attribute reports go out with
-  `virtualDevice.sendFrame()`. See `test/virtualDevice.js`, which also keeps known bugs as `todo`
-  tests; a fix removes the `todo`.
+- Never assert inside a `BoundCluster` or cluster handler: the endpoint turns the thrown assertion
+  into an error Default Response. Store what the handler received, assert after the `await`.
+- No `done` callbacks; `await settle()` before asserting that something did not happen.
+- Assert on the bytes in `frames` when the encoding is the point, not on a round trip through the
+  same definition.
+- A known bug is a test with `{ todo: '...' }`; check it fails on the bug, not on the test.
