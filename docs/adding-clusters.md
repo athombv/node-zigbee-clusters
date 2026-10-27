@@ -5,8 +5,11 @@ them. This describes the conventions that data follows.
 
 ## Spec source
 
-The specification is checked in as `docs/zigbee-cluster-specification-r8.pdf`. Extract the section
-you need, for example On/Off:
+Three revisions are checked in as `docs/zigbee-cluster-specification-r{6,7,8}.pdf`. Write
+definitions against r8; r6 and r7 are there to look up what an older revision said about a
+definition that devices in the field still implement.
+
+Extract the section you need, for example On/Off:
 
 ```bash
 pdftotext docs/zigbee-cluster-specification-r8.pdf - | grep -A 500 "^3.8 On/Off"

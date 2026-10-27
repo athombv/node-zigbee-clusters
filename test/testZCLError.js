@@ -6,6 +6,7 @@ const BoundCluster = require('../lib/BoundCluster');
 const Node = require('../lib/Node');
 const OnOffCluster = require('../lib/clusters/onOff');
 const LevelControlCluster = require('../lib/clusters/levelControl');
+const IasZoneCluster = require('../lib/clusters/iasZone');
 const { ZCLStandardHeader } = require('../lib/zclFrames');
 const { ZCLError } = require('../lib/util');
 const { createMockNode } = require('./util');
@@ -234,6 +235,31 @@ describe('ZCLError handling', function () {
     const { deviceNode, capturedFrames } = createSpyNodePair();
     await deviceNode.handleFrame(1, OnOffCluster.ID, makeToClientFrame(0x7f), {});
     assert.strictEqual(ZCLStandardHeader.fromBuffer(capturedFrames[0].data).data[1], 0x81);
+  });
+
+  // A known request without a handler is still unsupported; only responses without a pending
+  // request are ignored
+  it('should send UNSUP_COMMAND (0x81) for a server-to-client request without a handler', async function () {
+    const capturedFrames = [];
+    const node = new Node({
+      sendFrame: async (endpointId, clusterId, data) => {
+        capturedFrames.push(data);
+      },
+      endpointDescriptors: [{ endpointId: 1, inputClusters: [IasZoneCluster.ID] }],
+    });
+    const header = new ZCLStandardHeader();
+    header.frameControl.clusterSpecific = true;
+    header.frameControl.directionToClient = true;
+    header.trxSequenceNumber = 1;
+    header.cmdId = 0x00; // zoneStatusChangeNotification
+    header.data = Buffer.from([0x01, 0x00, 0x00, 0x01, 0x00, 0x00]);
+
+    await node.handleFrame(1, IasZoneCluster.ID, header.toBuffer(), {});
+    await new Promise(setImmediate);
+
+    const defaultResponse = ZCLStandardHeader.fromBuffer(capturedFrames[0]);
+    assert.strictEqual(defaultResponse.cmdId, 0x0b);
+    assert.strictEqual(defaultResponse.data[1], 0x81);
   });
 
   it('should send UNSUPPORTED_CLUSTER (0xc3) for a server-to-client frame on a cluster the endpoint lacks', async function () {

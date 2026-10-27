@@ -8,6 +8,7 @@ const Node = require('../lib/Node');
 const { ZCLDataTypes } = require('../lib/zclTypes');
 const BoundCluster = require('../lib/BoundCluster');
 const OnOffCluster = require('../lib/clusters/onOff');
+const BasicCluster = require('../lib/clusters/basic');
 const AlarmsCluster = require('../lib/clusters/alarms');
 const IasZoneCluster = require('../lib/clusters/iasZone');
 
@@ -370,5 +371,44 @@ describe('Cluster Response Timeout', function () {
     };
 
     await assert.rejects(sendingNode.endpoints[1].clusters.onOff.toggle(), /device not responding/);
+  });
+
+  it('should ignore a duplicate response without sending an error back', async function () {
+    const sentFrames = [];
+    const node = new Node({
+      sendFrame: async (endpointId, clusterId, frame) => {
+        sentFrames.push(frame);
+        if (sentFrames.length > 1) return;
+        // The device answers with a Read Attributes Response (attribute 0x0004, SUCCESS, "_TZ3000")
+        // and sends that same response a second time, as some devices do
+        const response = Buffer.from([
+          0x18,
+          frame[1],
+          0x01,
+          0x04,
+          0x00,
+          0x00,
+          0x42,
+          0x07,
+          ...Buffer.from('_TZ3000'),
+        ]);
+        setImmediate(async () => {
+          await node.handleFrame(endpointId, clusterId, response, { dstEndpoint: 1 });
+          await node.handleFrame(endpointId, clusterId, response, { dstEndpoint: 1 });
+        });
+      },
+      endpointDescriptors: [{ endpointId: 1, inputClusters: [BasicCluster.ID] }],
+    });
+
+    const { basic } = node.endpoints[1].clusters;
+    const response = await basic.readAttributesStructured(
+      { attributes: [{ attributeId: 4, indexPath: [] }] },
+      { timeout: 1000 },
+    );
+    await new Promise(setImmediate);
+
+    assert.strictEqual(response.attributes.subarray(5).toString(), '_TZ3000');
+    // Only the request went out, no error Default Response for the second copy
+    assert.strictEqual(sentFrames.length, 1);
   });
 });
