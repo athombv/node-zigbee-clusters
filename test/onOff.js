@@ -4,12 +4,11 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const OnOffCluster = require('../lib/clusters/onOff');
-const { createMockNode } = require('./util');
+const { createVirtualDevice } = require('./util');
 
 describe('On/Off', function () {
   it('should receive setOn', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -19,7 +18,7 @@ describe('On/Off', function () {
     });
 
     let called = false;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'onOff',
       new (class extends BoundCluster {
         async setOn() {
@@ -28,13 +27,12 @@ describe('On/Off', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.onOff.setOn();
+    await zclNode.endpoints[1].clusters.onOff.setOn();
     assert.strictEqual(called, true);
   });
 
   it('should receive setOff', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -44,7 +42,7 @@ describe('On/Off', function () {
     });
 
     let called = false;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'onOff',
       new (class extends BoundCluster {
         async setOff() {
@@ -53,13 +51,12 @@ describe('On/Off', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.onOff.setOff();
+    await zclNode.endpoints[1].clusters.onOff.setOff();
     assert.strictEqual(called, true);
   });
 
   it('should receive toggle', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -69,7 +66,7 @@ describe('On/Off', function () {
     });
 
     let called = false;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'onOff',
       new (class extends BoundCluster {
         async toggle() {
@@ -78,13 +75,12 @@ describe('On/Off', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.onOff.toggle();
+    await zclNode.endpoints[1].clusters.onOff.toggle();
     assert.strictEqual(called, true);
   });
 
   it('should receive onWithTimedOff', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -94,7 +90,7 @@ describe('On/Off', function () {
     });
 
     let receivedData = null;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'onOff',
       new (class extends BoundCluster {
         async onWithTimedOff(data) {
@@ -103,7 +99,7 @@ describe('On/Off', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.onOff.onWithTimedOff({
+    await zclNode.endpoints[1].clusters.onOff.onWithTimedOff({
       onOffControl: 0x01,
       onTime: 100,
       offWaitTime: 50,

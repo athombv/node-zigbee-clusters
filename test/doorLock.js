@@ -4,13 +4,12 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const DoorLockCluster = require('../lib/clusters/doorLock');
-const { createMockNode } = require('./util');
+const { createVirtualDevice } = require('./util');
 const { ZCLStandardHeader } = require('../lib/zclFrames');
 
 describe('Door Lock', function () {
   it('should receive lockDoor', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -20,7 +19,7 @@ describe('Door Lock', function () {
     });
 
     let receivedData = null;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'doorLock',
       new (class extends BoundCluster {
         async lockDoor(data) {
@@ -29,7 +28,7 @@ describe('Door Lock', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.doorLock.lockDoor({
+    await zclNode.endpoints[1].clusters.doorLock.lockDoor({
       pinCode: Buffer.from([0x31, 0x32, 0x33, 0x34]),
     });
 
@@ -37,36 +36,7 @@ describe('Door Lock', function () {
   });
 
   it('should receive lockDoor without arguments', async function () {
-    const node = createMockNode({
-      loopback: true,
-      endpoints: [
-        {
-          endpointId: 1,
-          inputClusters: [DoorLockCluster.ID],
-        },
-      ],
-    });
-
-    let called = false;
-    node.endpoints[1].bind(
-      'doorLock',
-      new (class extends BoundCluster {
-        async lockDoor(data) {
-          called = true;
-          // pinCode should be empty buffer when not provided
-          assert.deepStrictEqual(data.pinCode, Buffer.from([]));
-        }
-      })(),
-    );
-
-    // Call without any arguments - should not throw
-    await node.endpoints[1].clusters.doorLock.lockDoor();
-    assert.strictEqual(called, true);
-  });
-
-  it('should receive unlockDoor', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -76,7 +46,33 @@ describe('Door Lock', function () {
     });
 
     let receivedData = null;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
+      'doorLock',
+      new (class extends BoundCluster {
+        async lockDoor(data) {
+          receivedData = data;
+        }
+      })(),
+    );
+
+    // Call without any arguments - should not throw
+    await zclNode.endpoints[1].clusters.doorLock.lockDoor();
+    // pinCode should be empty buffer when not provided
+    assert.deepStrictEqual(receivedData.pinCode, Buffer.from([]));
+  });
+
+  it('should receive unlockDoor', async function () {
+    const { zclNode, virtualDevice } = createVirtualDevice({
+      endpoints: [
+        {
+          endpointId: 1,
+          inputClusters: [DoorLockCluster.ID],
+        },
+      ],
+    });
+
+    let receivedData = null;
+    virtualDevice.endpoints[1].bind(
       'doorLock',
       new (class extends BoundCluster {
         async unlockDoor(data) {
@@ -85,7 +81,7 @@ describe('Door Lock', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.doorLock.unlockDoor({
+    await zclNode.endpoints[1].clusters.doorLock.unlockDoor({
       pinCode: Buffer.from([0x30, 0x30, 0x30, 0x30]),
     });
 
@@ -93,8 +89,7 @@ describe('Door Lock', function () {
   });
 
   it('should receive setPINCode', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -104,7 +99,7 @@ describe('Door Lock', function () {
     });
 
     let receivedData = null;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'doorLock',
       new (class extends BoundCluster {
         async setPINCode(data) {
@@ -113,7 +108,7 @@ describe('Door Lock', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.doorLock.setPINCode({
+    await zclNode.endpoints[1].clusters.doorLock.setPINCode({
       userId: 1,
       userStatus: 'occupiedEnabled',
       userType: 'unrestricted',
@@ -128,9 +123,8 @@ describe('Door Lock', function () {
 
   // Server-to-client notifications require manual frame construction
   // since they are sent BY the device TO the controller
-  it('should receive operationEventNotification', function (t, done) {
-    const node = createMockNode({
-      loopback: true,
+  it('should receive operationEventNotification', async function () {
+    const { zclNode, virtualDevice, settle } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -139,14 +133,9 @@ describe('Door Lock', function () {
       ],
     });
 
-    node.endpoints[1].clusters.doorLock.onOperationEventNotification = (data) => {
-      assert.strictEqual(data.operationEventSource, 1); // Keypad
-      assert.strictEqual(data.operationEventCode, 2); // Unlock
-      assert.strictEqual(data.userId, 3);
-      assert.deepStrictEqual(data.pin, Buffer.from([0x31, 0x32, 0x33, 0x34]));
-      assert.strictEqual(data.zigBeeLocalTime, 0x12345678);
-      assert.deepStrictEqual(data.data, Buffer.from([]));
-      done();
+    let data;
+    zclNode.endpoints[1].clusters.doorLock.onOperationEventNotification = (received) => {
+      data = received;
     };
 
     const frame = new ZCLStandardHeader();
@@ -157,12 +146,19 @@ describe('Door Lock', function () {
       0x01, 0x02, 0x03, 0x00, 0x04, 0x31, 0x32, 0x33, 0x34, 0x78, 0x56, 0x34, 0x12, 0x00,
     ]);
 
-    node.handleFrame(1, DoorLockCluster.ID, frame.toBuffer(), {});
+    await virtualDevice.sendFrame(1, DoorLockCluster.ID, frame.toBuffer());
+    await settle();
+
+    assert.strictEqual(data.operationEventSource, 1); // Keypad
+    assert.strictEqual(data.operationEventCode, 2); // Unlock
+    assert.strictEqual(data.userId, 3);
+    assert.deepStrictEqual(data.pin, Buffer.from([0x31, 0x32, 0x33, 0x34]));
+    assert.strictEqual(data.zigBeeLocalTime, 0x12345678);
+    assert.deepStrictEqual(data.data, Buffer.from([]));
   });
 
-  it('should receive programmingEventNotification', function (t, done) {
-    const node = createMockNode({
-      loopback: true,
+  it('should receive programmingEventNotification', async function () {
+    const { zclNode, virtualDevice, settle } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -171,16 +167,9 @@ describe('Door Lock', function () {
       ],
     });
 
-    node.endpoints[1].clusters.doorLock.onProgrammingEventNotification = (data) => {
-      assert.strictEqual(data.programEventSource, 2); // RF
-      assert.strictEqual(data.programEventCode, 3); // PIN added
-      assert.strictEqual(data.userId, 7);
-      assert.deepStrictEqual(data.pin, Buffer.from([0x35, 0x36, 0x37, 0x38]));
-      assert.strictEqual(data.userType, 'unrestricted');
-      assert.strictEqual(data.userStatus, 'occupiedEnabled');
-      assert.strictEqual(data.zigBeeLocalTime, 0xaabbccdd);
-      assert.deepStrictEqual(data.data, Buffer.from([]));
-      done();
+    let data;
+    zclNode.endpoints[1].clusters.doorLock.onProgrammingEventNotification = (received) => {
+      data = received;
     };
 
     const frame = new ZCLStandardHeader();
@@ -192,6 +181,16 @@ describe('Door Lock', function () {
       0x00,
     ]);
 
-    node.handleFrame(1, DoorLockCluster.ID, frame.toBuffer(), {});
+    await virtualDevice.sendFrame(1, DoorLockCluster.ID, frame.toBuffer());
+    await settle();
+
+    assert.strictEqual(data.programEventSource, 2); // RF
+    assert.strictEqual(data.programEventCode, 3); // PIN added
+    assert.strictEqual(data.userId, 7);
+    assert.deepStrictEqual(data.pin, Buffer.from([0x35, 0x36, 0x37, 0x38]));
+    assert.strictEqual(data.userType, 'unrestricted');
+    assert.strictEqual(data.userStatus, 'occupiedEnabled');
+    assert.strictEqual(data.zigBeeLocalTime, 0xaabbccdd);
+    assert.deepStrictEqual(data.data, Buffer.from([]));
   });
 });

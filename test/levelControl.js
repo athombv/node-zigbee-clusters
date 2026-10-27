@@ -4,12 +4,11 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const LevelControlCluster = require('../lib/clusters/levelControl');
-const { createMockNode } = require('./util');
+const { createVirtualDevice } = require('./util');
 
 describe('Level Control', function () {
   it('should receive moveToLevel', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -19,7 +18,7 @@ describe('Level Control', function () {
     });
 
     let receivedData = null;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'levelControl',
       new (class extends BoundCluster {
         async moveToLevel(data) {
@@ -28,7 +27,7 @@ describe('Level Control', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.levelControl.moveToLevel({
+    await zclNode.endpoints[1].clusters.levelControl.moveToLevel({
       level: 128,
       transitionTime: 10,
     });
@@ -38,8 +37,7 @@ describe('Level Control', function () {
   });
 
   it('should receive step', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -49,7 +47,7 @@ describe('Level Control', function () {
     });
 
     let receivedData = null;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'levelControl',
       new (class extends BoundCluster {
         async step(data) {
@@ -58,7 +56,7 @@ describe('Level Control', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.levelControl.step({
+    await zclNode.endpoints[1].clusters.levelControl.step({
       mode: 'up',
       stepSize: 50,
       transitionTime: 5,
@@ -70,8 +68,7 @@ describe('Level Control', function () {
   });
 
   it('should receive stop', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -81,7 +78,7 @@ describe('Level Control', function () {
     });
 
     let called = false;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'levelControl',
       new (class extends BoundCluster {
         async stop() {
@@ -90,7 +87,7 @@ describe('Level Control', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.levelControl.stop();
+    await zclNode.endpoints[1].clusters.levelControl.stop();
     assert.strictEqual(called, true);
   });
 });

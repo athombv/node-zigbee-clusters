@@ -3,313 +3,131 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
-const Node = require('../lib/Node');
 const OnOffCluster = require('../lib/clusters/onOff');
 const LevelControlCluster = require('../lib/clusters/levelControl');
 const IasZoneCluster = require('../lib/clusters/iasZone');
 const { ZCLStandardHeader } = require('../lib/zclFrames');
 const { ZCLError } = require('../lib/util');
-const { createMockNode } = require('./util');
+const { createVirtualDevice } = require('./util');
 
-/**
- * Creates a connected node pair where frames sent from the device back to the controller
- * are captured before being forwarded.
- */
-function createSpyNodePair() {
-  const capturedFrames = [];
-  let controllerNode;
-  let deviceNode;
+const SET_ON_CMD_ID = OnOffCluster.COMMANDS.setOn.id;
+const DEFAULT_RESPONSE_CMD_ID = 0x0b;
 
-  const mockController = {
-    sendFrame: (endpointId, clusterId, data) => deviceNode.handleFrame(endpointId, clusterId, data),
-    endpointDescriptors: [{ endpointId: 1, inputClusters: [OnOffCluster.ID], outputClusters: [] }],
-  };
-
-  const mockDevice = {
-    sendFrame: (endpointId, clusterId, data) => {
-      capturedFrames.push({ endpointId, clusterId, data });
-      return controllerNode.handleFrame(endpointId, clusterId, data);
-    },
-    endpointDescriptors: [{ endpointId: 1, inputClusters: [OnOffCluster.ID], outputClusters: [] }],
-  };
-
-  controllerNode = new Node(mockController);
-  deviceNode = new Node(mockDevice);
-
-  return { controllerNode, deviceNode, capturedFrames };
+/** A device whose onOff cluster is served by `onOff`, when given. */
+function onOffDevice(onOff) {
+  return createVirtualDevice({
+    endpoints: [
+      { endpointId: 1, inputClusters: [OnOffCluster.ID], clusters: onOff ? { onOff } : {} },
+    ],
+  });
 }
 
-function makeToClientFrame(cmdId) {
+/** A device whose setOn handler throws `error`. */
+function onOffDeviceThrowing(error) {
+  return onOffDevice(
+    new (class extends BoundCluster {
+      async setOn() {
+        throw error;
+      }
+    })(),
+  );
+}
+
+/** The single Default Response the virtual device sent, as [command id it answers, status]. */
+function deviceDefaultResponse(frames) {
+  const responses = frames.filter(({ from }) => from === 'virtualDevice');
+  assert.strictEqual(responses.length, 1);
+  assert.strictEqual(responses[0].frame.cmdId, DEFAULT_RESPONSE_CMD_ID);
+  return [...responses[0].frame.data];
+}
+
+/** Has the device send a cluster-specific server-to-client frame; returns the node's answer. */
+async function nodeAnswerTo(clusterId, cmdId, data, inputClusters = [OnOffCluster.ID]) {
+  const { virtualDevice, frames, settle } = createVirtualDevice({
+    endpoints: [{ endpointId: 1, inputClusters }],
+  });
   const header = new ZCLStandardHeader();
   header.frameControl.clusterSpecific = true;
   header.frameControl.directionToClient = true;
   header.trxSequenceNumber = 1;
   header.cmdId = cmdId;
-  header.data = Buffer.alloc(0);
-  return header.toBuffer();
+  header.data = data;
+
+  await virtualDevice.sendFrame(1, clusterId, header.toBuffer());
+  await settle();
+
+  const answers = frames.filter(({ from }) => from === 'zclNode');
+  assert.strictEqual(answers.length, 1);
+  assert.strictEqual(answers[0].frame.cmdId, DEFAULT_RESPONSE_CMD_ID);
+  return [...answers[0].frame.data];
 }
 
 describe('ZCLError handling', function () {
-  it('should return ZCLError status code in Default Response when BoundCluster throws ZCLError', async function () {
-    const node = createMockNode({
-      loopback: true,
-      endpoints: [
-        {
-          endpointId: 1,
-          inputClusters: [OnOffCluster.ID],
-        },
-      ],
+  // ZCL status bytes from the spec, not from our own status table
+  for (const [description, error, status, statusByte] of [
+    ['a ZCLError', new ZCLError('NOT_AUTHORIZED'), 'NOT_AUTHORIZED', 0x7e],
+    ['a ZCLError', new ZCLError('INVALID_VALUE'), 'INVALID_VALUE', 0x87],
+    ['a ZCLError', new ZCLError('INSUFFICIENT_SPACE'), 'INSUFFICIENT_SPACE', 0x89],
+    ['a generic Error', new Error('something went wrong'), 'FAILURE', 0x01],
+  ]) {
+    it(`should answer ${status} (0x${statusByte.toString(16)}) when BoundCluster throws ${description}`, async function () {
+      const { zclNode, frames } = onOffDeviceThrowing(error);
+
+      await assert.rejects(zclNode.endpoints[1].clusters.onOff.setOn(), { message: status });
+
+      assert.deepStrictEqual(deviceDefaultResponse(frames), [SET_ON_CMD_ID, statusByte]);
     });
-
-    node.endpoints[1].bind(
-      'onOff',
-      new (class extends BoundCluster {
-        async setOn() {
-          throw new ZCLError('NOT_AUTHORIZED');
-        }
-      })(),
-    );
-
-    await assert.rejects(
-      () => node.endpoints[1].clusters.onOff.setOn(),
-      (err) => {
-        assert.strictEqual(err.message, 'NOT_AUTHORIZED');
-        return true;
-      },
-    );
-  });
-
-  it('should return FAILURE status in Default Response when BoundCluster throws a generic Error', async function () {
-    const node = createMockNode({
-      loopback: true,
-      endpoints: [
-        {
-          endpointId: 1,
-          inputClusters: [OnOffCluster.ID],
-        },
-      ],
-    });
-
-    node.endpoints[1].bind(
-      'onOff',
-      new (class extends BoundCluster {
-        async setOn() {
-          throw new Error('something went wrong');
-        }
-      })(),
-    );
-
-    await assert.rejects(
-      () => node.endpoints[1].clusters.onOff.setOn(),
-      (err) => {
-        assert.strictEqual(err.message, 'FAILURE');
-        return true;
-      },
-    );
-  });
-
-  it('should encode ZCLError status code in Default Response frame bytes', async function () {
-    // NOT_AUTHORIZED = 0x7e per ZCL spec
-    const NOT_AUTHORIZED_STATUS_BYTE = 0x7e;
-    const SET_ON_CMD_ID = OnOffCluster.COMMANDS.setOn.id;
-    const DEFAULT_RESPONSE_CMD_ID = 0x0b;
-
-    const { controllerNode, deviceNode, capturedFrames } = createSpyNodePair();
-
-    deviceNode.endpoints[1].bind(
-      'onOff',
-      new (class extends BoundCluster {
-        async setOn() {
-          throw new ZCLError('NOT_AUTHORIZED');
-        }
-      })(),
-    );
-
-    await assert.rejects(() => controllerNode.endpoints[1].clusters.onOff.setOn());
-
-    // capturedFrames only contains frames sent from the device back to the controller.
-    // Find the Default Response frame among the captured device → controller frames.
-    const defaultResponseFrame = capturedFrames
-      .map((f) => ZCLStandardHeader.fromBuffer(f.data))
-      .find((frame) => frame.cmdId === DEFAULT_RESPONSE_CMD_ID);
-
-    assert.ok(defaultResponseFrame, 'Default Response frame was sent');
-    assert.strictEqual(
-      defaultResponseFrame.data[0],
-      SET_ON_CMD_ID,
-      'Default Response should reference the received setOn command ID',
-    );
-    assert.strictEqual(
-      defaultResponseFrame.data[1],
-      NOT_AUTHORIZED_STATUS_BYTE,
-      'Default Response should encode NOT_AUTHORIZED (0x7e) as the status byte',
-    );
-  });
-
-  it('should encode FAILURE (0x01) in Default Response frame bytes when a generic Error is thrown', async function () {
-    const FAILURE_STATUS_BYTE = 0x01;
-    const SET_ON_CMD_ID = OnOffCluster.COMMANDS.setOn.id;
-    const DEFAULT_RESPONSE_CMD_ID = 0x0b;
-
-    const { controllerNode, deviceNode, capturedFrames } = createSpyNodePair();
-
-    deviceNode.endpoints[1].bind(
-      'onOff',
-      new (class extends BoundCluster {
-        async setOn() {
-          throw new Error('something went wrong');
-        }
-      })(),
-    );
-
-    await assert.rejects(() => controllerNode.endpoints[1].clusters.onOff.setOn());
-
-    const defaultResponseFrame = capturedFrames
-      .map((f) => ZCLStandardHeader.fromBuffer(f.data))
-      .find((frame) => frame.cmdId === DEFAULT_RESPONSE_CMD_ID);
-
-    assert.ok(defaultResponseFrame, 'Default Response frame was sent');
-    assert.strictEqual(
-      defaultResponseFrame.data[0],
-      SET_ON_CMD_ID,
-      'Default Response should reference the received setOn command ID',
-    );
-    assert.strictEqual(
-      defaultResponseFrame.data[1],
-      FAILURE_STATUS_BYTE,
-      'Default Response should encode FAILURE (0x01) as the status byte',
-    );
-  });
+  }
 
   it('should send SUCCESS status byte when ZCLError("SUCCESS") is thrown', async function () {
-    const SUCCESS_STATUS_BYTE = 0x00;
-    const SET_ON_CMD_ID = OnOffCluster.COMMANDS.setOn.id;
-    const DEFAULT_RESPONSE_CMD_ID = 0x0b;
+    const { zclNode, frames } = onOffDeviceThrowing(new ZCLError('SUCCESS'));
 
-    const { controllerNode, deviceNode, capturedFrames } = createSpyNodePair();
+    // A SUCCESS default response resolves the command
+    await zclNode.endpoints[1].clusters.onOff.setOn();
 
-    deviceNode.endpoints[1].bind(
-      'onOff',
-      new (class extends BoundCluster {
-        async setOn() {
-          throw new ZCLError('SUCCESS');
-        }
-      })(),
-    );
-
-    // The controller should not reject — a SUCCESS default response resolves the command
-    await controllerNode.endpoints[1].clusters.onOff.setOn();
-
-    const defaultResponseFrame = capturedFrames
-      .map((f) => ZCLStandardHeader.fromBuffer(f.data))
-      .find((frame) => frame.cmdId === DEFAULT_RESPONSE_CMD_ID);
-
-    assert.ok(defaultResponseFrame, 'Default Response frame was sent');
-    assert.strictEqual(
-      defaultResponseFrame.data[0],
-      SET_ON_CMD_ID,
-      'Default Response should reference the received setOn command ID',
-    );
-    assert.strictEqual(
-      defaultResponseFrame.data[1],
-      SUCCESS_STATUS_BYTE,
-      'Default Response should encode SUCCESS (0x00) as the status byte',
-    );
+    assert.deepStrictEqual(deviceDefaultResponse(frames), [SET_ON_CMD_ID, 0x00]);
   });
 
   // ZCL R8 2.5.12.2
   it('should send UNSUP_COMMAND (0x81) for a command the BoundCluster does not implement', async function () {
-    const { controllerNode, deviceNode, capturedFrames } = createSpyNodePair();
-    deviceNode.endpoints[1].bind('onOff', new BoundCluster());
+    const { zclNode, frames } = onOffDevice(new BoundCluster());
 
-    await assert.rejects(() => controllerNode.endpoints[1].clusters.onOff.setOn(), {
+    await assert.rejects(zclNode.endpoints[1].clusters.onOff.setOn(), {
       message: 'UNSUP_CLUSTER_COMMAND',
     });
 
-    const defaultResponseFrame = ZCLStandardHeader.fromBuffer(capturedFrames[0].data);
-    assert.strictEqual(defaultResponseFrame.cmdId, 0x0b);
-    assert.strictEqual(defaultResponseFrame.data[1], 0x81);
+    assert.deepStrictEqual(deviceDefaultResponse(frames), [SET_ON_CMD_ID, 0x81]);
   });
 
   it('should send UNSUP_COMMAND (0x81) for an unknown command id on a client cluster', async function () {
-    const { deviceNode, capturedFrames } = createSpyNodePair();
-    await deviceNode.handleFrame(1, OnOffCluster.ID, makeToClientFrame(0x7f), {});
-    assert.strictEqual(ZCLStandardHeader.fromBuffer(capturedFrames[0].data).data[1], 0x81);
+    const answer = await nodeAnswerTo(OnOffCluster.ID, 0x7f, Buffer.alloc(0));
+    assert.deepStrictEqual(answer, [0x7f, 0x81]);
   });
 
   // A known request without a handler is still unsupported; only responses without a pending
   // request are ignored
   it('should send UNSUP_COMMAND (0x81) for a server-to-client request without a handler', async function () {
-    const capturedFrames = [];
-    const node = new Node({
-      sendFrame: async (endpointId, clusterId, data) => {
-        capturedFrames.push(data);
-      },
-      endpointDescriptors: [{ endpointId: 1, inputClusters: [IasZoneCluster.ID] }],
-    });
-    const header = new ZCLStandardHeader();
-    header.frameControl.clusterSpecific = true;
-    header.frameControl.directionToClient = true;
-    header.trxSequenceNumber = 1;
-    header.cmdId = 0x00; // zoneStatusChangeNotification
-    header.data = Buffer.from([0x01, 0x00, 0x00, 0x01, 0x00, 0x00]);
-
-    await node.handleFrame(1, IasZoneCluster.ID, header.toBuffer(), {});
-    await new Promise(setImmediate);
-
-    const defaultResponse = ZCLStandardHeader.fromBuffer(capturedFrames[0]);
-    assert.strictEqual(defaultResponse.cmdId, 0x0b);
-    assert.strictEqual(defaultResponse.data[1], 0x81);
+    const answer = await nodeAnswerTo(
+      IasZoneCluster.ID,
+      0x00, // zoneStatusChangeNotification
+      Buffer.from([0x01, 0x00, 0x00, 0x01, 0x00, 0x00]),
+      [IasZoneCluster.ID],
+    );
+    assert.deepStrictEqual(answer, [0x00, 0x81]);
   });
 
   it('should send UNSUPPORTED_CLUSTER (0xc3) for a server-to-client frame on a cluster the endpoint lacks', async function () {
-    const { deviceNode, capturedFrames } = createSpyNodePair();
-    await deviceNode.handleFrame(1, LevelControlCluster.ID, makeToClientFrame(0x00), {});
-    assert.strictEqual(ZCLStandardHeader.fromBuffer(capturedFrames[0].data).data[1], 0xc3);
+    const answer = await nodeAnswerTo(LevelControlCluster.ID, 0x00, Buffer.alloc(0));
+    assert.deepStrictEqual(answer, [0x00, 0xc3]);
   });
 
   it('should send UNSUPPORTED_CLUSTER (0xc3) when the endpoint has no binding for the cluster', async function () {
-    const { controllerNode, capturedFrames } = createSpyNodePair();
+    const { zclNode, frames } = onOffDevice();
 
-    await assert.rejects(() => controllerNode.endpoints[1].clusters.onOff.setOn(), {
+    await assert.rejects(zclNode.endpoints[1].clusters.onOff.setOn(), {
       message: 'UNSUPPORTED_CLUSTER',
     });
 
-    const defaultResponseFrame = ZCLStandardHeader.fromBuffer(capturedFrames[0].data);
-    assert.strictEqual(defaultResponseFrame.cmdId, 0x0b);
-    assert.strictEqual(defaultResponseFrame.data[1], 0xc3);
-  });
-
-  it('should propagate different ZCLError status codes', async function () {
-    const statuses = ['NOT_AUTHORIZED', 'INVALID_VALUE', 'INSUFFICIENT_SPACE'];
-
-    for (const status of statuses) {
-      const node = createMockNode({
-        loopback: true,
-        endpoints: [
-          {
-            endpointId: 1,
-            inputClusters: [OnOffCluster.ID],
-          },
-        ],
-      });
-
-      node.endpoints[1].bind(
-        'onOff',
-        new (class extends BoundCluster {
-          async setOn() {
-            throw new ZCLError(status);
-          }
-        })(),
-      );
-
-      await assert.rejects(
-        () => node.endpoints[1].clusters.onOff.setOn(),
-        (err) => {
-          assert.strictEqual(err.message, status);
-          return true;
-        },
-      );
-    }
+    assert.deepStrictEqual(deviceDefaultResponse(frames), [SET_ON_CMD_ID, 0xc3]);
   });
 });

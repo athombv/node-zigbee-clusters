@@ -3,8 +3,8 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
-const Node = require('../lib/Node');
 const OTACluster = require('../lib/clusters/ota');
+const { createVirtualDevice } = require('./util');
 
 // ZCL Standard Header: frameControl(1), trxSequenceNumber(1), cmdId(1), data(rest)
 const ZCL_HEADER_SIZE = 3;
@@ -14,39 +14,27 @@ const CMD_QUERY_NEXT_IMAGE_REQUEST = OTACluster.COMMANDS.queryNextImageRequest.i
 const CMD_QUERY_NEXT_IMAGE_RESPONSE = OTACluster.COMMANDS.queryNextImageRequest.response.id;
 
 /**
- * Creates a mock node that captures raw ZCL frame buffers from every sendFrame call,
- * with loopback so frames are handled by the same node.
+ * A device with an OTA client, as real devices have, and Homey's node serving OTA. The device asks
+ * for images; the node under test answers.
  */
-function createCapturingNode() {
-  const capturedFrames = [];
-  let node;
+function createOtaDevice() {
+  return createVirtualDevice({ endpoints: [{ endpointId: 1, outputClusters: [OTACluster.ID] }] });
+}
 
-  const mockNode = {
-    sendFrame: (endpointId, clusterId, buffer) => {
-      capturedFrames.push(buffer);
-      return node.handleFrame(endpointId, clusterId, buffer, {});
-    },
-    endpointDescriptors: [
-      {
-        endpointId: 1,
-        inputClusters: [OTACluster.ID],
-        outputClusters: [],
-      },
-    ],
-  };
-
-  node = new Node(mockNode);
-  return { node, capturedFrames };
+/** The raw frame `from` sent with command `cmdId`. */
+function sentFrame(frames, from, cmdId) {
+  const sent = frames.find((record) => record.from === from && record.frame.cmdId === cmdId);
+  return sent && sent.raw;
 }
 
 describe('OTA', function () {
   // --- queryNextImageRequest: encodeMissingFieldsBehavior on the request ---
 
   it('should NOT encode hardwareVersion when omitted from queryNextImageRequest', async function () {
-    const { node, capturedFrames } = createCapturingNode();
+    const { zclNode, virtualDevice, frames } = createOtaDevice();
 
     let receivedData = null;
-    node.endpoints[1].bind(
+    zclNode.endpoints[1].bind(
       'ota',
       new (class extends BoundCluster {
         async queryNextImageRequest(data) {
@@ -56,7 +44,7 @@ describe('OTA', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.ota.queryNextImageRequest({
+    await virtualDevice.endpoints[1].clusters.ota.queryNextImageRequest({
       fieldControl: 0,
       manufacturerCode: 0x1234,
       imageType: 0x0001,
@@ -64,7 +52,7 @@ describe('OTA', function () {
       // hardwareVersion intentionally omitted
     });
 
-    const requestFrame = capturedFrames.find((buf) => buf[2] === CMD_QUERY_NEXT_IMAGE_REQUEST);
+    const requestFrame = sentFrame(frames, 'virtualDevice', CMD_QUERY_NEXT_IMAGE_REQUEST);
     assert.ok(requestFrame, 'request frame not captured');
 
     // fieldControl(1) + manufacturerCode(2) + imageType(2) + fileVersion(4) = 9 bytes
@@ -84,9 +72,9 @@ describe('OTA', function () {
   });
 
   it('should encode hardwareVersion when provided in queryNextImageRequest', async function () {
-    const { node, capturedFrames } = createCapturingNode();
+    const { zclNode, virtualDevice, frames } = createOtaDevice();
 
-    node.endpoints[1].bind(
+    zclNode.endpoints[1].bind(
       'ota',
       new (class extends BoundCluster {
         async queryNextImageRequest() {
@@ -95,7 +83,7 @@ describe('OTA', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.ota.queryNextImageRequest({
+    await virtualDevice.endpoints[1].clusters.ota.queryNextImageRequest({
       fieldControl: ['hardwareVersionPresent'],
       manufacturerCode: 0x1234,
       imageType: 0x0001,
@@ -103,7 +91,7 @@ describe('OTA', function () {
       hardwareVersion: 0x0002,
     });
 
-    const requestFrame = capturedFrames.find((buf) => buf[2] === CMD_QUERY_NEXT_IMAGE_REQUEST);
+    const requestFrame = sentFrame(frames, 'virtualDevice', CMD_QUERY_NEXT_IMAGE_REQUEST);
     assert.ok(requestFrame, 'request frame not captured');
 
     // fieldControl(1) + manufacturerCode(2) + imageType(2) + fileVersion(4)
@@ -122,9 +110,9 @@ describe('OTA', function () {
   // --- queryNextImageResponse: encodeMissingFieldsBehavior on the response ---
 
   it('should encode all fields in queryNextImageResponse when status is SUCCESS', async function () {
-    const { node, capturedFrames } = createCapturingNode();
+    const { zclNode, virtualDevice, frames } = createOtaDevice();
 
-    node.endpoints[1].bind(
+    zclNode.endpoints[1].bind(
       'ota',
       new (class extends BoundCluster {
         async queryNextImageRequest() {
@@ -139,14 +127,14 @@ describe('OTA', function () {
       })(),
     );
 
-    const response = await node.endpoints[1].clusters.ota.queryNextImageRequest({
+    const response = await virtualDevice.endpoints[1].clusters.ota.queryNextImageRequest({
       fieldControl: 0,
       manufacturerCode: 0x1234,
       imageType: 0x0001,
       fileVersion: 0x00000010,
     });
 
-    const responseFrame = capturedFrames.find((buf) => buf[2] === CMD_QUERY_NEXT_IMAGE_RESPONSE);
+    const responseFrame = sentFrame(frames, 'zclNode', CMD_QUERY_NEXT_IMAGE_RESPONSE);
     assert.ok(responseFrame, 'response frame not captured');
 
     // status(1) + manufacturerCode(2) + imageType(2) + fileVersion(4) + imageSize(4) = 13 bytes
@@ -165,9 +153,9 @@ describe('OTA', function () {
   });
 
   it('should encode only the status byte in queryNextImageResponse when status is NO_IMAGE_AVAILABLE', async function () {
-    const { node, capturedFrames } = createCapturingNode();
+    const { zclNode, virtualDevice, frames } = createOtaDevice();
 
-    node.endpoints[1].bind(
+    zclNode.endpoints[1].bind(
       'ota',
       new (class extends BoundCluster {
         async queryNextImageRequest() {
@@ -176,17 +164,17 @@ describe('OTA', function () {
       })(),
     );
 
-    const response = await node.endpoints[1].clusters.ota.queryNextImageRequest({
+    const response = await virtualDevice.endpoints[1].clusters.ota.queryNextImageRequest({
       fieldControl: 0,
       manufacturerCode: 0x1234,
       imageType: 0x0001,
       fileVersion: 0x00000010,
     });
 
-    const responseFrame = capturedFrames.find((buf) => buf[2] === CMD_QUERY_NEXT_IMAGE_RESPONSE);
+    const responseFrame = sentFrame(frames, 'zclNode', CMD_QUERY_NEXT_IMAGE_RESPONSE);
     assert.ok(responseFrame, 'response frame not captured');
 
-    // Only status(1) — all other fields must be absent
+    // Only status(1): all other fields must be absent
     const payload = responseFrame.slice(ZCL_HEADER_SIZE);
     assert.strictEqual(
       payload.length,

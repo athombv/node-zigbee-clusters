@@ -57,6 +57,18 @@ describe('Virtual device', function () {
     );
   });
 
+  it('lets attribute values be written', async function () {
+    const { zclNode, virtualDevice } = createVirtualDevice({
+      endpoints: [
+        { endpointId: 1, inputClusters: [OnOffCluster.ID], clusters: { onOff: { onTime: 1 } } },
+      ],
+    });
+
+    await zclNode.endpoints[1].clusters.onOff.writeAttributes({ onTime: 7 });
+
+    assert.strictEqual(virtualDevice.endpoints[1].bindings.onOff.onTime, 7);
+  });
+
   it('times out when an interceptor drops the response', async function (t) {
     t.mock.timers.enable({ apis: ['setTimeout'] });
     const { zclNode, intercept, settle } = createVirtualDevice({

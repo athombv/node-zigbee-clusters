@@ -1,18 +1,16 @@
 'use strict';
 
-const { describe, it, afterEach, mock } = require('node:test');
+const { describe, it } = require('node:test');
 const assert = require('node:assert');
 
 const BoundCluster = require('../lib/BoundCluster');
 const ColorControlCluster = require('../lib/clusters/colorControl');
-const Endpoint = require('../lib/Endpoint');
-const { createMockNode } = require('./util');
+const { createVirtualDevice } = require('./util');
 
 // Sends colorLoopSet on a fresh node and returns the parsed outgoing frame, so tests can assert
 // the payload bytes against the ZCL spec instead of round-tripping through our own definition
 async function sendColorLoopSet(args) {
-  const node = createMockNode({
-    loopback: true,
+  const { zclNode, virtualDevice, frames } = createVirtualDevice({
     endpoints: [
       {
         endpointId: 1,
@@ -21,7 +19,7 @@ async function sendColorLoopSet(args) {
     ],
   });
 
-  node.endpoints[1].bind(
+  virtualDevice.endpoints[1].bind(
     'colorControl',
     new (class extends BoundCluster {
       async colorLoopSet() {
@@ -30,20 +28,15 @@ async function sendColorLoopSet(args) {
     })(),
   );
 
-  const sendFrameSpy = mock.method(node, 'sendFrame');
-  await node.endpoints[1].clusters.colorControl.colorLoopSet(args);
+  await zclNode.endpoints[1].clusters.colorControl.colorLoopSet(args);
 
-  return Endpoint.parseFrame(sendFrameSpy.mock.calls[0].arguments[2]);
+  assert.strictEqual(frames[0].from, 'zclNode');
+  return frames[0].frame;
 }
 
 describe('Color Control', function () {
-  afterEach(function () {
-    mock.restoreAll();
-  });
-
   it('should receive moveToColor', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -53,7 +46,7 @@ describe('Color Control', function () {
     });
 
     let receivedData = null;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'colorControl',
       new (class extends BoundCluster {
         async moveToColor(data) {
@@ -62,7 +55,7 @@ describe('Color Control', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.colorControl.moveToColor({
+    await zclNode.endpoints[1].clusters.colorControl.moveToColor({
       colorX: 0x5000,
       colorY: 0x3000,
       transitionTime: 20,
@@ -74,8 +67,7 @@ describe('Color Control', function () {
   });
 
   it('should receive moveToColorTemperature', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -85,7 +77,7 @@ describe('Color Control', function () {
     });
 
     let receivedData = null;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'colorControl',
       new (class extends BoundCluster {
         async moveToColorTemperature(data) {
@@ -94,7 +86,7 @@ describe('Color Control', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.colorControl.moveToColorTemperature({
+    await zclNode.endpoints[1].clusters.colorControl.moveToColorTemperature({
       colorTemperature: 370,
       transitionTime: 15,
     });
@@ -104,8 +96,7 @@ describe('Color Control', function () {
   });
 
   it('should receive moveToHueAndSaturation', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -115,7 +106,7 @@ describe('Color Control', function () {
     });
 
     let receivedData = null;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'colorControl',
       new (class extends BoundCluster {
         async moveToHueAndSaturation(data) {
@@ -124,7 +115,7 @@ describe('Color Control', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.colorControl.moveToHueAndSaturation({
+    await zclNode.endpoints[1].clusters.colorControl.moveToHueAndSaturation({
       hue: 180,
       saturation: 200,
       transitionTime: 10,
@@ -136,8 +127,7 @@ describe('Color Control', function () {
   });
 
   it('should receive colorLoopSet', async function () {
-    const node = createMockNode({
-      loopback: true,
+    const { zclNode, virtualDevice } = createVirtualDevice({
       endpoints: [
         {
           endpointId: 1,
@@ -147,7 +137,7 @@ describe('Color Control', function () {
     });
 
     let receivedData = null;
-    node.endpoints[1].bind(
+    virtualDevice.endpoints[1].bind(
       'colorControl',
       new (class extends BoundCluster {
         async colorLoopSet(data) {
@@ -156,7 +146,7 @@ describe('Color Control', function () {
       })(),
     );
 
-    await node.endpoints[1].clusters.colorControl.colorLoopSet({
+    await zclNode.endpoints[1].clusters.colorControl.colorLoopSet({
       updateFlags: ['updateAction', 'updateDirection', 'updateTime', 'updateStartHue'],
       action: 'activateFromColorLoopStartEnhancedHue',
       direction: 'incrementHue',
@@ -176,7 +166,7 @@ describe('Color Control', function () {
     assert.strictEqual(receivedData.startHue, 0x2300);
   });
 
-  // The loopback test above encodes and decodes with the same definition, so it passes even when
+  // The round-trip test above encodes and decodes with the same definition, so it passes even when
   // that definition is wrong on the wire. These bytes come from the spec, not from our types:
   // ZCL r8 Figure 5-17 (payload layout), Figure 5-18 (updateFlags bits), Table 5.25 (action
   // values), Table 5.26 (direction values), Table 5.13 (command id).
