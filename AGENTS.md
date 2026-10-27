@@ -18,7 +18,8 @@ npm run generate-types  # regenerate index.d.ts after changing cluster definitio
 npm run build           # JSDoc site into build/, open build/index.html in a browser
 ```
 
-`npm test` globs `test/*.js` only, so nothing under `test/manual/` runs with it.
+`npm test` globs `test/*.js` only, so a test file must sit directly in `test/`; `test/util/` holds
+the harness.
 
 `index.d.ts` is generated from the cluster definitions and committed. Never edit it by hand; run
 `npm run generate-types`, which CI does too.
@@ -51,19 +52,8 @@ Refer to a cluster id as `OnOffCluster.ID`, never as `6` or `0x0006`.
 
 ## Tests
 
-Tests run on `node:test`, so `describe`, `it` and `mock` are imported, not globals. A callback-style
-test takes the test context first: `it('...', function (t, done) { ... })`. Written as
-`function (done)` node:test sees a synchronous test, passes it immediately and never runs the
-assertions.
+Tests run on `node:test`, so `describe`, `it` and `mock` are imported, not globals.
 
-Build mock nodes with the helpers in `test/util/index.js` instead of by hand:
-
-- `createMockNode({ loopback: true, ... })` sends a command straight back into the same node's
-  `BoundCluster`, which covers most cases. See `test/onOff.js`.
-- `createConnectedNodePair()` wires two nodes together when sender and receiver must differ. See
-  `test/testNode.js`.
-- `MOCK_DEVICES` holds preset sensors. See `test/iasZone.js`.
-
-Server-to-client traffic such as attribute reports and notifications has no helper at the time of
-writing, so check `test/util/index.js` first and otherwise build a `ZCLStandardHeader` by hand and
-pass it to `node.handleFrame()`, as `test/attributeReport.js` does.
+Every test that needs a node uses `createVirtualDevice()` from `test/util/virtualDevice.js`.
+Read [docs/testing.md](docs/testing.md) before writing a test, above all its rules: an assertion
+inside a `BoundCluster` or cluster handler becomes an error Default Response instead of a failure.

@@ -73,291 +73,178 @@ class IkeaSceneCluster extends SceneCluster {
 }
 
 Cluster.addCluster(IkeaSceneCluster);
-const { createMockNode } = require('./util');
+const { createSingleClusterDevice } = require('./util/virtualDevice');
 
-const node = createMockNode({
-  loopback: true,
-  endpoints: [
-    {
-      endpointId: 1,
-      inputClusters: [SceneCluster.ID],
-    },
-  ],
-});
+/**
+ * Sends `command` from a scenes cluster to a virtual device that answers with BoundCluster's
+ * defaults, and returns what went on the wire.
+ */
+async function send(command, bound = new BoundCluster()) {
+  const { zclNode, frames } = createSingleClusterDevice(SceneCluster, bound);
 
-class IkeaBoundCluster extends BoundCluster {
-  constructor({
-    onReadAttributes,
-    onWriteAttributes,
-    onConfigureReporting,
-    onReadReportingConfiguration,
-    onIkeaSceneStep,
-    onIkeaSceneMove,
-    onIkeaSceneMoveStop,
-  } = {}) {
-    super();
-    if (onReadAttributes) this.readAttributes = onReadAttributes;
-    if (onWriteAttributes) this.writeAttributes = onWriteAttributes;
-    if (onConfigureReporting) this.configureReporting = onConfigureReporting;
-    if (onReadReportingConfiguration) {
-      this.readReportingConfiguration = onReadReportingConfiguration;
-    }
-    if (onIkeaSceneStep) this.ikeaSceneStep = onIkeaSceneStep;
-    if (onIkeaSceneMove) this.ikeaSceneMove = onIkeaSceneMove;
-    if (onIkeaSceneMoveStop) this.ikeaSceneMoveStop = onIkeaSceneMoveStop;
-  }
+  const result = command(zclNode.endpoints[1].clusters.scenes);
+  return { result, frames };
+}
+
+/** Asserts the single frame the scenes cluster sent carries `manufacturerId`. */
+async function assertSentManufacturerId(command, manufacturerId) {
+  const { result, frames } = await send(command);
+  // Only the request is under test: BoundCluster's defaults reject some of these commands.
+  await result.catch(() => {});
+  const sent = frames.filter((frame) => frame.from === 'zclNode');
+  assert.strictEqual(sent.length, 1);
+  assert.strictEqual(sent[0].frame.manufacturerId, manufacturerId);
+}
+
+/** Asserts that mixing manufacturers is rejected before anything is sent. */
+async function assertRejectsMixedManufacturers(command) {
+  const { result, frames } = await send(command);
+  await assert.rejects(result, /multiple manufacturer ids/);
+  assert.deepStrictEqual(frames, []);
 }
 
 describe('manufacturer specific commands', function () {
-  it('should execute custom commands', function (t, done) {
-    let commandsExecuted = 0;
-    const ikeaSceneStepCommand = {
-      mode: 'up',
-      stepSize: 1,
-      transitionTime: 13,
-    };
-    const ikeaSceneMoveCommand = {
-      mode: 'up',
-      transitionTime: 13,
-    };
-    const ikeaSceneMoveStop = {
-      duration: 1000,
-    };
-    node.endpoints[1].bind(
-      'scenes',
-      new IkeaBoundCluster({
-        onIkeaSceneStep: (payload) => {
-          commandsExecuted++;
-          assert.deepStrictEqual({ ...payload }, ikeaSceneStepCommand);
-          if (commandsExecuted === 3) done();
-        },
-        onIkeaSceneMove: (payload) => {
-          commandsExecuted++;
-          assert.deepStrictEqual({ ...payload }, ikeaSceneMoveCommand);
-          if (commandsExecuted === 3) done();
-        },
-        onIkeaSceneMoveStop: (payload) => {
-          commandsExecuted++;
-          assert.deepStrictEqual({ ...payload }, ikeaSceneMoveStop);
-          if (commandsExecuted === 3) done();
-        },
-      }),
-    );
+  it('should execute custom commands', async function () {
+    const received = {};
+    const { result, frames } = await send(
+      async (scenes) => {
+        await scenes.ikeaSceneStep({ mode: 'up', stepSize: 1, transitionTime: 13 });
+        await scenes.ikeaSceneMove({ mode: 'up', transitionTime: 13 });
+        await scenes.ikeaSceneMoveStop({ duration: 1000 });
+      },
+      new (class extends BoundCluster {
+        async ikeaSceneStep(payload) {
+          received.ikeaSceneStep = { ...payload };
+        }
 
-    node.endpoints[1].clusters['scenes'].ikeaSceneStep(ikeaSceneStepCommand);
-    node.endpoints[1].clusters['scenes'].ikeaSceneMove(ikeaSceneMoveCommand);
-    node.endpoints[1].clusters['scenes'].ikeaSceneMoveStop(ikeaSceneMoveStop);
+        async ikeaSceneMove(payload) {
+          received.ikeaSceneMove = { ...payload };
+        }
+
+        async ikeaSceneMoveStop(payload) {
+          received.ikeaSceneMoveStop = { ...payload };
+        }
+      })(),
+    );
+    await result;
+
+    assert.deepStrictEqual(received, {
+      ikeaSceneStep: { mode: 'up', stepSize: 1, transitionTime: 13 },
+      ikeaSceneMove: { mode: 'up', transitionTime: 13 },
+      ikeaSceneMoveStop: { duration: 1000 },
+    });
+    const sent = frames.filter((frame) => frame.from === 'zclNode');
+    assert.deepStrictEqual(
+      sent.map(({ frame }) => frame.manufacturerId),
+      [0x117c, 0x117c, 0x117c],
+    );
   });
 
   describe('global commands', function () {
     describe('readAttributes', function () {
-      it('should set correct manufacturerId', function (t, done) {
-        node.endpoints[1].bind(
-          'scenes',
-          new IkeaBoundCluster({
-            onReadAttributes: (payload, meta, rawPayload) => {
-              assert.strictEqual(MANUFACTURER_ID_1, rawPayload.manufacturerId);
-              done();
-            },
-          }),
+      it('should set correct manufacturerId', async function () {
+        await assertSentManufacturerId(
+          (scenes) => scenes.readAttributes(['sceneCount']),
+          MANUFACTURER_ID_1,
         );
-        node.endpoints[1].clusters['scenes'].readAttributes(['sceneCount']);
       });
-      it('should throw when different manufacturerIds are found', function (t, done) {
-        node.endpoints[1].clusters['scenes']
-          .readAttributes(['sceneCount', 'currentScene'])
-          .catch((err) => {
-            assert(err instanceof Error);
-            done();
-          });
-      });
-      it('should set correct manufacturerId for multiple attributes', function (t, done) {
-        node.endpoints[1].bind(
-          'scenes',
-          new IkeaBoundCluster({
-            onReadAttributes: (payload, meta, rawPayload) => {
-              assert.strictEqual(MANUFACTURER_ID_2, rawPayload.manufacturerId);
-              done();
-            },
-          }),
+      it('should throw when different manufacturerIds are found', async function () {
+        await assertRejectsMixedManufacturers((scenes) =>
+          scenes.readAttributes(['sceneCount', 'currentScene']),
         );
-
-        node.endpoints[1].clusters['scenes'].readAttributes(['currentScene', 'currentGroup']);
       });
-      it('should not set manufacturerId when zcl attribute is present', function (t, done) {
-        node.endpoints[1].bind(
-          'scenes',
-          new IkeaBoundCluster({
-            onReadAttributes: (payload, meta, rawPayload) => {
-              assert.strictEqual(undefined, rawPayload.manufacturerId);
-              done();
-            },
-          }),
+      it('should set correct manufacturerId for multiple attributes', async function () {
+        await assertSentManufacturerId(
+          (scenes) => scenes.readAttributes(['currentScene', 'currentGroup']),
+          MANUFACTURER_ID_2,
         );
-
-        node.endpoints[1].clusters['scenes'].readAttributes(['sceneValid']);
+      });
+      it('should not set manufacturerId when zcl attribute is present', async function () {
+        await assertSentManufacturerId(
+          (scenes) => scenes.readAttributes(['sceneValid']),
+          undefined,
+        );
       });
     });
 
     describe('writeAttributes', function () {
-      it('should set correct manufacturerId', function (t, done) {
-        node.endpoints[1].bind(
-          'scenes',
-          new IkeaBoundCluster({
-            onWriteAttributes: (payload, meta, rawPayload) => {
-              assert.strictEqual(MANUFACTURER_ID_1, rawPayload.manufacturerId);
-              done();
-            },
-          }),
+      it('should set correct manufacturerId', async function () {
+        await assertSentManufacturerId(
+          (scenes) => scenes.writeAttributes({ sceneCount: 1 }),
+          MANUFACTURER_ID_1,
         );
-        node.endpoints[1].clusters['scenes'].writeAttributes({ sceneCount: 1 });
       });
-      it('should throw when different manufacturerIds are found', function (t, done) {
-        node.endpoints[1].clusters['scenes']
-          .writeAttributes({ sceneCount: 1, currentScene: 2 })
-          .catch((err) => {
-            assert(err instanceof Error);
-            done();
-          });
-      });
-      it('should set correct manufacturerId for multiple attributes', function (t, done) {
-        node.endpoints[1].bind(
-          'scenes',
-          new IkeaBoundCluster({
-            onWriteAttributes: (payload, meta, rawPayload) => {
-              assert.strictEqual(MANUFACTURER_ID_2, rawPayload.manufacturerId);
-              done();
-            },
-          }),
+      it('should throw when different manufacturerIds are found', async function () {
+        await assertRejectsMixedManufacturers((scenes) =>
+          scenes.writeAttributes({ sceneCount: 1, currentScene: 2 }),
         );
-
-        node.endpoints[1].clusters['scenes'].writeAttributes({ currentScene: 1, currentGroup: 2 });
       });
-      it('should not set manufacturerId when zcl attribute is present', function (t, done) {
-        node.endpoints[1].bind(
-          'scenes',
-          new IkeaBoundCluster({
-            onWriteAttributes: (payload, meta, rawPayload) => {
-              assert.strictEqual(undefined, rawPayload.manufacturerId);
-              done();
-            },
-          }),
+      it('should set correct manufacturerId for multiple attributes', async function () {
+        await assertSentManufacturerId(
+          (scenes) => scenes.writeAttributes({ currentScene: 1, currentGroup: 2 }),
+          MANUFACTURER_ID_2,
         );
-
-        node.endpoints[1].clusters['scenes'].writeAttributes({ sceneValid: true });
+      });
+      it('should not set manufacturerId when zcl attribute is present', async function () {
+        await assertSentManufacturerId(
+          (scenes) => scenes.writeAttributes({ sceneValid: true }),
+          undefined,
+        );
       });
     });
 
     describe('configureReporting', function () {
-      it('should set correct manufacturerId', function (t, done) {
-        node.endpoints[1].bind(
-          'scenes',
-          new IkeaBoundCluster({
-            onConfigureReporting: (payload, meta, rawPayload) => {
-              assert.strictEqual(MANUFACTURER_ID_1, rawPayload.manufacturerId);
-              done();
-            },
-          }),
-        );
-        node.endpoints[1].clusters['scenes'].configureReporting({
-          sceneCount: { minInterval: 0, maxInterval: 300, minChange: 1 },
-        });
-      });
-      it('should throw when different manufacturerIds are found', function (t, done) {
-        node.endpoints[1].clusters['scenes']
-          .configureReporting({
-            sceneCount: { minInterval: 0, maxInterval: 300, minChange: 1 },
-            currentScene: { minInterval: 0, maxInterval: 300, minChange: 1 },
-          })
-          .catch((err) => {
-            assert(err instanceof Error);
-            done();
-          });
-      });
-      it('should set correct manufacturerId for multiple attributes', function (t, done) {
-        node.endpoints[1].bind(
-          'scenes',
-          new IkeaBoundCluster({
-            onConfigureReporting: (payload, meta, rawPayload) => {
-              assert.strictEqual(MANUFACTURER_ID_2, rawPayload.manufacturerId);
-              done();
-            },
-          }),
-        );
-        node.endpoints[1].clusters['scenes'].configureReporting({
-          currentScene: { minInterval: 0, maxInterval: 300, minChange: 1 },
-          currentGroup: { minInterval: 0, maxInterval: 300, minChange: 1 },
-        });
-      });
-      it('should not set manufacturerId when zcl attribute is present', function (t, done) {
-        node.endpoints[1].bind(
-          'scenes',
-          new IkeaBoundCluster({
-            onConfigureReporting: (payload, meta, rawPayload) => {
-              assert.strictEqual(undefined, rawPayload.manufacturerId);
-              done();
-            },
-          }),
-        );
+      const reporting = { minInterval: 0, maxInterval: 300, minChange: 1 };
 
-        node.endpoints[1].clusters['scenes'].configureReporting({
-          sceneValid: { minInterval: 0, maxInterval: 300, minChange: 1 },
-          currentGroup: { minInterval: 0, maxInterval: 300, minChange: 1 },
-        });
+      it('should set correct manufacturerId', async function () {
+        await assertSentManufacturerId(
+          (scenes) => scenes.configureReporting({ sceneCount: reporting }),
+          MANUFACTURER_ID_1,
+        );
+      });
+      it('should throw when different manufacturerIds are found', async function () {
+        await assertRejectsMixedManufacturers((scenes) =>
+          scenes.configureReporting({ sceneCount: reporting, currentScene: reporting }),
+        );
+      });
+      it('should set correct manufacturerId for multiple attributes', async function () {
+        await assertSentManufacturerId(
+          (scenes) =>
+            scenes.configureReporting({ currentScene: reporting, currentGroup: reporting }),
+          MANUFACTURER_ID_2,
+        );
+      });
+      it('should not set manufacturerId when zcl attribute is present', async function () {
+        await assertSentManufacturerId(
+          (scenes) => scenes.configureReporting({ sceneValid: reporting, currentGroup: reporting }),
+          undefined,
+        );
       });
     });
 
     describe('readReportingConfiguration', function () {
-      it('should set correct manufacturerId', function (t, done) {
-        node.endpoints[1].bind(
-          'scenes',
-          new IkeaBoundCluster({
-            onReadReportingConfiguration: (payload, meta, rawPayload) => {
-              assert.strictEqual(MANUFACTURER_ID_1, rawPayload.manufacturerId);
-              done();
-            },
-          }),
+      it('should set correct manufacturerId', async function () {
+        await assertSentManufacturerId(
+          (scenes) => scenes.readReportingConfiguration(['sceneCount']),
+          MANUFACTURER_ID_1,
         );
-        node.endpoints[1].clusters['scenes'].readReportingConfiguration(['sceneCount']);
       });
-      it('should throw when different manufacturerIds are found', function (t, done) {
-        node.endpoints[1].clusters['scenes']
-          .readReportingConfiguration(['sceneCount', 'currentScene'])
-          .catch((err) => {
-            assert(err instanceof Error);
-            done();
-          });
-      });
-      it('should set correct manufacturerId for multiple attributes', function (t, done) {
-        node.endpoints[1].bind(
-          'scenes',
-          new IkeaBoundCluster({
-            onReadReportingConfiguration: (payload, meta, rawPayload) => {
-              assert.strictEqual(MANUFACTURER_ID_2, rawPayload.manufacturerId);
-              done();
-            },
-          }),
+      it('should throw when different manufacturerIds are found', async function () {
+        await assertRejectsMixedManufacturers((scenes) =>
+          scenes.readReportingConfiguration(['sceneCount', 'currentScene']),
         );
-        node.endpoints[1].clusters['scenes'].readReportingConfiguration([
-          'currentGroup',
-          'currentScene',
-        ]);
       });
-      it('should not set manufacturerId when zcl attribute is present', function (t, done) {
-        node.endpoints[1].bind(
-          'scenes',
-          new IkeaBoundCluster({
-            onReadReportingConfiguration: (payload, meta, rawPayload) => {
-              assert.strictEqual(undefined, rawPayload.manufacturerId);
-              done();
-            },
-          }),
+      it('should set correct manufacturerId for multiple attributes', async function () {
+        await assertSentManufacturerId(
+          (scenes) => scenes.readReportingConfiguration(['currentGroup', 'currentScene']),
+          MANUFACTURER_ID_2,
         );
-
-        node.endpoints[1].clusters['scenes'].readReportingConfiguration([
-          'currentGroup',
-          'sceneValid',
-        ]);
+      });
+      it('should not set manufacturerId when zcl attribute is present', async function () {
+        await assertSentManufacturerId(
+          (scenes) => scenes.readReportingConfiguration(['currentGroup', 'sceneValid']),
+          undefined,
+        );
       });
     });
   });
