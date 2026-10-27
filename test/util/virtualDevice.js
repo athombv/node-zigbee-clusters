@@ -34,7 +34,18 @@ function boundClusterWithAttributes(attributes) {
 
 /**
  * Creates the node under test (`zclNode`) and a scripted device (`virtualDevice`), linked in
- * memory. See docs/testing.md for the options, what it returns and how to use it.
+ * memory. docs/testing.md explains the idea.
+ *
+ * @param {object} config
+ * @param {object[]} config.endpoints - The device's endpoints as its descriptors list them
+ *   (`endpointId`, `inputClusters`, `outputClusters`), plus `clusters`: per cluster name, attribute
+ *   values or a `BoundCluster` that serves it.
+ * @param {number} [config.maxFrameSize] - Longest frame `zclNode` may send.
+ * @returns {object} `zclNode` and `virtualDevice`; `frames`, every frame sent as `{ from,
+ *   endpointId, clusterId, frame, raw }`; `intercept(fn)`, where `fn(record)` returns `undefined`
+ *   to pass a frame, `null` to drop it or buffers to send instead, and throwing fails the sender's
+ *   `sendFrame`; `settle()`, which waits until no frame is in flight and rejects when a delivery
+ *   failed.
  */
 function createVirtualDevice({ endpoints, maxFrameSize = HOMEY_MAX_ZCL_BYTES }) {
   const frames = [];
