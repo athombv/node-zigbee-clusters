@@ -158,33 +158,35 @@ describe('Virtual device: known bugs on master', function () {
     );
   });
 
-  it(
-    'a report with an unknown attribute id does not emit attr.undefined',
-    { todo: 'onReportAttributes emits attr.undefined' },
-    async function () {
-      const { zclNode, virtualDevice, settle } = createVirtualDevice({
-        endpoints: [{ endpointId: 1, inputClusters: [OnOffCluster.ID] }],
-      });
-      const onOff = zclNode.endpoints[1].clusters.onOff;
-      const onUndefined = mock.fn();
-      const onOnOff = mock.fn();
-      onOff.on('attr.undefined', onUndefined);
-      onOff.on('attr.onOff', onOnOff);
+  it('a report with an unknown attribute id emits attr.<id>, not attr.undefined', async function () {
+    const { zclNode, virtualDevice, settle } = createVirtualDevice({
+      endpoints: [{ endpointId: 1, inputClusters: [OnOffCluster.ID] }],
+    });
+    const onOff = zclNode.endpoints[1].clusters.onOff;
+    const onUndefined = mock.fn();
+    const onUnknown = mock.fn();
+    const onOnOff = mock.fn();
+    onOff.on('attr.undefined', onUndefined);
+    onOff.on(`attr.${0x4242}`, onUnknown);
+    onOff.on('attr.onOff', onOnOff);
 
-      const report = frameToClient({
-        cmdId: 0x0a, // reportAttributes
-        disableDefaultResponse: true,
-        // 0x4242 uint8 (0x20) 1, then onOff bool (0x10) true
-        data: Buffer.from([0x42, 0x42, 0x20, 0x01, ON_OFF, 0x00, 0x10, 0x01]),
-      });
-      await virtualDevice.sendFrame(1, OnOffCluster.ID, report);
-      await settle();
+    const report = frameToClient({
+      cmdId: 0x0a, // reportAttributes
+      disableDefaultResponse: true,
+      // 0x4242 uint8 (0x20) 1, then onOff bool (0x10) true
+      data: Buffer.from([0x42, 0x42, 0x20, 0x01, ON_OFF, 0x00, 0x10, 0x01]),
+    });
+    await virtualDevice.sendFrame(1, OnOffCluster.ID, report);
+    await settle();
 
-      assert.deepStrictEqual(
-        onOnOff.mock.calls.map((call) => call.arguments[0]),
-        [true],
-      );
-      assert.strictEqual(onUndefined.mock.callCount(), 0);
-    },
-  );
+    assert.deepStrictEqual(
+      onOnOff.mock.calls.map((call) => call.arguments[0]),
+      [true],
+    );
+    assert.deepStrictEqual(
+      onUnknown.mock.calls.map((call) => call.arguments[0]),
+      [1],
+    );
+    assert.strictEqual(onUndefined.mock.callCount(), 0);
+  });
 });
