@@ -6,36 +6,10 @@ const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const OnOffCluster = require('../lib/clusters/onOff');
 const MeteringCluster = require('../lib/clusters/metering');
-const { ZCLStandardHeader } = require('../lib/zclFrames');
-const { createVirtualDevice } = require('./util');
+const { createVirtualDevice, createSingleClusterDevice, frameToClient } = require('./util');
 
 const ON_OFF = OnOffCluster.ATTRIBUTES.onOff.id;
 const ON_TIME = OnOffCluster.ATTRIBUTES.onTime.id;
-
-/** A plug whose onOff cluster answers reads with what `answer(requestedIds)` returns. */
-function plugAnswering(answer) {
-  return createVirtualDevice({
-    endpoints: [
-      {
-        endpointId: 1,
-        inputClusters: [OnOffCluster.ID],
-        clusters: {
-          onOff: new (class extends BoundCluster {
-            async readAttributes({ attributes }) {
-              const buf = Buffer.alloc(255);
-              const len = OnOffCluster.attributeArrayStatusDataType.toBuffer(
-                buf,
-                answer(attributes),
-                0,
-              );
-              return { attributes: buf.slice(0, len) };
-            }
-          })(),
-        },
-      },
-    ],
-  });
-}
 
 describe('Virtual device', function () {
   it('answers a read and records both frames', async function () {
@@ -93,6 +67,29 @@ describe('Virtual device', function () {
 
     await assert.rejects(zclNode.endpoints[1].clusters.onOff.toggle(), /ZCL frame too long/);
   });
+
+  it('fails settle when the nodes keep answering each other', async function () {
+    const { zclNode, virtualDevice, settle } = createVirtualDevice({
+      endpoints: [
+        { endpointId: 1, inputClusters: [OnOffCluster.ID], outputClusters: [OnOffCluster.ID] },
+      ],
+    });
+    // Each side answers a toggle with a toggle of its own. Not waiting for responses keeps no
+    // response timers alive after the test.
+    const NO_WAIT = { waitForResponse: false };
+    const toggleBack = (node) =>
+      new (class extends BoundCluster {
+        toggle() {
+          node.endpoints[1].clusters.onOff.toggle(undefined, NO_WAIT).catch(() => {});
+        }
+      })();
+    virtualDevice.endpoints[1].bind('onOff', toggleBack(virtualDevice));
+    zclNode.endpoints[1].bind('onOff', toggleBack(zclNode));
+
+    zclNode.endpoints[1].clusters.onOff.toggle(undefined, NO_WAIT).catch(() => {});
+
+    await assert.rejects(settle(), /are the nodes in a loop/);
+  });
 });
 
 describe('Virtual device: known bugs on master', function () {
@@ -100,9 +97,18 @@ describe('Virtual device: known bugs on master', function () {
     'readAttributes stops when the device answers with unrequested ids',
     { todo: 'fixed by #258' },
     async function () {
-      const { zclNode, intercept } = plugAnswering(() => [
-        { id: ON_TIME, status: 'SUCCESS', value: 5 },
-      ]);
+      // Whatever is asked, the plug answers with onTime only
+      const { zclNode, intercept } = createSingleClusterDevice(
+        OnOffCluster,
+        new (class extends BoundCluster {
+          async readAttributes() {
+            const buf = Buffer.alloc(255);
+            const records = [{ id: ON_TIME, status: 'SUCCESS', value: 5 }];
+            const len = OnOffCluster.attributeArrayStatusDataType.toBuffer(buf, records, 0);
+            return { attributes: buf.subarray(0, len) };
+          }
+        })(),
+      );
       let reads = 0;
       intercept((frame) => {
         // Guard: on master the read loops forever.
@@ -173,13 +179,13 @@ describe('Virtual device: known bugs on master', function () {
       onOff.on('attr.undefined', onUndefined);
       onOff.on('attr.onOff', onOnOff);
 
-      const report = new ZCLStandardHeader();
-      report.cmdId = 0x0a; // reportAttributes
-      report.frameControl.directionToClient = true;
-      report.frameControl.disableDefaultResponse = true;
-      // 0x4242 uint8 (0x20) 1, then onOff bool (0x10) true
-      report.data = Buffer.from([0x42, 0x42, 0x20, 0x01, ON_OFF, 0x00, 0x10, 0x01]);
-      await virtualDevice.sendFrame(1, OnOffCluster.ID, report.toBuffer());
+      const report = frameToClient({
+        cmdId: 0x0a, // reportAttributes
+        disableDefaultResponse: true,
+        // 0x4242 uint8 (0x20) 1, then onOff bool (0x10) true
+        data: Buffer.from([0x42, 0x42, 0x20, 0x01, ON_OFF, 0x00, 0x10, 0x01]),
+      });
+      await virtualDevice.sendFrame(1, OnOffCluster.ID, report);
       await settle();
 
       assert.deepStrictEqual(

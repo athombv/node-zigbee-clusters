@@ -6,25 +6,16 @@ const BoundCluster = require('../lib/BoundCluster');
 const OnOffCluster = require('../lib/clusters/onOff');
 const LevelControlCluster = require('../lib/clusters/levelControl');
 const IasZoneCluster = require('../lib/clusters/iasZone');
-const { ZCLStandardHeader } = require('../lib/zclFrames');
 const { ZCLError } = require('../lib/util');
-const { createVirtualDevice } = require('./util');
+const { createVirtualDevice, createSingleClusterDevice, frameToClient } = require('./util');
 
 const SET_ON_CMD_ID = OnOffCluster.COMMANDS.setOn.id;
 const DEFAULT_RESPONSE_CMD_ID = 0x0b;
 
-/** A device whose onOff cluster is served by `onOff`, when given. */
-function onOffDevice(onOff) {
-  return createVirtualDevice({
-    endpoints: [
-      { endpointId: 1, inputClusters: [OnOffCluster.ID], clusters: onOff ? { onOff } : {} },
-    ],
-  });
-}
-
 /** A device whose setOn handler throws `error`. */
 function onOffDeviceThrowing(error) {
-  return onOffDevice(
+  return createSingleClusterDevice(
+    OnOffCluster,
     new (class extends BoundCluster {
       async setOn() {
         throw error;
@@ -46,14 +37,8 @@ async function nodeAnswerTo(clusterId, cmdId, data, inputClusters = [OnOffCluste
   const { virtualDevice, frames, settle } = createVirtualDevice({
     endpoints: [{ endpointId: 1, inputClusters }],
   });
-  const header = new ZCLStandardHeader();
-  header.frameControl.clusterSpecific = true;
-  header.frameControl.directionToClient = true;
-  header.trxSequenceNumber = 1;
-  header.cmdId = cmdId;
-  header.data = data;
-
-  await virtualDevice.sendFrame(1, clusterId, header.toBuffer());
+  const frame = frameToClient({ cmdId, data, clusterSpecific: true, trxSequenceNumber: 1 });
+  await virtualDevice.sendFrame(1, clusterId, frame);
   await settle();
 
   const answers = frames.filter(({ from }) => from === 'zclNode');
@@ -90,7 +75,7 @@ describe('ZCLError handling', function () {
 
   // ZCL R8 2.5.12.2
   it('should send UNSUP_COMMAND (0x81) for a command the BoundCluster does not implement', async function () {
-    const { zclNode, frames } = onOffDevice(new BoundCluster());
+    const { zclNode, frames } = createSingleClusterDevice(OnOffCluster, new BoundCluster());
 
     await assert.rejects(zclNode.endpoints[1].clusters.onOff.setOn(), {
       message: 'UNSUP_CLUSTER_COMMAND',
@@ -122,7 +107,7 @@ describe('ZCLError handling', function () {
   });
 
   it('should send UNSUPPORTED_CLUSTER (0xc3) when the endpoint has no binding for the cluster', async function () {
-    const { zclNode, frames } = onOffDevice();
+    const { zclNode, frames } = createSingleClusterDevice(OnOffCluster);
 
     await assert.rejects(zclNode.endpoints[1].clusters.onOff.setOn(), {
       message: 'UNSUPPORTED_CLUSTER',

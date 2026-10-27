@@ -3,7 +3,7 @@
 const { describe, it, mock } = require('node:test');
 const assert = require('node:assert');
 
-const { createVirtualDevice } = require('./util');
+const { createVirtualDevice, createSingleClusterDevice } = require('./util');
 const BoundCluster = require('../lib/BoundCluster');
 const Cluster = require('../lib/Cluster');
 const { ZCLDataTypes } = require('../lib/zclTypes');
@@ -12,15 +12,6 @@ const OnOffCluster = require('../lib/clusters/onOff');
 
 // Cluster-specific, client to server, TSN 1, command 0x02 (toggle)
 const TOGGLE = Buffer.from([0x01, 0x01, 0x02]);
-
-/** A device with a basic cluster, served by `basic` when given. */
-function basicDevice(basic) {
-  return createVirtualDevice({
-    endpoints: [
-      { endpointId: 1, inputClusters: [BasicCluster.ID], clusters: basic ? { basic } : {} },
-    ],
-  });
-}
 
 /** A remote that sends onOff commands to the node under test, which serves them with `onOff`. */
 function remoteSendingTo(onOff) {
@@ -36,7 +27,8 @@ const summary = (frames) => frames.map(({ from, frame }) => [from, frame.cmdId])
 describe('Node', function () {
   it('should configure reporting', async function () {
     let received;
-    const { zclNode } = basicDevice(
+    const { zclNode } = createSingleClusterDevice(
+      BasicCluster,
       new (class extends BoundCluster {
         async configureReporting({ reports }) {
           received = reports;
@@ -52,7 +44,8 @@ describe('Node', function () {
   });
 
   it('should read attributes', async function () {
-    const { zclNode } = basicDevice(
+    const { zclNode } = createSingleClusterDevice(
+      BasicCluster,
       new (class extends BoundCluster {
         constructor() {
           super();
@@ -84,7 +77,8 @@ describe('Node', function () {
   });
 
   it('should read attributes by numeric ID', async function () {
-    const { zclNode } = basicDevice(
+    const { zclNode } = createSingleClusterDevice(
+      BasicCluster,
       new (class extends BoundCluster {
         get modelId() {
           return 'numericTest';
@@ -98,7 +92,8 @@ describe('Node', function () {
   });
 
   it('should read attributes with mixed strings and numeric IDs', async function () {
-    const { zclNode } = basicDevice(
+    const { zclNode } = createSingleClusterDevice(
+      BasicCluster,
       new (class extends BoundCluster {
         get modelId() {
           return 'mixedTest';
@@ -117,7 +112,8 @@ describe('Node', function () {
   });
 
   it('should return both name and numeric key when same attribute requested both ways', async function () {
-    const { zclNode } = basicDevice(
+    const { zclNode } = createSingleClusterDevice(
+      BasicCluster,
       new (class extends BoundCluster {
         get modelId() {
           return 'both';
@@ -131,7 +127,7 @@ describe('Node', function () {
   });
 
   it('should read an unregistered attribute by numeric ID', async function () {
-    const { zclNode } = basicDevice(new BoundCluster());
+    const { zclNode } = createSingleClusterDevice(BasicCluster, new BoundCluster());
 
     // 0x1234 is not registered in the basic cluster, expect no error and empty/missing result
     const res = await zclNode.endpoints[1].clusters.basic.readAttributes([0x1234]);
@@ -139,7 +135,7 @@ describe('Node', function () {
   });
 
   it('should throw for invalid numeric attribute IDs', async function () {
-    const { zclNode, frames } = basicDevice(new BoundCluster());
+    const { zclNode, frames } = createSingleClusterDevice(BasicCluster, new BoundCluster());
     const { basic } = zclNode.endpoints[1].clusters;
 
     for (const id of [-1, 0x10000, 1.5, NaN]) {
@@ -149,7 +145,8 @@ describe('Node', function () {
   });
 
   it('should read attributes without a default response when disableDefaultResponse is true', async function () {
-    const { zclNode, frames, settle } = basicDevice(
+    const { zclNode, frames, settle } = createSingleClusterDevice(
+      BasicCluster,
       new (class extends BoundCluster {
         get modelId() {
           return 'test';
@@ -233,7 +230,8 @@ describe('Node', function () {
 
   it('should write attributes', async function () {
     let written;
-    const { zclNode } = basicDevice(
+    const { zclNode } = createSingleClusterDevice(
+      BasicCluster,
       new (class extends BoundCluster {
         get modelId() {
           return 'test';
@@ -251,7 +249,8 @@ describe('Node', function () {
   });
 
   it('should discover attributes', async function () {
-    const { zclNode } = basicDevice(
+    const { zclNode } = createSingleClusterDevice(
+      BasicCluster,
       new (class extends BoundCluster {
         get modelId() {
           return 'test';
@@ -270,7 +269,8 @@ describe('Node', function () {
   });
 
   it('should discover received commands', async function () {
-    const { zclNode } = basicDevice(
+    const { zclNode } = createSingleClusterDevice(
+      BasicCluster,
       new (class extends BoundCluster {
         async factoryReset() {}
       })(),

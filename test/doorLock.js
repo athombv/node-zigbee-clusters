@@ -4,8 +4,7 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const DoorLockCluster = require('../lib/clusters/doorLock');
-const { createVirtualDevice } = require('./util');
-const { ZCLStandardHeader } = require('../lib/zclFrames');
+const { createVirtualDevice, frameToClient } = require('./util');
 
 describe('Door Lock', function () {
   it('should receive lockDoor', async function () {
@@ -138,15 +137,15 @@ describe('Door Lock', function () {
       data = received;
     };
 
-    const frame = new ZCLStandardHeader();
-    frame.cmdId = DoorLockCluster.COMMANDS.operationEventNotification.id;
-    frame.frameControl.directionToClient = true;
-    frame.frameControl.clusterSpecific = true;
-    frame.data = Buffer.from([
-      0x01, 0x02, 0x03, 0x00, 0x04, 0x31, 0x32, 0x33, 0x34, 0x78, 0x56, 0x34, 0x12, 0x00,
-    ]);
+    const frame = frameToClient({
+      cmdId: DoorLockCluster.COMMANDS.operationEventNotification.id,
+      clusterSpecific: true,
+      data: Buffer.from([
+        0x01, 0x02, 0x03, 0x00, 0x04, 0x31, 0x32, 0x33, 0x34, 0x78, 0x56, 0x34, 0x12, 0x00,
+      ]),
+    });
 
-    await virtualDevice.sendFrame(1, DoorLockCluster.ID, frame.toBuffer());
+    await virtualDevice.sendFrame(1, DoorLockCluster.ID, frame);
     await settle();
 
     assert.strictEqual(data.operationEventSource, 1); // Keypad
@@ -172,16 +171,16 @@ describe('Door Lock', function () {
       data = received;
     };
 
-    const frame = new ZCLStandardHeader();
-    frame.cmdId = DoorLockCluster.COMMANDS.programmingEventNotification.id;
-    frame.frameControl.directionToClient = true;
-    frame.frameControl.clusterSpecific = true;
-    frame.data = Buffer.from([
-      0x02, 0x03, 0x07, 0x00, 0x04, 0x35, 0x36, 0x37, 0x38, 0x00, 0x01, 0xdd, 0xcc, 0xbb, 0xaa,
-      0x00,
-    ]);
+    const frame = frameToClient({
+      cmdId: DoorLockCluster.COMMANDS.programmingEventNotification.id,
+      clusterSpecific: true,
+      data: Buffer.from([
+        0x02, 0x03, 0x07, 0x00, 0x04, 0x35, 0x36, 0x37, 0x38, 0x00, 0x01, 0xdd, 0xcc, 0xbb, 0xaa,
+        0x00,
+      ]),
+    });
 
-    await virtualDevice.sendFrame(1, DoorLockCluster.ID, frame.toBuffer());
+    await virtualDevice.sendFrame(1, DoorLockCluster.ID, frame);
     await settle();
 
     assert.strictEqual(data.programEventSource, 2); // RF

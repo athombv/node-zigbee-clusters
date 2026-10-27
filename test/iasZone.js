@@ -4,8 +4,7 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const BoundCluster = require('../lib/BoundCluster');
 const IASZoneCluster = require('../lib/clusters/iasZone');
-const { createVirtualDevice } = require('./util');
-const { ZCLStandardHeader } = require('../lib/zclFrames');
+const { createVirtualDevice, frameToClient } = require('./util');
 
 /** Has an IAS zone sensor send the cluster-specific `cmdId` with `data` to the node under test. */
 async function receiveFromSensor(cmdId, data, handlerName) {
@@ -18,12 +17,8 @@ async function receiveFromSensor(cmdId, data, handlerName) {
     received = payload;
   };
 
-  const frame = new ZCLStandardHeader();
-  frame.cmdId = cmdId;
-  frame.frameControl.directionToClient = true;
-  frame.frameControl.clusterSpecific = true;
-  frame.data = data;
-  await virtualDevice.sendFrame(1, IASZoneCluster.ID, frame.toBuffer());
+  const frame = frameToClient({ cmdId, data, clusterSpecific: true });
+  await virtualDevice.sendFrame(1, IASZoneCluster.ID, frame);
   await settle();
 
   return received;

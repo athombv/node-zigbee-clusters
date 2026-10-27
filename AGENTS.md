@@ -54,14 +54,6 @@ Refer to a cluster id as `OnOffCluster.ID`, never as `6` or `0x0006`.
 
 Tests run on `node:test`, so `describe`, `it` and `mock` are imported, not globals.
 
-Every test that needs a node uses `createVirtualDevice()` from `test/util`: the code under test
-(`zclNode`) and a scripted device (`virtualDevice`) on two nodes, with an in-memory link that logs
-every frame (`frames`), can drop or rewrite them (`intercept`) and waits for them (`settle`). Read
-[docs/testing.md](docs/testing.md) before writing a test. The rules that matter most:
-
-- Never assert inside a `BoundCluster` or cluster handler: the endpoint turns the thrown assertion
-  into an error Default Response. Store what the handler received, assert after the `await`.
-- No `done` callbacks; `await settle()` before asserting that something did not happen.
-- Assert on the bytes in `frames` when the encoding is the point, not on a round trip through the
-  same definition.
-- A known bug is a test with `{ todo: '...' }`; check it fails on the bug, not on the test.
+Every test that needs a node uses `createVirtualDevice()` from `test/util`. Read
+[docs/testing.md](docs/testing.md) before writing a test, above all its rules: an assertion inside a
+`BoundCluster` or cluster handler becomes an error Default Response instead of a failure.

@@ -10,19 +10,11 @@ const OnOffCluster = require('../lib/clusters/onOff');
 const BasicCluster = require('../lib/clusters/basic');
 const AlarmsCluster = require('../lib/clusters/alarms');
 const IasZoneCluster = require('../lib/clusters/iasZone');
-const { createVirtualDevice } = require('./util');
-
-/** A device whose `clusterName` cluster is served by `bound`. */
-function deviceServing(clusterId, clusterName, bound) {
-  return createVirtualDevice({
-    endpoints: [{ endpointId: 1, inputClusters: [clusterId], clusters: { [clusterName]: bound } }],
-  });
-}
+const { createSingleClusterDevice } = require('./util');
 
 const togglingDevice = () =>
-  deviceServing(
-    OnOffCluster.ID,
-    'onOff',
+  createSingleClusterDevice(
+    OnOffCluster,
     new (class extends BoundCluster {
       toggle() {}
     })(),
@@ -58,9 +50,8 @@ describe('Cluster Response Timeout', function () {
 
   it('should clear timeout when response is received', async function (t) {
     const clearTimeoutSpy = t.mock.method(global, 'clearTimeout');
-    const { zclNode } = deviceServing(
-      OnOffCluster.ID,
-      'onOff',
+    const { zclNode } = createSingleClusterDevice(
+      OnOffCluster,
       new (class extends BoundCluster {
         async toggle() {
           // Respond after sendFrame resolved
@@ -107,9 +98,8 @@ describe('Cluster Response Timeout', function () {
   });
 
   it('should resolve getAlarm with a Get Alarm Response alone', async function () {
-    const { zclNode } = deviceServing(
-      AlarmsCluster.ID,
-      'alarms',
+    const { zclNode } = createSingleClusterDevice(
+      AlarmsCluster,
       new (class extends BoundCluster {
         getAlarm() {
           return {
@@ -154,9 +144,8 @@ describe('Cluster Response Timeout', function () {
     Cluster.addCluster(TuyaLikeCluster);
     t.after(() => Cluster.removeCluster(TuyaLikeCluster.ID));
 
-    const { zclNode, virtualDevice } = deviceServing(
-      TuyaLikeCluster.ID,
-      'tuyaLike',
+    const { zclNode, virtualDevice } = createSingleClusterDevice(
+      TuyaLikeCluster,
       new (class extends BoundCluster {
         // Reply like a Tuya MCU: its own command with the request's TSN, no Default Response
         async datapoint({ value }, meta, frame) {
@@ -205,9 +194,8 @@ describe('Cluster Response Timeout', function () {
     Cluster.addCluster(EchoCluster);
     t.after(() => Cluster.removeCluster(EchoCluster.ID));
 
-    const { zclNode, intercept } = deviceServing(
-      EchoCluster.ID,
-      'echo',
+    const { zclNode, intercept } = createSingleClusterDevice(
+      EchoCluster,
       new (class extends BoundCluster {
         async ping({ value }) {
           return { value };
@@ -224,9 +212,8 @@ describe('Cluster Response Timeout', function () {
 
   describe('pending response matching', function () {
     it('should not resolve a global command on a cluster-specific frame with its response id', async function () {
-      const { zclNode, intercept } = deviceServing(
-        IasZoneCluster.ID,
-        'iasZone',
+      const { zclNode, intercept } = createSingleClusterDevice(
+        IasZoneCluster,
         new (class extends BoundCluster {
           get zoneState() {
             return 'enrolled';
@@ -277,9 +264,8 @@ describe('Cluster Response Timeout', function () {
   });
 
   it('should ignore a duplicate response without sending an error back', async function () {
-    const { zclNode, frames, intercept, settle } = deviceServing(
-      BasicCluster.ID,
-      'basic',
+    const { zclNode, frames, intercept, settle } = createSingleClusterDevice(
+      BasicCluster,
       new (class extends BoundCluster {
         async readAttributesStructured() {
           // Attribute 0x0004, SUCCESS, string "_TZ3000"

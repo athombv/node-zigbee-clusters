@@ -1,9 +1,7 @@
 'use strict';
 
-// Xiaomi and Aqara devices report their state as Basic attribute 0xff01, typed on the wire as a
-// character string (0x42) but holding a list of id/type/value records. A cluster subclass can
-// declare its own data type for that attribute, and a report must then be decoded with the
-// declared type rather than the one on the wire.
+// Xiaomi devices report state in Basic attribute 0xff01: a string (0x42) on the wire holding
+// id/type/value records. A cluster that declares its own type for it must get that type used.
 
 const { describe, it, mock } = require('node:test');
 const assert = require('node:assert');

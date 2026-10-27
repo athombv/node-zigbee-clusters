@@ -73,17 +73,14 @@ class IkeaSceneCluster extends SceneCluster {
 }
 
 Cluster.addCluster(IkeaSceneCluster);
-const { createVirtualDevice } = require('./util');
+const { createSingleClusterDevice } = require('./util');
 
 /**
  * Sends `command` from a scenes cluster to a virtual device that answers with BoundCluster's
  * defaults, and returns what went on the wire.
  */
 async function send(command, bound = new BoundCluster()) {
-  const { zclNode, virtualDevice, frames } = createVirtualDevice({
-    endpoints: [{ endpointId: 1, inputClusters: [SceneCluster.ID] }],
-  });
-  virtualDevice.endpoints[1].bind('scenes', bound);
+  const { zclNode, frames } = createSingleClusterDevice(SceneCluster, bound);
 
   const result = command(zclNode.endpoints[1].clusters.scenes);
   return { result, frames };
@@ -102,7 +99,7 @@ async function assertSentManufacturerId(command, manufacturerId) {
 /** Asserts that mixing manufacturers is rejected before anything is sent. */
 async function assertRejectsMixedManufacturers(command) {
   const { result, frames } = await send(command);
-  await assert.rejects(result);
+  await assert.rejects(result, /multiple manufacturer ids/);
   assert.deepStrictEqual(frames, []);
 }
 

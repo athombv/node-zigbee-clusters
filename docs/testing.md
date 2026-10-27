@@ -22,7 +22,8 @@ zclNode  <-- in-memory link: logs, intercepts, 82-byte limit -->  virtualDevice
   to `zclNode`.
 
 Both sides run the library's real frame parsing, encoding, response matching and default response
-rules. Only the stack below `ZCLNode.sendFrame` is replaced.
+rules. Only the stack below `ZCLNode.sendFrame` is replaced. As on Homey, `sendFrame` resolves
+before the other side sees the frame, so a command's response timeout runs for every command.
 
 ## Quick start
 
@@ -56,24 +57,28 @@ it('reads the on/off state', async function () {
 
 Attribute values become a `BoundCluster` that answers reads and accepts writes. Pass your own
 `BoundCluster` subclass to script commands or misbehave. A cluster can also be bound later with
-`virtualDevice.endpoints[n].bind()`.
+`virtualDevice.endpoints[n].bind()`. For the common case of one endpoint with one cluster,
+`createSingleClusterDevice(OnOffCluster, boundCluster)` is the short form.
 
 It returns:
 
-- `zclNode`: the node under test.
-- `virtualDevice`: the device node. `virtualDevice.sendFrame(endpointId, clusterId, buffer, meta)`
+- `zclNode` and `virtualDevice`: the two nodes. `virtualDevice.sendFrame(endpointId, clusterId, buffer, meta)`
   sends any raw frame to `zclNode`; `meta` is what the stack would pass along, such as
   `{ groupId }` or `{ broadcast: true }`.
-- `frames`: every delivered frame, in order, as `{ from, endpointId, clusterId, frame, raw, error }`.
-  `from` is `'zclNode'` or `'virtualDevice'`, `frame` the parsed header (`undefined` when
-  malformed), and `error` is set when the receiver threw.
+- `frames`: every frame sent over the link, in order, as `{ from, endpointId, clusterId, frame,
+raw }`. `from` is `'zclNode'` or `'virtualDevice'` and `frame` the parsed header. Frames an
+  interceptor dropped are not in it.
 - `intercept(fn)`: `fn(record)` sees each frame before delivery and returns `undefined` to pass it,
   `null` to drop it, or a buffer or array of buffers to deliver instead. Throwing makes the sender's
   `sendFrame` reject, as a stack error does.
-- `settle()`: resolves once every frame in flight, and each frame sent in reply, has been handled.
+- `settle()`: resolves once every frame in flight, and each frame sent while handling one, has been
+  handled. Work a handler or listener starts after an `await` of its own is not tracked. It rejects
+  when a delivery failed, including when the nodes got stuck answering each other: the link refuses
+  to send more than 1000 frames in total. Raise that cap in `test/util/virtualDevice.js` when a
+  legit test, such as a long OTA transfer, needs more.
 
-The link also fails a send once 1000 frames have gone over it, so two nodes stuck answering each
-other fail the test instead of hanging it.
+`frameToClient({ cmdId, data, clusterSpecific, trxSequenceNumber, disableDefaultResponse })` builds
+the server-to-client frame a device sends as a report or notification.
 
 ## Recipes
 
@@ -119,8 +124,8 @@ intercept(({ from, frame, raw }) =>
 ```
 
 **Something the device starts, such as a report or a notification.** Build the frame with
-`ZCLStandardHeader` (`frameControl.directionToClient = true`), send it with
-`virtualDevice.sendFrame()`, then `await settle()` before asserting. See `test/attributeReport.js`.
+`frameToClient()`, send it with `virtualDevice.sendFrame()`, then `await settle()` before
+asserting. See `test/attributeReport.js`.
 
 **Homey serving the device.** For traffic the device starts, such as OTA requests or a remote's
 commands, give the device the cluster as an output cluster, bind the `BoundCluster` on `zclNode`
@@ -137,7 +142,7 @@ mistake in the test, because nothing else will tell you. See `test/virtualDevice
   caught by the endpoint and turned into an error Default Response, so the assertion message is
   lost or the test passes anyway. Store what the handler received and assert after the `await`.
 - **No `done` callbacks.** Await the command, or `settle()`, then assert. A `done` that is never
-  called hangs the test instead of failing it.
+  called fails only after `npm test`'s 5 second timeout, and hangs a bare `node --test`.
 - **`await settle()` before asserting that something did not happen**, and before asserting on
   anything a device-initiated frame triggers. Awaiting a command only waits for its own response.
 - **Fake time, never wait.** Use `t.mock.timers` for response timeouts, which default to 10 seconds.
@@ -149,10 +154,10 @@ mistake in the test, because nothing else will tell you. See `test/virtualDevice
 
 ## Known gaps
 
-- The device has no typed way to send reports or server-to-client commands on its input clusters,
-  so those frames are built by hand.
-- Interceptors run synchronously before delivery, so "deliver, then have `sendFrame` reject" or "resolve
-  `sendFrame` late" need a stub on top of the harness, see `test/testClusterResponseTimeout.js`.
-- Dropped frames do not appear in `frames`.
+- The device has no typed way to send reports or server-to-client commands on its input clusters:
+  `frameToClient()` builds the header, the payload bytes are written by hand.
+- Interceptors run synchronously before delivery, so "deliver, then have `sendFrame` reject" or
+  "resolve `sendFrame` late" need a stub on top of the harness, see
+  `test/testClusterResponseTimeout.js`.
 - `test/endpointStandalone.js` builds an `Endpoint` without a node on purpose and does not use the
   harness.
