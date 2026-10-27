@@ -1,86 +1,57 @@
 'use strict';
 
-const { describe, it, beforeEach, afterEach, mock } = require('node:test');
+const { describe, it } = require('node:test');
 const assert = require('node:assert');
 
 const Cluster = require('../lib/Cluster');
-const Node = require('../lib/Node');
 const { ZCLDataTypes } = require('../lib/zclTypes');
 const BoundCluster = require('../lib/BoundCluster');
 const OnOffCluster = require('../lib/clusters/onOff');
 const BasicCluster = require('../lib/clusters/basic');
 const AlarmsCluster = require('../lib/clusters/alarms');
 const IasZoneCluster = require('../lib/clusters/iasZone');
+const { createSingleClusterDevice } = require('./util/virtualDevice');
+
+const togglingDevice = () =>
+  createSingleClusterDevice(
+    OnOffCluster,
+    new (class extends BoundCluster {
+      toggle() {}
+    })(),
+  );
+
+/** Makes the device send `colliding(tsn)` with the request's TSN right before each reply. */
+function collideBeforeReplies(intercept, colliding) {
+  intercept(({ from, frame, raw }) =>
+    from === 'virtualDevice' ? [colliding(frame.trxSequenceNumber), raw] : undefined,
+  );
+}
 
 describe('Cluster Response Timeout', function () {
-  let receivingNode;
-  let sendingNode;
-
-  beforeEach(function () {
-    sendingNode = new Node({
-      // Forward frames to receiving node
-      sendFrame: (...args) => {
-        receivingNode.handleFrame(...args);
-      },
-      endpointDescriptors: [
-        {
-          endpointId: 1,
-          inputClusters: [OnOffCluster.ID],
-        },
-      ],
-    });
-
-    receivingNode = new Node({
-      // Forward frames to sending node
-      sendFrame: (...args) => {
-        sendingNode.handleFrame(...args);
-      },
-      endpointDescriptors: [
-        {
-          endpointId: 1,
-          inputClusters: [OnOffCluster.ID],
-        },
-      ],
-    });
-  });
-
-  afterEach(function () {
-    mock.restoreAll();
-    mock.timers.reset();
-  });
-
-  it('should only start timeout after frame is sent', async function () {
-    mock.timers.enable({ apis: ['setTimeout'] });
-    const originalSendFrame = sendingNode.endpoints[1].sendFrame.bind(sendingNode.endpoints[1]);
-    mock.method(sendingNode.endpoints[1], 'sendFrame', async (...args) => {
-      // Delay sendFrame by 150ms (longer than timeout)
+  it('should only start timeout after frame is sent', async function (t) {
+    t.mock.timers.enable({ apis: ['setTimeout'] });
+    const { zclNode } = togglingDevice();
+    const endpoint = zclNode.endpoints[1];
+    const originalSendFrame = endpoint.sendFrame.bind(endpoint);
+    // Delay sendFrame by 150ms (longer than timeout)
+    t.mock.method(endpoint, 'sendFrame', async (...args) => {
       await new Promise((resolve) => setTimeout(resolve, 150));
       return originalSendFrame(...args);
     });
 
-    receivingNode.endpoints[1].bind(
-      'onOff',
-      new (class extends BoundCluster {
-        toggle() {
-          // Respond immediately
-        }
-      })(),
-    );
-
     // Start the command with 100ms timeout, if timeout starts immediately it will fire before
     // sendFrame completes and cause the command to fail
-    const toggled = sendingNode.endpoints[1].clusters.onOff.toggle(undefined, { timeout: 100 });
+    const toggled = endpoint.clusters.onOff.toggle(undefined, { timeout: 100 });
     // Let the stubbed sendFrame reach its fake timer before advancing past the 100ms timeout.
     await Promise.resolve();
-    mock.timers.tick(150);
+    t.mock.timers.tick(150);
     await toggled;
   });
 
-  it('should clear timeout when response is received', async function () {
-    const clearTimeoutSpy = mock.method(global, 'clearTimeout');
-
-    receivingNode.endpoints[1].bind(
-      'onOff',
+  it('should clear timeout when response is received', async function (t) {
+    const clearTimeoutSpy = t.mock.method(global, 'clearTimeout');
+    const { zclNode } = createSingleClusterDevice(
+      OnOffCluster,
       new (class extends BoundCluster {
         async toggle() {
           // Respond after sendFrame resolved
@@ -89,7 +60,7 @@ describe('Cluster Response Timeout', function () {
       })(),
     );
 
-    await sendingNode.endpoints[1].clusters.onOff.toggle(undefined, { timeout: 5000 });
+    await zclNode.endpoints[1].clusters.onOff.toggle(undefined, { timeout: 5000 });
 
     // Should have called clearTimeout to prevent timeout firing
     assert(
@@ -99,63 +70,36 @@ describe('Cluster Response Timeout', function () {
   });
 
   it('should not wait for response when waitForResponse is false', async function () {
-    const sendingNodeSendFrameSpy = mock.method(sendingNode, 'sendFrame');
+    const { zclNode, frames, intercept } = togglingDevice();
+    // A device that never answers: waiting would time out
+    intercept(({ from }) => (from === 'virtualDevice' ? null : undefined));
 
-    receivingNode.endpoints[1].bind(
-      'onOff',
-      new (class extends BoundCluster {
-        toggle() {
-          // Respond with default response
-        }
-      })(),
-    );
+    const result = await zclNode.endpoints[1].clusters.onOff.toggle(undefined, {
+      waitForResponse: false,
+    });
 
-    // Send command without waiting for response
-    const result = await sendingNode.endpoints[1].clusters.onOff.toggle({ waitForResponse: false });
-
-    // Should return undefined since we're not waiting
     assert.strictEqual(result, undefined);
-
-    // Only one frame should be sent (the command itself)
-    assert.strictEqual(sendingNodeSendFrameSpy.mock.callCount(), 1);
+    assert.strictEqual(frames.length, 1);
   });
 
   it('should not resolve with a device-initiated frame that reuses the pending TSN', async function () {
-    const reportedValues = [];
-    sendingNode.endpoints[1].clusters.onOff.on('attr.onOff', (value) => reportedValues.push(value));
-
-    receivingNode.endpoints[1].bind(
-      'onOff',
-      new (class extends BoundCluster {
-        async toggle(args, meta, frame) {
-          // Device sends an attribute report numbered from its own counter, colliding with the TSN
-          await sendingNode.handleFrame(
-            1,
-            OnOffCluster.ID,
-            Buffer.from([0x18, frame.trxSequenceNumber, 0x0a, 0x00, 0x00, 0x10, 0x01]),
-          );
-        }
-      })(),
+    const { zclNode, intercept } = togglingDevice();
+    // Device sends an attribute report numbered from its own counter, colliding with the TSN
+    collideBeforeReplies(intercept, (tsn) =>
+      Buffer.from([0x18, tsn, 0x0a, 0x00, 0x00, 0x10, 0x01]),
     );
+    const reportedValues = [];
+    zclNode.endpoints[1].clusters.onOff.on('attr.onOff', (value) => reportedValues.push(value));
 
-    const result = await sendingNode.endpoints[1].clusters.onOff.toggle();
+    const result = await zclNode.endpoints[1].clusters.onOff.toggle();
 
     assert.deepStrictEqual(reportedValues, [true]);
     assert.strictEqual(result, undefined);
   });
 
   it('should resolve getAlarm with a Get Alarm Response alone', async function () {
-    const pair = [AlarmsCluster.ID];
-    const sender = new Node({
-      sendFrame: (...args) => receiver.handleFrame(...args),
-      endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
-    });
-    const receiver = new Node({
-      sendFrame: (...args) => sender.handleFrame(...args),
-      endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
-    });
-    receiver.endpoints[1].bind(
-      'alarms',
+    const { zclNode } = createSingleClusterDevice(
+      AlarmsCluster,
       new (class extends BoundCluster {
         getAlarm() {
           return {
@@ -168,14 +112,15 @@ describe('Cluster Response Timeout', function () {
       })(),
     );
 
-    const { alarms } = sender.endpoints[1].clusters;
-    const response = await alarms.getAlarm(undefined, { timeout: 1000 });
+    const response = await zclNode.endpoints[1].clusters.alarms.getAlarm(undefined, {
+      timeout: 1000,
+    });
 
     assert.strictEqual(response.alarmCode, 2);
     assert.strictEqual(response.timeStamp, 1234);
   });
 
-  it('should resolve a command without declared response on a cluster-specific reply', async function () {
+  it('should resolve a command without declared response on a cluster-specific reply', async function (t) {
     class TuyaLikeCluster extends Cluster {
       static get ID() {
         return 0xef00;
@@ -197,44 +142,31 @@ describe('Cluster Response Timeout', function () {
       }
     }
     Cluster.addCluster(TuyaLikeCluster);
+    t.after(() => Cluster.removeCluster(TuyaLikeCluster.ID));
 
-    try {
-      const pair = [TuyaLikeCluster.ID];
-      const sender = new Node({
-        sendFrame: (...args) => receiver.handleFrame(...args),
-        endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
-      });
-      const receiver = new Node({
-        sendFrame: (...args) => sender.handleFrame(...args),
-        endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
-      });
-      receiver.endpoints[1].bind(
-        'tuyaLike',
-        new (class extends BoundCluster {
-          // Reply like a Tuya MCU: its own command with the request's TSN, no Default Response
-          async datapoint({ value }, meta, frame) {
-            await sender.handleFrame(
-              1,
-              TuyaLikeCluster.ID,
-              Buffer.from([0x19, frame.trxSequenceNumber, 0x01, value]),
-            );
-          }
-        })(),
-      );
+    const { zclNode, virtualDevice } = createSingleClusterDevice(
+      TuyaLikeCluster,
+      new (class extends BoundCluster {
+        // Reply like a Tuya MCU: its own command with the request's TSN, no Default Response
+        async datapoint({ value }, meta, frame) {
+          await virtualDevice.sendFrame(
+            1,
+            TuyaLikeCluster.ID,
+            Buffer.from([0x19, frame.trxSequenceNumber, 0x01, value]),
+          );
+        }
+      })(),
+    );
 
-      const { tuyaLike } = sender.endpoints[1].clusters;
-      const response = await tuyaLike.datapoint(
-        { value: 7 },
-        { disableDefaultResponse: true, timeout: 1000 },
-      );
+    const response = await zclNode.endpoints[1].clusters.tuyaLike.datapoint(
+      { value: 7 },
+      { disableDefaultResponse: true, timeout: 1000 },
+    );
 
-      assert.strictEqual(response.value, 7);
-    } finally {
-      Cluster.removeCluster(TuyaLikeCluster.ID);
-    }
+    assert.strictEqual(response.value, 7);
   });
 
-  it('should treat a declared response without id as the command id', async function () {
+  it('should treat a declared response without id as the command id', async function (t) {
     class EchoCluster extends Cluster {
       static get ID() {
         return 0xfc01;
@@ -260,155 +192,100 @@ describe('Cluster Response Timeout', function () {
       }
     }
     Cluster.addCluster(EchoCluster);
+    t.after(() => Cluster.removeCluster(EchoCluster.ID));
 
-    try {
-      const pair = [EchoCluster.ID];
-      const sender = new Node({
-        sendFrame: (...args) => receiver.handleFrame(...args),
-        endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
-      });
-      const receiver = new Node({
-        sendFrame: (...args) => sender.handleFrame(...args),
-        endpointDescriptors: [{ endpointId: 1, inputClusters: pair }],
-      });
-      receiver.endpoints[1].bind(
-        'echo',
-        new (class extends BoundCluster {
-          // An unrelated device command reuses the TSN first, then the real response (id 0x05)
-          async ping({ value }, meta, frame) {
-            await sender.handleFrame(
-              1,
-              EchoCluster.ID,
-              Buffer.from([0x19, frame.trxSequenceNumber, 0x06, 99]),
-            );
-            return { value };
-          }
-        })(),
-      );
+    const { zclNode, intercept } = createSingleClusterDevice(
+      EchoCluster,
+      new (class extends BoundCluster {
+        async ping({ value }) {
+          return { value };
+        }
+      })(),
+    );
+    // An unrelated device command reuses the TSN first, then the real response (id 0x05)
+    collideBeforeReplies(intercept, (tsn) => Buffer.from([0x19, tsn, 0x06, 99]));
 
-      const { echo } = sender.endpoints[1].clusters;
-      const response = await echo.ping({ value: 7 }, { timeout: 1000 });
+    const response = await zclNode.endpoints[1].clusters.echo.ping({ value: 7 }, { timeout: 1000 });
 
-      assert.strictEqual(response.value, 7);
-    } finally {
-      Cluster.removeCluster(EchoCluster.ID);
-    }
+    assert.strictEqual(response.value, 7);
   });
 
   describe('pending response matching', function () {
-    // Node pair where the receiving side first sends `colliding(tsn)` with the request's TSN,
-    // then its real reply
-    function createCollidingPair(clusterId, colliding) {
-      const descriptors = [{ endpointId: 1, inputClusters: [clusterId] }];
-      const sender = new Node({
-        sendFrame: (...args) => receiver.handleFrame(...args),
-        endpointDescriptors: descriptors,
-      });
-      const receiver = new Node({
-        sendFrame: async (endpointId, frameClusterId, frame) => {
-          await sender.handleFrame(endpointId, frameClusterId, colliding(frame[1]));
-          await sender.handleFrame(endpointId, frameClusterId, frame);
-        },
-        endpointDescriptors: descriptors,
-      });
-      return { sender, receiver };
-    }
-
     it('should not resolve a global command on a cluster-specific frame with its response id', async function () {
-      // IAS Zone Enroll Request is cluster-specific 0x01, the same id as Read Attributes Response
-      const { sender, receiver } = createCollidingPair(IasZoneCluster.ID, (tsn) =>
-        Buffer.from([0x19, tsn, 0x01, 0x0d, 0x00, 0x00, 0x00]),
-      );
-      receiver.endpoints[1].bind(
-        'iasZone',
+      const { zclNode, intercept } = createSingleClusterDevice(
+        IasZoneCluster,
         new (class extends BoundCluster {
           get zoneState() {
             return 'enrolled';
           }
         })(),
       );
+      // IAS Zone Enroll Request is cluster-specific 0x01, the same id as Read Attributes Response
+      collideBeforeReplies(intercept, (tsn) =>
+        Buffer.from([0x19, tsn, 0x01, 0x0d, 0x00, 0x00, 0x00]),
+      );
 
-      const { iasZone } = sender.endpoints[1].clusters;
-      const result = await iasZone.readAttributes(['zoneState'], { timeout: 1000 });
+      const result = await zclNode.endpoints[1].clusters.iasZone.readAttributes(['zoneState'], {
+        timeout: 1000,
+      });
 
       assert.deepStrictEqual(result, { zoneState: 'enrolled' });
     });
 
     it('should not resolve on a Default Response for another command', async function () {
+      const { zclNode, intercept } = togglingDevice();
       // Default Response with FAILURE for cmdId 0x01 (on), while toggle (0x02) is pending
-      const { sender, receiver } = createCollidingPair(OnOffCluster.ID, (tsn) =>
-        Buffer.from([0x18, tsn, 0x0b, 0x01, 0x01]),
-      );
-      receiver.endpoints[1].bind(
-        'onOff',
-        new (class extends BoundCluster {
-          toggle() {}
-        })(),
-      );
+      collideBeforeReplies(intercept, (tsn) => Buffer.from([0x18, tsn, 0x0b, 0x01, 0x01]));
 
-      await sender.endpoints[1].clusters.onOff.toggle(undefined, { timeout: 1000 });
+      await zclNode.endpoints[1].clusters.onOff.toggle(undefined, { timeout: 1000 });
     });
   });
 
   it('should resolve when the response arrives before sendFrame rejects', async function () {
-    receivingNode.endpoints[1].bind(
-      'onOff',
-      new (class extends BoundCluster {
-        toggle() {}
-      })(),
-    );
-    sendingNode.sendFrame = async (endpointId, clusterId, frame) => {
-      await receivingNode.handleFrame(endpointId, clusterId, frame);
+    const { zclNode, settle } = togglingDevice();
+    // The stack reports a failed send (e.g. no APS ACK in time) after the device already answered
+    const sendFrame = zclNode.sendFrame;
+    zclNode.sendFrame = async (...args) => {
+      await sendFrame(...args);
+      await settle();
       throw new Error('device not responding');
     };
 
-    await sendingNode.endpoints[1].clusters.onOff.toggle();
+    await zclNode.endpoints[1].clusters.onOff.toggle();
   });
 
   it('should reject when sendFrame rejects without a response', async function () {
-    sendingNode.sendFrame = async () => {
+    const { zclNode, intercept } = togglingDevice();
+    intercept(() => {
       throw new Error('device not responding');
-    };
+    });
 
-    await assert.rejects(sendingNode.endpoints[1].clusters.onOff.toggle(), /device not responding/);
+    await assert.rejects(zclNode.endpoints[1].clusters.onOff.toggle(), /device not responding/);
   });
 
   it('should ignore a duplicate response without sending an error back', async function () {
-    const sentFrames = [];
-    const node = new Node({
-      sendFrame: async (endpointId, clusterId, frame) => {
-        sentFrames.push(frame);
-        if (sentFrames.length > 1) return;
-        // The device answers with a Read Attributes Response (attribute 0x0004, SUCCESS, "_TZ3000")
-        // and sends that same response a second time, as some devices do
-        const response = Buffer.from([
-          0x18,
-          frame[1],
-          0x01,
-          0x04,
-          0x00,
-          0x00,
-          0x42,
-          0x07,
-          ...Buffer.from('_TZ3000'),
-        ]);
-        setImmediate(async () => {
-          await node.handleFrame(endpointId, clusterId, response, { dstEndpoint: 1 });
-          await node.handleFrame(endpointId, clusterId, response, { dstEndpoint: 1 });
-        });
-      },
-      endpointDescriptors: [{ endpointId: 1, inputClusters: [BasicCluster.ID] }],
-    });
+    const { zclNode, frames, intercept, settle } = createSingleClusterDevice(
+      BasicCluster,
+      new (class extends BoundCluster {
+        async readAttributesStructured() {
+          // Attribute 0x0004, SUCCESS, string "_TZ3000"
+          return {
+            attributes: Buffer.from([0x04, 0x00, 0x00, 0x42, 0x07, ...Buffer.from('_TZ3000')]),
+          };
+        }
+      })(),
+    );
+    // The device sends its response a second time, as some devices do
+    intercept(({ from, raw }) => (from === 'virtualDevice' ? [raw, raw] : undefined));
 
-    const { basic } = node.endpoints[1].clusters;
-    const response = await basic.readAttributesStructured(
+    const response = await zclNode.endpoints[1].clusters.basic.readAttributesStructured(
       { attributes: [{ attributeId: 4, indexPath: [] }] },
       { timeout: 1000 },
     );
-    await new Promise(setImmediate);
+    await settle();
 
     assert.strictEqual(response.attributes.subarray(5).toString(), '_TZ3000');
     // Only the request went out, no error Default Response for the second copy
-    assert.strictEqual(sentFrames.length, 1);
+    assert.strictEqual(frames.filter(({ from }) => from === 'zclNode').length, 1);
   });
 });
