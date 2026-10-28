@@ -1,7 +1,7 @@
 name: Label pull request
 
 # Labels each pull request from the conventional-commit prefix of its title, so the release
-# notes can sort it (see .github/release.yml). Re-runs when the title or base branch is edited.
+# notes can sort it (see .github/release.yml). Re-runs on every edit.
 # The five labels below follow the title alone: to move a pull request, retitle it.
 #
 # pull_request_target so pull requests from forks get a token that can label. This is safe
@@ -40,9 +40,9 @@ jobs:
               return null;
             }
 
-            const { action, changes = {} } = context.payload;
-            // The label depends on the title and the base branch; other edits change nothing.
-            if (action === 'edited' && !changes.title && !changes.base) return;
+            // No early return for edits that leave the title and base alone: a newer queued run in
+            // the concurrency group replaces an older one, so a body edit can be all that runs
+            // after a title edit.
 
             // The payload is a snapshot from when the event fired. Read the pull request as it is
             // now, so labels an earlier run added are seen and the latest title wins.
